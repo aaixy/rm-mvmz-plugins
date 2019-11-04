@@ -1,0 +1,59 @@
+2019.10.28
+使用说明：
+1.备份好你的rmmv工程
+2.将本插件组合包内的所有文件和文件夹整个复制到你的rmmv工程根目录并覆盖；
+包括bootstrap-4.3.1-dist、img、js等
+3.A如果你的rmmv工程根目录下的index.html文件没有做过自定义处理的话，则将其删除，然后将indexSample.html文件重命名为index.html，放心的覆盖，rmmv的编辑器会自动修改标题为你的游戏的标题的，这也是最简单的一种方式；
+B如果你的rmmv工程根目录下的index.html文件做过自定义处理的话，这就会稍微复杂一点了，用记事本分别打开你的index.html和插件包的indexSample.html文件，然后将indexSample.html文件中
+<!--AXY_AjaxNetStuff-->
+		<link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
+		<script type="text/javascript" src="js/libs/crypto.sha1.js"></script>
+		<script type="text/javascript" src="js/libs/crypto.aes.js"></script>
+        <script type="text/javascript" src="js/libs/socket.io.js"></script>
+		<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+		<script type="text/javascript" src="js/functions.js"></script>
+		<script type="text/javascript" src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+		<!--AXY_AjaxNetStuff-->
+这部分内容复制，然后粘贴到index.html文件内容的<script type="text/javascript" src="js/main.js"></script>这行下面；
+4.保存index.html文件并关闭；
+5.打开你的rmmv工程，进入插件管理器，将AXY_AjaxNetStuff group\js\plugins文件夹下的所有插件引入你的游戏工程并启用；
+6.保存工程，此时就已经完成了rmmv部分的设置工作；
+此时运行游戏或者打开index.html文件可以看到rmmv编辑器自动将index.html的标题部分修改为你的游戏的标题了；
+如果不出意外，一切都可以正常运行了；
+
+但现在插件对接的网络接口还不是你的游戏，所以还需要如下步骤：
+7.打开网站 http://666rpg.com/zhongchou/ 进行注册，并发布一款游戏，
+在地址栏中获得一个你注册的游戏的链接，类似下面这样：
+http://666rpg.com/zhongchou/product/id/##
+其中##是你注册的游戏的id；使用本插件可以简单到你只需要复制粘贴一个链接就能完成网络排名、登录、网络验证兑换码、云存档等功能！
+8.打开工程，进入插件管理器，打开AXY_AjaxNetStuff这个插件，并设置AXY_AjaxNetStuff插件的URL参数为你的链接，其实就是替换里面的id为你注册的游戏的id；
+9.加QQ群：399090587，请求审核通过你的游戏；
+10.你的游戏审核通过后，网络插件就可以工作了，这时候你会在游戏中看到联网的玩家排名，并可以使用联网验证的兑换码、登录并使用云存档和众筹内购、多人联机同屏等一系列网络附加功能。
+11.如果对插件的默认参数不满意的，可以自行修改各个参数来达到符合自身需求的目的，比如关闭不需要的功能，这样也可以帮我们节省服务器资源，默认全部开启只是为了展示该插件所具备的能力；
+
+功能不断的在增加，在完善。
+
+附兑换码生成教程：
+1.http://666rpg.com/zhongchou/
+在这里注册后，依次
+点击上部导航数字币众筹，
+点击中部导航我的众筹，
+点击添加众筹，
+按照表单说明和提示进行填写，注意分类要选择游戏，并提交；
+2.点击中部导航我的众筹，这时候列表里会出现你刚注册的游戏，在后面点击查看优惠券；
+3.点优惠券栏后面的添加，按照你设定的不同支持等级进行优惠券的生成，系统会自动将其加入相对应的券池中；
+此步骤也可以暂时不做，等游戏众筹成功之后再来添加也可以。
+如果券池中都对应的优惠券，当用户参与众筹支持了你的游戏，那么系统将自动为其分配优惠券，其他人无法使用。
+如果券池为空，系统无法自动分配，你可以手动分发优惠券兑换码什么的。
+4.其他更多功能请自行慢慢摸索，非常强大。
+5.看反响如何，我将继续进行功能的添加和更新。
+
+
+注意：以下教程可能不是基于最新版内容创作，但具有极高的学习和参考价值。
+图文教程：
+http://rpg.blue/forum.php?mod=redirect&goto=findpost&ptid=397990&pid=2710033&fromuid=215523
+
+神仙狼的视频教程：https://www.bilibili.com/video/av15594375/
+
+
+
