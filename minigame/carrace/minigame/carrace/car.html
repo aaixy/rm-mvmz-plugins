@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" /> 
+	<title>CAR GAME</title>
+	<style type="text/css">
+	#sence{border:1px solid #ccc;position:relative;}
+	.carracemainbox{width:;margin:0 auto;background:white;}
+	#block{width:50px;height:50px;background:#f00;position:fixed;left:0;top:0;}
+	</style>
+</head>
+<body>
+<div class="carracemainbox">
+	<canvas id="sence" width="640" height="480"></canvas>
+</div>
+
+<script src="minigame/carrace/lib/entities.js"></script>
+<script src="minigame/carrace/user-entities.js"></script>
+<script src="minigame/carrace/lib/patch-enhancement.js"></script>
+<script src="minigame/carrace/lib/main_app.js"></script>
+<script type="text/javascript">
+
+var screenObjects = [];
+var startTime = null;
+
+var resources = [
+	{'name': 'car1', src: 'minigame/carrace/images/car1.png', type: 'images'},
+	{'name': 'car2', src: 'minigame/carrace/images/car2.png', type: 'images'},
+	{'name': 'car3', src: 'minigame/carrace/images/car3.png', type: 'images'},
+	{'name': 'car4', src: 'minigame/carrace/images/car4.png', type: 'images'},
+	{'name': 'car5', src: 'minigame/carrace/images/car5.png', type: 'images'},
+	{'name': 'car_p', src: 'minigame/carrace/images/car_p.png', type: 'images'},
+	{'name': 'saint', src: 'minigame/carrace/images/saint.png', type: 'images'},
+	{'name': 'soldier', src: 'minigame/carrace/images/soldier.png', type: 'images'},
+	{'name': 'tree', src: 'minigame/carrace/images/tree.png', type: 'images'},
+	{'name': 'road', src: 'minigame/carrace/images/road.png', type: 'images'},
+	{'name': 'bike', src: 'minigame/carrace/images/bike.png', type: 'images'}
+]; 
+resourceLoader.onProgress = function(e){
+	loadScreen.setProgress(e.loadedCount / e.totalCount);
+};
+
+resourceLoader.onComplete = function(){
+	ScreenObjPool.remove(loadScreen);
+	//showWelcome();
+	startGame();
+};
+var loadScreen = new LoadScreen();
+
+MainApp.init();
+
+MainApp.startRun();
+
+ScreenObjPool.add(loadScreen);
+
+resourceLoader.load(resources);
+
+function showWelcome(){
+	var logo = new TextEntityObject('CAR RACE', new Vector(160, 150), {fillStyle: '#900', font: 'bold 64px 微软雅黑', 'textBaseline': 'top'}, 100, 35);
+	
+	var welcome = new TextEntityObject('点击开始', new Vector(267, 310), {fillStyle: '#333', font: 'bold 24px 微软雅黑', 'textBaseline': 'top'}, 100, 35);
+	MainApp.addEventListener(welcome, 'mouseover', function(e){
+		welcome.setStyle({fillStyle: '#999'});
+	});
+	
+	MainApp.addEventListener(welcome, 'mouseout', function(e){
+		welcome.setStyle({fillStyle: '#333'});
+	});
+	
+	/*MainApp.addEventListener(welcome, 'click', function(e){
+		startGame();
+		
+		ScreenObjPool.remove(logo);
+		ScreenObjPool.remove(welcome);
+		ScreenObjPool.remove(magic);
+		ScreenObjPool.remove(magic2);
+	});*/
+	var magic = new Magic(new Vector(70, 160), resourceLoader.resources.saint, Magic.ANIM_TYPE.VERTICAL, 56, new Vector(20, 0));
+	var magic2 = new Magic(new Vector(70, 260), resourceLoader.resources.soldier, Magic.ANIM_TYPE.VERTICAL, 48, new Vector(20, 0));
+	
+	var copy = new TextEntityObject('Power BY: DK', new Vector(390, 230), {fillStyle: '#666', font: 'bold 14px 微软雅黑', 'textBaseline': 'top'}, 100, 20);
+	
+	MainApp.addEventListener(copy, 'mouseover', function(e){
+		this.setStyle({fillStyle: '#06c'});
+	});
+	MainApp.addEventListener(copy, 'mouseout', function(e){
+		this.setStyle({fillStyle: '#666'});
+	});
+	/*MainApp.addEventListener(copy, 'click', function(e){
+		window.open('http://www.dklogs.net');
+	});*/
+	ScreenObjPool.add(logo);
+	ScreenObjPool.add(welcome);
+	ScreenObjPool.add(magic);
+	ScreenObjPool.add(magic2);
+	ScreenObjPool.add(copy);
+	
+}
+var SCORE = 0;
+function startGame(){
+	var road = new ImageEntityObject(resourceLoader.get('road'), new Vector(0, 0), 640, 480);
+	ScreenObjPool.add(road);
+
+	var images = [];
+	images.push(resourceLoader.resources.car1);
+	images.push(resourceLoader.resources.car2);
+	images.push(resourceLoader.resources.car3);
+	images.push(resourceLoader.resources.car4);
+	images.push(resourceLoader.resources.car5);
+	
+	for(var i = 0; i < 5; i++){
+		var img =  images[(~~(Math.random() * (images.length-1 - 0 + 1)) + 0)];
+		var newCar = new Car(new Vector(i * 60 + 50, (~~(Math.random() * (-80 - -480 + 1)) + -480)), 'rgb(' + (~~(Math.random() * (255 - 0 + 1)) + 0) + ', ' + (~~(Math.random() * (255 - 0 + 1)) + 0) + ', ' + (~~(Math.random() * (255 - 0 + 1)) + 0) + ')', img);
+		newCar.hitable = true;
+		ScreenObjPool.add(newCar);
+	}
+	
+	var tree = new Magic(new Vector(370, 0), resourceLoader.get('tree'), Magic.ANIM_TYPE.HORIZONTAL, 50);
+	ScreenObjPool.add(tree);
+	
+	var bike = new Magic(new Vector(500, 0), resourceLoader.get('bike'), Magic.ANIM_TYPE.HORIZONTAL, 73);
+	ScreenObjPool.add(bike);
+	
+	var leftC = new CollisionEntityObject(new Vector(0, 0), 30, 480);
+	var rightC = new CollisionEntityObject(new Vector(350, 0), 20, 480);
+	var topC = new CollisionEntityObject(new Vector(0, 0), 640, 40);
+	var bottomC = new CollisionEntityObject(new Vector(0, 480), 640, 10);
+	var cMap = new CollistionMap();
+	cMap.add(leftC);
+	cMap.add(rightC);
+	cMap.add(topC);
+	cMap.add(bottomC);
+	
+	var myCar = new Car(new Vector(240, 390), 'rgb(' + (~~(Math.random() * (255 - 0 + 1)) + 0) + ', ' + (~~(Math.random() * (255 - 0 + 1)) + 0) + ', ' + (~~(Math.random() * (255 - 0 + 1)) + 0) + ')', resourceLoader.resources.car_p, new Vector(0, 0));
+	myCar.setCollisionMap(cMap);
+	MainApp.addEventListener(myCar, 'keyup', function(e){
+		var KEY = MainApp.INPUT.KEY;
+		switch(e.which){
+			case KEY.UP:
+				if(KEY_LOCK.UP){
+					this.speed.remove(new Vector(0, -200));
+					KEY_LOCK.UP = false;
+				}
+				break;
+			case KEY.DOWN:
+				if(KEY_LOCK.DOWN){
+					this.speed.remove(new Vector(0, 200));
+					KEY_LOCK.DOWN = false;
+				}
+				break;
+			case KEY.LEFT:
+				if(KEY_LOCK.LEFT){
+					this.speed.remove(new Vector(-200, 0));
+					KEY_LOCK.LEFT = false;
+				}
+				break;
+			case KEY.RIGHT:
+				if(KEY_LOCK.RIGHT){
+					this.speed.remove(new Vector(200, 0));
+					KEY_LOCK.RIGHT = false;
+				}
+				break;
+		}
+	});
+	
+	MainApp.addEventListener(myCar, 'keydown', function(e){
+		var KEY = MainApp.INPUT.KEY;
+		switch(e.which){
+			case KEY.UP:
+				if(!KEY_LOCK.UP){
+					myCar.speed.add(new Vector(0, -200));
+					KEY_LOCK.UP = true;
+				}
+				break;
+			case KEY.DOWN:
+				if(!KEY_LOCK.DOWN){
+					myCar.speed.add(new Vector(0, 200));
+					KEY_LOCK.DOWN = true;
+				}
+				break;
+			case KEY.LEFT:
+				if(!KEY_LOCK.LEFT){
+					myCar.speed.add(new Vector(-200, 0));
+					KEY_LOCK.LEFT = true;
+				}
+				break;
+			case KEY.RIGHT:
+				if(!KEY_LOCK.RIGHT){
+					myCar.speed.add(new Vector(200, 0));
+					KEY_LOCK.RIGHT = true;
+				}
+				break;
+		}
+		
+	});
+	
+	MainApp.addEventListener(myCar, 'hit', function(e){
+		ScreenObjPool.empty();
+		MainApp.emptyEventsPool();
+		KEY_LOCK = {
+			LEFT: false,
+			RIGHT: false,
+			UP: false,
+			DOWN: false
+		}
+		endGame(score.score);
+	});
+	ScreenObjPool.add(myCar);
+	
+	var scorePre = new TextEntityObject('Score: ', new Vector(50, 5), {fillStyle: '#fff', font: 'bold 32px 微软雅黑', 'textBaseline': 'top'}, 100, 35);
+	ScreenObjPool.add(scorePre);
+	//var score = new TextEntityObject('0', new Vector(160, 5), {fillStyle: '#fff', font: 'bold 32px 微软雅黑', 'textBaseline': 'top'}, 100, 35);
+	var score = new GameScore(0, new Vector(160, 5));
+	ScreenObjPool.add(score);
+	
+	
+	
+}
+
+
+function endGame(score){
+	AXY_MiniGameCarRace.remove(1,~~score);
+	//console.log(~~score);
+	//$gameParty.gainGold(~~score);
+	
+	var end = new TextEntityObject('GAME OVER', new Vector(120, 150), {fillStyle: '#900', font: 'bold 64px 微软雅黑', 'textBaseline': 'top'}, 100, 35);
+	
+	ScreenObjPool.add(end);
+	
+	var score = new TextEntityObject('Score: ' + ~~score, new Vector(240,240), {fillStyle: '#000', font: 'bold 32px 微软雅黑', 'textBaseline': 'top'}, 100, 35);
+	ScreenObjPool.add(score);
+	
+	//ScreenObjPool.remove(end);
+	//ScreenObjPool.remove(score);
+	
+	
+	
+	//ScreenObjPool.empty();
+	//MainApp.emptyEventsPool();
+	
+	/*var restart = new TextEntityObject('重新开始', new Vector(267, 310), {fillStyle: '#333', font: 'bold 24px 微软雅黑', 'textBaseline': 'top'}, 100, 35);
+	MainApp.addEventListener(restart, 'mouseover', function(e){
+		restart.setStyle({fillStyle: '#999'});
+	});
+	
+	
+	MainApp.addEventListener(restart, 'mouseout', function(e){
+		restart.setStyle({fillStyle: '#333'});
+	});
+	
+	ScreenObjPool.add(restart);
+	
+	MainApp.addEventListener(restart, 'click', function(e){
+		ScreenObjPool.remove(end);
+		ScreenObjPool.remove(restart);
+		
+		startGame();
+	});*/
+	
+}
+var KEY_LOCK = {
+	LEFT: false,
+	RIGHT: false,
+	UP: false,
+	DOWN: false
+}
+
+</script>
+</body>
+</html>
