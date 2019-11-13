@@ -1,11 +1,11 @@
 //=============================================================================
 // A XueYu Plugins - SingleImgSVActor
 // AXY_SingleImgSVActor.js
-// Version: 1.02
+// Version: 1.03
 // License: MIT
 //=============================================================================
 /*:
- * @plugindesc v1.02 Allows actors using single img in battle.
+ * @plugindesc v1.03 Allows actors using single img in battle.
  * @author A XueYu Plugins
  *
  * @help
@@ -41,6 +41,9 @@
  * 
  *
  * changelog
+ * 1.03 2019.11.5
+ * add: class meta support, class meta has higher priority;
+ * fix: death image has no effect;
  * 1.02 2019.10.31
  * add: damage image support;
  * add: recovery image support;
@@ -74,20 +77,22 @@ Spriteset_Battle.prototype.createActors = function () {
 
 		this._actorSprites[i] = new Sprite_Actor();
 
-
 		//console.log($gameParty);
+		//console.log(this);
 
 		if (actorId) {
 			//console.log($gameActors.actor(actorId));
 			//var name = $gameActors._data[actorId]._battlerName;
 			//console.log($gameActors._data[actorId]._battlerName);
 			//console.log($dataActors[actorId]);
-			var AXYSingleImgSVActorFileName = $dataActors[actorId].meta.axysingle;
+			var _metaClass = $gameActors.actor(actorId).currentClass().meta;
+			var _metaActor = $dataActors[actorId].meta;
+			var AXYSingleImgSVActorFileName = _metaActor.axysingle;
 			//console.log(isAXYSingleImgSVActor);
-			var AXYSingleImgSVActorScaleX = $dataActors[actorId].meta.axysingle_scalex;
-			var AXYSingleImgSVActorScaleY = $dataActors[actorId].meta.axysingle_scaley;
-			var AXYSingleImgSVActorRotation = $dataActors[actorId].meta.axysingle_rotation;
-			var AXYSingleImgSVActorHUE = $dataActors[actorId].meta.axysingle_hue ? $dataActors[actorId].meta.axysingle_hue : 0;
+			var AXYSingleImgSVActorScaleX = _metaClass.axysingle_scalex ? _metaClass.axysingle_scalex : _metaActor.axysingle_scalex;
+			var AXYSingleImgSVActorScaleY = _metaClass.axysingle_scaley ? _metaClass.axysingle_scaley : _metaActor.axysingle_scaley;
+			var AXYSingleImgSVActorRotation = _metaClass.axysingle_rotation ? _metaClass.axysingle_rotation : _metaActor.axysingle_rotation;
+			var AXYSingleImgSVActorHUE = _metaClass.axysingle_hue ? _metaClass.axysingle_hue : _metaActor.axysingle_hue ? _metaActor.axysingle_hue : 0;
 
 
 			if (AXYSingleImgSVActorFileName) {
@@ -124,7 +129,6 @@ Spriteset_Battle.prototype.createActors = function () {
 				}
 			}
 		}
-
 		this._battleField.addChild(this._actorSprites[i]);
 	}
 };
@@ -142,13 +146,15 @@ Game_Actor.prototype.performCollapse = function () {
 			//console.log($gameActors.actor(this._actorId));
 			var actorId = this._actorId;
 			SoundManager.playActorCollapse();
-			console.log(AXY.SingleImgSVActor.Param.SVActor[this._actorId]);
+			//console.log(AXY.SingleImgSVActor.Param.SVActor[this._actorId]);
+			var _metaClass = $gameActors.actor(actorId).currentClass().meta;
+			var _metaActor = $dataActors[actorId].meta;
 
-			var AXYSingleImgSVActorFileName = $dataActors[actorId].meta.axysingle_death ? $dataActors[actorId].meta.axysingle_death : $dataActors[actorId].meta.axysingle;
-			var AXYSingleImgSVActorScaleX = $dataActors[actorId].meta.axysingle_death_scalex ? $dataActors[actorId].meta.axysingle_death_scalex : $dataActors[actorId].meta.axysingle_scalex;
-			var AXYSingleImgSVActorScaleY = $dataActors[actorId].meta.axysingle_death_scaley ? $dataActors[actorId].meta.axysingle_death_scaley : $dataActors[actorId].meta.axysingle_scaley;
-			var AXYSingleImgSVActorRotation = $dataActors[actorId].meta.axysingle_death_rotation ? $dataActors[actorId].meta.axysingle_death_rotation : $dataActors[actorId].meta.axysingle_rotation;
-			var AXYSingleImgSVActorHUE = $dataActors[actorId].meta.axysingle_death_hue ? $dataActors[actorId].meta.axysingle_death_hue : $dataActors[actorId].meta.axysingle_hue;
+			var AXYSingleImgSVActorFileName = _metaActor.axysingle_death ? _metaActor.axysingle_death : _metaActor.axysingle;
+			var AXYSingleImgSVActorScaleX = _metaClass.axysingle_death_scalex ? _metaClass.axysingle_death_scalex : _metaActor.axysingle_death_scalex ? _metaActor.axysingle_death_scalex : _metaActor.axysingle_scalex;
+			var AXYSingleImgSVActorScaleY = _metaClass.axysingle_death_scaley ? _metaClass.axysingle_death_scaley : _metaActor.axysingle_death_scaley ? _metaActor.axysingle_death_scaley : _metaActor.axysingle_scaley;
+			var AXYSingleImgSVActorRotation = _metaClass.axysingle_death_rotation ? _metaClass.axysingle_death_rotation : _metaActor.axysingle_death_rotation ? _metaActor.axysingle_death_rotation : _metaActor.axysingle_rotation;
+			var AXYSingleImgSVActorHUE = _metaClass.axysingle_death_hue ? _metaClass.axysingle_death_hue : _metaActor.axysingle_death_hue ? _metaActor.axysingle_death_hue : _metaActor.axysingle_hue;
 
 			if (AXYSingleImgSVActorScaleX) {
 				AXY.SingleImgSVActor.Param.SVActor[actorId].scale.x = AXYSingleImgSVActorScaleX;
@@ -204,7 +210,7 @@ AXY.SingleImgSVActor.Alias.Game_Actor_prototype_performDamage = Game_Actor.proto
 Game_Actor.prototype.performDamage = function () {
 	Game_Battler.prototype.performDamage.call(this);
 	if ($gameParty.inBattle()) {
-		if (this.isAXYSingleImgSVActor === true) {
+		if (this.isAXYSingleImgSVActor === true && this.isDead() !== true) {
 			//console.log('isAXYSingleImgSVActor dead');
 			//console.log(this);
 
@@ -212,13 +218,15 @@ Game_Actor.prototype.performDamage = function () {
 			//console.log($gameActors.actor(this._actorId));
 			var actorId = this._actorId;
 			SoundManager.playActorDamage();
-			console.log(AXY.SingleImgSVActor.Param.SVActor[this._actorId]);
+			//console.log(AXY.SingleImgSVActor.Param.SVActor[this._actorId]);
+			var _metaClass = $gameActors.actor(actorId).currentClass().meta;
+			var _metaActor = $dataActors[actorId].meta;
 
-			var AXYSingleImgSVActorFileName = $dataActors[actorId].meta.axysingle_damage ? $dataActors[actorId].meta.axysingle_damage : $dataActors[actorId].meta.axysingle;
-			var AXYSingleImgSVActorScaleX = $dataActors[actorId].meta.axysingle_damage_scalex ? $dataActors[actorId].meta.axysingle_damage_scalex : $dataActors[actorId].meta.axysingle_scalex;
-			var AXYSingleImgSVActorScaleY = $dataActors[actorId].meta.axysingle_damage_scaley ? $dataActors[actorId].meta.axysingle_damage_scaley : $dataActors[actorId].meta.axysingle_scaley;
-			var AXYSingleImgSVActorRotation = $dataActors[actorId].meta.axysingle_damage_rotation ? $dataActors[actorId].meta.axysingle_damage_rotation : $dataActors[actorId].meta.axysingle_rotation;
-			var AXYSingleImgSVActorHUE = $dataActors[actorId].meta.axysingle_damage_hue ? $dataActors[actorId].meta.axysingle_damage_hue : $dataActors[actorId].meta.axysingle_hue;
+			var AXYSingleImgSVActorFileName = _metaActor.axysingle_damage ? _metaActor.axysingle_damage : _metaActor.axysingle;
+			var AXYSingleImgSVActorScaleX = _metaClass.axysingle_damage_scalex ? _metaClass.axysingle_damage_scalex : _metaActor.axysingle_damage_scalex ? _metaActor.axysingle_damage_scalex : _metaActor.axysingle_scalex;
+			var AXYSingleImgSVActorScaleY = _metaClass.axysingle_damage_scaley ? _metaClass.axysingle_damage_scaley : _metaActor.axysingle_damage_scaley ? _metaActor.axysingle_damage_scaley : _metaActor.axysingle_scaley;
+			var AXYSingleImgSVActorRotation = _metaClass.axysingle_damage_rotation ? _metaClass.axysingle_damage_rotation : _metaActor.axysingle_damage_rotation ? _metaActor.axysingle_damage_rotation : _metaActor.axysingle_rotation;
+			var AXYSingleImgSVActorHUE = _metaClass.axysingle_damage_hue ? _metaClass.axysingle_damage_hue : _metaActor.axysingle_damage_hue ? _metaActor.axysingle_damage_hue : _metaActor.axysingle_hue;
 
 			if (AXYSingleImgSVActorScaleX) {
 				AXY.SingleImgSVActor.Param.SVActor[actorId].scale.x = AXYSingleImgSVActorScaleX;
@@ -269,15 +277,15 @@ Game_Actor.prototype.performDamage = function () {
 	}
 };
 
-Game_Battler.prototype.performRecovery = function () {
+/*Game_Battler.prototype.performRecovery = function () {
 	SoundManager.playRecovery();
-};
+};*/
 //Replace Actor default Recovery animation
 AXY.SingleImgSVActor.Alias.Game_Actor_prototype_performRecovery = Game_Actor.prototype.performRecovery;
 Game_Actor.prototype.performRecovery = function () {
 	Game_Battler.prototype.performRecovery.call(this);
 	if ($gameParty.inBattle()) {
-		if (this.isAXYSingleImgSVActor === true) {
+		if (this.isAXYSingleImgSVActor === true && this.isDead() !== true) {
 			//console.log('isAXYSingleImgSVActor dead');
 			//console.log(this);
 
@@ -285,13 +293,15 @@ Game_Actor.prototype.performRecovery = function () {
 			//console.log($gameActors.actor(this._actorId));
 			var actorId = this._actorId;
 			SoundManager.playRecovery();
-			console.log(AXY.SingleImgSVActor.Param.SVActor[this._actorId]);
+			//console.log(AXY.SingleImgSVActor.Param.SVActor[this._actorId]);
+			var _metaClass = $gameActors.actor(actorId).currentClass().meta;
+			var _metaActor = $dataActors[actorId].meta;
 
-			var AXYSingleImgSVActorFileName = $dataActors[actorId].meta.axysingle_recovery ? $dataActors[actorId].meta.axysingle_recovery : $dataActors[actorId].meta.axysingle;
-			var AXYSingleImgSVActorScaleX = $dataActors[actorId].meta.axysingle_recovery_scalex ? $dataActors[actorId].meta.axysingle_recovery_scalex : $dataActors[actorId].meta.axysingle_scalex;
-			var AXYSingleImgSVActorScaleY = $dataActors[actorId].meta.axysingle_recovery_scaley ? $dataActors[actorId].meta.axysingle_recovery_scaley : $dataActors[actorId].meta.axysingle_scaley;
-			var AXYSingleImgSVActorRotation = $dataActors[actorId].meta.axysingle_recovery_rotation ? $dataActors[actorId].meta.axysingle_recovery_rotation : $dataActors[actorId].meta.axysingle_rotation;
-			var AXYSingleImgSVActorHUE = $dataActors[actorId].meta.axysingle_recovery_hue ? $dataActors[actorId].meta.axysingle_recovery_hue : $dataActors[actorId].meta.axysingle_hue;
+			var AXYSingleImgSVActorFileName = _metaActor.axysingle_recovery ? _metaActor.axysingle_recovery : _metaActor.axysingle;
+			var AXYSingleImgSVActorScaleX = _metaClass.axysingle_recovery_scalex ? _metaClass.axysingle_recovery_scalex : _metaActor.axysingle_recovery_scalex ? _metaActor.axysingle_recovery_scalex : _metaActor.axysingle_scalex;
+			var AXYSingleImgSVActorScaleY = _metaClass.axysingle_recovery_scaley ? _metaClass.axysingle_recovery_scaley : _metaActor.axysingle_recovery_scaley ? _metaActor.axysingle_recovery_scaley : _metaActor.axysingle_scaley;
+			var AXYSingleImgSVActorRotation = _metaClass.axysingle_recovery_rotation ? _metaClass.axysingle_recovery_rotation : _metaActor.axysingle_recovery_rotation ? _metaActor.axysingle_recovery_rotation : _metaActor.axysingle_rotation;
+			var AXYSingleImgSVActorHUE = _metaClass.axysingle_recovery_hue ? _metaClass.axysingle_recovery_hue : _metaActor.axysingle_recovery_hue ? _metaActor.axysingle_recovery_hue : _metaActor.axysingle_hue;
 
 			if (AXYSingleImgSVActorScaleX) {
 				AXY.SingleImgSVActor.Param.SVActor[actorId].scale.x = AXYSingleImgSVActorScaleX;
