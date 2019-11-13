@@ -1,14 +1,14 @@
 var AXY = AXY || {};
 AXY.AjaxNetStuff = AXY.AjaxNetStuff || {};
-AXY.AjaxNetStuff.VERSION = 1.38;
+AXY.AjaxNetStuff.VERSION = 1.45;
 //=============================================================================
 // A XueYu Plugin - Ajax Net Stuff
 // AXY_AjaxNetStuff.js
-// Version: 1.38
+// Version: 1.45
 // License: MIT
 //=============================================================================
 /*:
- * @plugindesc v1.38 This plugin support rmmv with ajax net stuff.
+ * @plugindesc v1.45 This plugin support rmmv with ajax net stuff.
  * @author A XueYu Plugin
  *
  * @help
@@ -56,6 +56,32 @@ AXY.AjaxNetStuff.VERSION = 1.38;
  * AXY.AjaxNetStuff.Variables.loggedin;
  *
  * changelog
+ * 1.45 2019.11.13
+ * add: change switches and/or variables with coupon/shopingame; see issues #1: https://github.com/aaixy/rmmv-plugins/issues/1
+ * 1.44 2019.11.10
+ * add: my store;
+ * add: new game with my store;
+ * add: episode selection;
+ * add: param: autoSaveAfterNewGame;
+ * add: param: episodeSelectionCommonEventId;
+ * add: param: episodeSelectionThreshold;
+ * modify: param: AutoSaveAfterShopping to autoSaveAfterShopping and move to shopingame settings struce;
+ * modify: param: CommandRemember to commandRemember;
+ * 1.43 2019.11.7
+ * add: param game name;
+ * add: toaster 666rpg.com info;
+ * 1.42 2019.11.6
+ * add: shopingame popular amount;
+ * remove: transaction password;
+ * modify: shopingame font size;
+ * 1.41 2019.10.30
+ * fix: autologin logic issus;
+ * 1.40 2019.10.29
+ * add: command Remember;
+ * fix: autologin checkbox issus;
+ * 1.39 2019.10.27
+ * add: pageup and pagedown buttons;
+ * fix: some bugs;
  * 1.38 2019.10.23
  * change: some param uint changed to rem from px;
  * 1.37 2019.10.19
@@ -103,7 +129,7 @@ AXY.AjaxNetStuff.VERSION = 1.38;
  * 1.24 2019.7.7
  * fix some issus;
  * 1.23 2019.7.6
- * add AutoSaveAfterShopping
+ * add autoSaveAfterShopping
  * 1.22 2019.6.21
  * add alert about shopingame and version issus;
  * 1.21 2017.10.22
@@ -177,6 +203,12 @@ AXY.AjaxNetStuff.VERSION = 1.38;
  * @desc The url of your ajax net stuff.
  * @default http://666rpg.com/zhongchou/product/id/20
  *
+ * @param name
+ * @text Game Name
+ * @desc The game name.
+ * @type text
+ * @default 
+ * 
  * @param Version
  * @desc The game version.
  * @default 1.0
@@ -481,23 +513,11 @@ AXY.AjaxNetStuff.VERSION = 1.38;
  * @param DanmuInterval
  * @desc Danmu Interval? unit: ms
  * @default 1000
- *
- * @param EnableShopInGame
- * @desc Enable ShopInGame? true/false
- * @type boolean
- * @default true
- *
- * @param ShopInGameText
- * @desc ShopInGame Text
- * @default Shop In Game
- *
- * @param ShopInGameSoldOutText
- * @desc ShopInGame Sold Out Text
- * @default Sold Out
- *
- * @param ShopInGameColumn
- * @desc ShopInGame Column
- * @default 4
+ * 
+ * @param ShopInGame
+ * @text Shop In Game Settings
+ * @desc Shop In Game Settings.
+ * @type struct<ShopInGameStruct>
  *
  * @param LoginCommonEventId
  * @desc Do common event by this id when player logged in. Set 0 to disable.
@@ -537,11 +557,7 @@ AXY.AjaxNetStuff.VERSION = 1.38;
  * @desc Prevent Android Return Key? true/false
  * @type boolean
  * @default true
- *
- * @param AutoSaveAfterShopping
- * @desc The save file id that you want Auto Save After Shopping. Default:21
- * @default 21
- *
+ * 
  * @param EnableHandleShowText
  * @desc Enable Handle Show Text? true/false
  * @type boolean
@@ -560,6 +576,32 @@ AXY.AjaxNetStuff.VERSION = 1.38;
  * @type struct<AltTopListStruct>
  * @desc A "toggle" button that allows players to turn the UI
  * on and off.
+ * 
+ * @param Button
+ * @text Button Settings
+ * @desc Such as Page Up/Down Button Settings etc.
+ * @type struct<ButtonStruct>
+ * @default {"enable":"true","wheelThreshold":"20","KeyButton":"[\"{\\\"name\\\":\\\"pageUp\\\",\\\"enable\\\":\\\"true\\\",\\\"inputTrigger\\\":\\\"pageup\\\",\\\"image\\\":\\\"Arrow8\\\",\\\"opacity\\\":\\\"0.2\\\",\\\"x\\\":\\\"70\\\",\\\"y\\\":\\\"0\\\",\\\"soundEffect\\\":\\\"{\\\\\\\"name\\\\\\\":\\\\\\\"Cursor2\\\\\\\",\\\\\\\"volume\\\\\\\":\\\\\\\"90\\\\\\\",\\\\\\\"pitch\\\\\\\":\\\\\\\"100\\\\\\\",\\\\\\\"pan\\\\\\\":\\\\\\\"0\\\\\\\"}\\\"}\",\"{\\\"name\\\":\\\"pageDown\\\",\\\"enable\\\":\\\"true\\\",\\\"inputTrigger\\\":\\\"pagedown\\\",\\\"image\\\":\\\"Arrow2\\\",\\\"opacity\\\":\\\"0.2\\\",\\\"x\\\":\\\"73\\\",\\\"y\\\":\\\"0\\\",\\\"soundEffect\\\":\\\"{\\\\\\\"name\\\\\\\":\\\\\\\"Cursor2\\\\\\\",\\\\\\\"volume\\\\\\\":\\\\\\\"90\\\\\\\",\\\\\\\"pitch\\\\\\\":\\\\\\\"100\\\\\\\",\\\\\\\"pan\\\\\\\":\\\\\\\"0\\\\\\\"}\\\"}\"]"}
+ * 
+ * @param commandRemember
+ * @text Command Remember
+ * @desc Command Remember? true/false, default:false.
+ * @type boolean
+ * @default false
+ * 
+ * @param episodeSelectionCommonEventId
+ * @text Episode Selection CommonEvent Id
+ * @desc Do common event by this id when player select episode. Set 0 to disable. default:0.
+ * @type number
+ * @default 0
+ * 
+ * @param episodeSelectionThreshold
+ * @text Episode Selection Threshold
+ * @desc Must exceeds this threshold can do common event when player select episode. default:0.
+ * @type number
+ * @default 0
+ * 
+ * 
  */
 
 /*~struct~AltTopListStruct:
@@ -680,6 +722,210 @@ AXY.AjaxNetStuff.VERSION = 1.38;
  * 
  */
 
+/*~struct~ButtonStruct:
+ * @param enable
+ * @text Enable Button
+ * @desc Enable Button? true/false
+ * @type boolean
+ * @default true
+ * 
+ * @param wheelThreshold
+ * @text Wheel Threshold
+ * @desc Wheel Threshold. Allowed values: 0 - 100, default: 20
+ * @type number
+ * @min 0
+ * @max 100
+ * @default 20
+ * 
+ * 
+ * @param KeyButton
+ * @text Key Button Settings
+ * @desc Such as Page Up/Down Button Settings etc.
+ * @type struct<KeyButtonStruct>[]
+ */
+
+/*~struct~KeyButtonStruct:
+ * @param enable
+ * @text Enable Button
+ * @desc Enable Button? true/false
+ * @type boolean
+ * @default true
+ * 
+ * @param name
+ * @text Name
+ * @type text
+ * @desc The name of the button
+ *
+ * @param inputTrigger
+ * @text Input Code
+ * @type text
+ * @desc The input code triggered when the button is pressed.
+ * ex. ok / escape / pagedown / pageup
+ * 
+ * @param image
+ * @text Image
+ * @type file
+ * @dir img/pictures
+ * @desc File path for the button image
+ * @require 1
+ * 
+ * @param opacity
+ * @text Opacity
+ * @desc The image css opacity. 0-1
+ * @type text
+ * @default 1
+ * 
+ * @param x
+ * @text X
+ * @type text
+ * @desc X position of the button. Uint: rem, 1rem ≈ 10px.
+ * @default 0
+ * 
+ * @param y
+ * @text Y
+ * @type text
+ * @desc Y position of the button. Uint: rem, 1rem ≈ 10px.
+ * @default 0
+ * 
+ * @param soundEffect
+ * @text Sound Effect
+ * @type struct<soundEffect>
+ * @desc Sound Effect to play when button is pressed.
+ * Depending on scenario, SE might already play. Test first.
+ */
+
+/*~struct~soundEffect:
+ * @param name
+ * @text Sound Effect Name
+ * @type file
+ * @dir audio/se
+ * @desc Sound effect to play when the button is pressed.
+ * @default
+ * @require 1
+ * 
+ * @param volume
+ * @text Volume
+ * @type number
+ * @min 0
+ * @max 100
+ * @desc Volume of the sound effect, in %
+ * Allowed values: 0% - 100%
+ * @default 90
+ * 
+ * @param pitch
+ * @text Pitch
+ * @type number
+ * @min 50
+ * @max 150
+ * @desc Pitch of the sound effect, in %
+ * Allowed values: 50% - 150%
+ * @default 100
+ * 
+ * @param pan
+ * @text Pan
+ * @type number
+ * @min -100
+ * @max 100
+ * @desc Pan of the sound effect
+ * Allowed values: -100 - 100
+ * @default 0
+ * 
+ */
+
+/*~struct~ShopInGameStruct:
+ * @param enable
+ * @desc Enable ShopInGame? true/false
+ * @type boolean
+ * @default true
+ * 
+ * @param showInMenu
+ * @text Show In Menu
+ * @desc Show In Menu? true/false
+ * @type boolean
+ * @default true
+ *
+ * @param commandText
+ * @text Command Text In Menu
+ * @desc Command Text In Menu
+ * @type text
+ * @default Shop In Game
+ *
+ * @param soldOutText
+ * @text Sold Out Text
+ * @desc Sold Out Text
+ * @type text
+ * @default Sold Out
+ * 
+ * @param popularText
+ * @text Popular Text
+ * @desc Popular Text
+ * @type text
+ * @default Popular
+ * 
+ * @param generalText
+ * @text General Text
+ * @desc General Text
+ * @type text
+ * @default General
+ * 
+ * @param myStoreText
+ * @text My Store Text
+ * @desc My Store Text
+ * @type text
+ * @default My Store
+ * 
+ * @param amountText
+ * @text Amount Text
+ * @desc Amount Text
+ * @type text
+ * @default Amount:
+ * 
+ * @param currencyText
+ * @text Currency Text
+ * @desc Currency Text
+ * @type text
+ * @default USD
+ *
+ * @param column
+ * @text Column
+ * @desc Column
+ * @type number
+ * @min 1
+ * @max 10
+ * @default 4
+ * 
+ * @param popularAmount
+ * @text Popular Amount
+ * @desc Popular Amount
+ * @type number
+ * @default 4
+ * 
+ * @param autoSaveAfterShopping
+ * @text Auto Save After Shopping
+ * @desc The save file id that you want Auto Save After Shopping. Default:21
+ * @type number
+ * @default 21
+ * 
+ * @param autoSaveAfterNewGame
+ * @text Auto Save After NewGame
+ * @desc The save file id that you want Auto Save After NewGame with bought items. Default:22
+ * @type number
+ * @default 22
+ * 
+ * @param displaySwitchesToggleInformation
+ * @text Display Switches Toggle Information
+ * @desc Display Switches Toggle Information? true/false default:true
+ * @type boolean
+ * @default true
+ * 
+ * @param displayVariablesChangeInformation
+ * @text Display Variables Change Information
+ * @desc Display Variables Change Information? true/false default:true
+ * @type boolean
+ * @default true
+ * 
+ */
+
 // Imported
 var Imported = Imported || {};
 Imported.AXY_AjaxNetStuff = true;
@@ -754,10 +1000,10 @@ AXY.AjaxNetStuff.Param.DanmuObj = {};
 AXY.AjaxNetStuff.Param.DanmuObj.Troop = [];
 AXY.AjaxNetStuff.Param.DanmuObj.Map = [];
 //shopingame
-AXY.AjaxNetStuff.Param.EnableShopInGame = AXY.AjaxNetStuff.Parameters['EnableShopInGame'].toLowerCase() === 'true';
+/*AXY.AjaxNetStuff.Param.EnableShopInGame = AXY.AjaxNetStuff.Parameters['EnableShopInGame'].toLowerCase() === 'true';
 AXY.AjaxNetStuff.Param.ShopInGameText = String(AXY.AjaxNetStuff.Parameters['ShopInGameText']);
 AXY.AjaxNetStuff.Param.ShopInGameSoldOutText = String(AXY.AjaxNetStuff.Parameters['ShopInGameSoldOutText']);
-AXY.AjaxNetStuff.Param.ShopInGameColumn = parseInt(AXY.AjaxNetStuff.Parameters['ShopInGameColumn']);
+AXY.AjaxNetStuff.Param.ShopInGameColumn = parseInt(AXY.AjaxNetStuff.Parameters['ShopInGameColumn']);*/
 AXY.AjaxNetStuff.Param.ShopInGameFetchDone = false;
 AXY.AjaxNetStuff.Param.ShopInGameFetchHbid = 0;
 AXY.AjaxNetStuff.Param.ShopInGameFee = 0;
@@ -777,8 +1023,8 @@ AXY.AjaxNetStuff.Param.AuctionInGameFetchHbid = 0;
 AXY.AjaxNetStuff.Param.AuctionInGameFee = 0;
 //PreventAndroidReturnKey
 AXY.AjaxNetStuff.Param.PreventAndroidReturnKey = AXY.AjaxNetStuff.Parameters['PreventAndroidReturnKey'].toLowerCase() === 'true';
-//AutoSaveAfterShopping
-AXY.AjaxNetStuff.Param.AutoSaveAfterShopping = parseInt(AXY.AjaxNetStuff.Parameters['AutoSaveAfterShopping']);
+//autoSaveAfterShopping
+//AXY.AjaxNetStuff.Param.autoSaveAfterShopping = parseInt(AXY.AjaxNetStuff.Parameters['autoSaveAfterShopping']);
 //HandleShowText
 AXY.AjaxNetStuff.Param.EnableHandleShowText = AXY.AjaxNetStuff.Parameters['EnableHandleShowText'].toLowerCase() === 'true';
 AXY.AjaxNetStuff.Param.HandleShowTextText = String(AXY.AjaxNetStuff.Parameters['HandleShowTextText']);
@@ -830,6 +1076,7 @@ AXY.AjaxNetStuff.Variables.isonline = false;
 //Toplist
 AXY.AjaxNetStuff.Variables.toplist = [];
 AXY.AjaxNetStuff.Variables.gamename = '';
+AXY.AjaxNetStuff.Variables.gameName = AXY.AjaxNetStuff.Param.name ? AXY.AjaxNetStuff.Param.name : '666rpg.com';
 AXY.AjaxNetStuff.Variables.totalplayer = 0;
 AXY.AjaxNetStuff.Variables.loggedin = false;
 AXY.AjaxNetStuff.Variables.AltTopList = {};
@@ -879,6 +1126,65 @@ var AXY_AjaxFetchServerState = {
 	}
 };
 //fixed, lock top this statement.
+
+//commandRemember
+AXY.AjaxNetStuff.Alias._ConfigManager_applyData = ConfigManager.applyData;
+ConfigManager.applyData = function (config) {
+	AXY.AjaxNetStuff.Alias._ConfigManager_applyData.apply(this, arguments);
+	if (config['commandRemember'] === undefined) {
+		this.commandRemember = AXY.AjaxNetStuff.Param.commandRemember;
+	}
+};
+
+//button
+if (AXY.AjaxNetStuff.Param.Button.enable) {
+	$.each(AXY.AjaxNetStuff.Param.Button.KeyButton, function (index, obj) {
+		if (obj.enable) {
+			//display html first
+			var tpl =
+				'<div class="AXYAjaxButtonImg_' + obj.name + '"><img src="img/pictures/' + obj.image + '.png" class="AXYAjaxButton_' + obj.name + '"></div>';
+			var css =
+				'.AXYAjaxButtonImg_' + obj.name + '{position:fixed;z-index:10000;margin:auto;left:' +
+				obj.x + 'rem;right:0;top:' +
+				obj.y + 'rem;bottom:0;pointer-events:none;}.AXYAjaxButtonImg_' + obj.name + ' img{width:' +
+				AXY.AjaxNetStuff.Param.ImgWidth + 'rem;height:' +
+				AXY.AjaxNetStuff.Param.ImgHeight + 'rem;opacity:' +
+				obj.opacity + ';pointer-events:auto;}';
+
+			$('body').append(tpl);
+			$('body').append('<style type="text/css">' + css + '</style>');
+
+			//last bind the click
+			$('.AXYAjaxButton_' + obj.name).unbind('click touchstart').bind('click touchstart', function () {
+				if (!$gameMap) {
+					$.toaster({
+						message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 请先进入游戏",
+						color: 'white'
+					});
+					return false;
+				}
+				if (!$gameMap._mapId) {
+					$.toaster({
+						message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 请先进入游戏",
+						color: 'white'
+					});
+					return false;
+				}
+				switch (obj.inputTrigger) {
+					case 'pageup':
+						TouchInput._events.wheelY = -AXY.AjaxNetStuff.Param.Button.wheelThreshold;
+						break;
+					case 'pagedown':
+						TouchInput._events.wheelY = AXY.AjaxNetStuff.Param.Button.wheelThreshold;
+						break;
+				}
+				AudioManager.playSe(obj.soundEffect);
+			});
+		}
+	})
+}
+
+//};
 
 //
 AXY.AjaxNetStuff.saidHello = false;
@@ -1705,7 +2011,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 		var AXYAjaxAuctionInGameTemplate =
 			'<div class="AXYAjaxAuctionInGame" id="AXYAjaxAuctionInGame">' +
 			'<div class="AXYAjaxAuctionInGameBG"></div><div class="AXYAjaxAuctionInGameGold">' +
-			'<input type="button" class="AXYAjaxAuctionInGameButtonGold" id="AXYAjaxAuctionInGameButtonGold" value="DTC" /><input type="hidden" name="balance" value="" />' +
+			'<input type="button" class="AXYAjaxAuctionInGameButtonGold" id="AXYAjaxAuctionInGameButtonGold" value="" /><input type="hidden" name="balance" value="" />' +
 			'<input type="button" class="AXYAjaxAuctionInGameButtonClose" id="AXYAjaxAuctionInGameButtonUp" value="上一页" />' +
 			'<input type="button" class="AXYAjaxAuctionInGameButtonClose" id="AXYAjaxAuctionInGameButtonDown" value="下一页" />' +
 			'<input type="button" class="AXYAjaxAuctionInGameButtonClose" id="AXYAjaxAuctionInGameButtonClose" value="关闭" /></div>' +
@@ -1751,7 +2057,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 			show: function () {
 				if (!AXY.AjaxNetStuff.Param.Loggedin) {
 					$.toaster({
-						message: '请先登录',
+						message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 请先登录",
 						color: 'white'
 					});
 					return;
@@ -1783,7 +2089,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 					$('#AXYAjaxAuctionInGame').scrollTop(100);
 				});*/
 				var scrollTop = 0;
-				$('#AXYAjaxAuctionInGameButtonUp').unbind('click touchend').bind('click touchend', function () {
+				$('#AXYAjaxAuctionInGameButtonUp').unbind('click touchstart').bind('click touchstart', function () {
 					scrollTop -= 200;
 					if (scrollTop <= 0) {
 						scrollTop = 0;
@@ -1798,7 +2104,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 						color: 'white'
 					});
 				});
-				$('#AXYAjaxAuctionInGameButtonDown').unbind('click touchend').bind('click touchend', function () {
+				$('#AXYAjaxAuctionInGameButtonDown').unbind('click touchstart').bind('click touchstart', function () {
 					scrollTop += 200;
 					$('#AXYAjaxAuctionInGame').scrollTop(scrollTop);
 					$('.AXYAjaxAuctionInGameGold').css('position', 'fixed');
@@ -1827,7 +2133,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 							//$('.AXYAjaxTopListTbody').empty();
 							//console.log(data);
 							try {
-								$('#AXYAjaxAuctionInGameButtonGold').val(data['balance'] + 'DTC');
+								$('#AXYAjaxAuctionInGameButtonGold').val(data['balance'] + '');
 								$('.AXYAjaxAuctionInGameGold').find("input[name='balance']").val($.unformatMoney(data['balance']));
 
 
@@ -1839,16 +2145,16 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 									//console.log(obj);
 									//var time1 = new Date((obj1.lasttime).replace(new RegExp("-","gm"),"/")).Format("hh:mm"); 
 									if (obj.endflag) {
-										str += '<button class="AXYAjaxAuctionInGameButton"><span class="AXYAjaxAuctionInGameButtonDiv1">' + obj.neirong + '</span><span class="AXYAjaxAuctionInGameButtonDiv2">' + AXY.AjaxNetStuff.Param.AuctionInGameSoldOutText + '</span><input type="hidden" name="hbid" value="soldout" /></button>';
+										str += '<button class="AXYAjaxAuctionInGameButton"><span class="AXYAjaxAuctionInGameButtonDiv1">' + obj.nr + '</span><span class="AXYAjaxAuctionInGameButtonDiv2">' + AXY.AjaxNetStuff.Param.AuctionInGameSoldOutText + '</span><input type="hidden" name="hbid" value="soldout" /></button>';
 									} else {
-										str += '<button class="AXYAjaxAuctionInGameButton"><span class="AXYAjaxAuctionInGameButtonDiv1">' + obj.neirong + '</span><span class="AXYAjaxAuctionInGameButtonDiv2">' + parseFloat($.formatMoney(parseFloat(obj.fee) + parseFloat(obj.yunfei), 8)) + 'DTC</span><input type="hidden" name="hbid" value="' + obj.id + '" /><input type="hidden" name="fee" value="' + (parseFloat(obj.fee) + parseFloat(obj.yunfei)) + '" /></button>';
+										str += '<button class="AXYAjaxAuctionInGameButton"><span class="AXYAjaxAuctionInGameButtonDiv1">' + obj.nr + '</span><span class="AXYAjaxAuctionInGameButtonDiv2">' + parseFloat($.formatMoney(parseFloat(obj.f) + parseFloat(obj.yf), 2)) + '</span><input type="hidden" name="hbid" value="' + obj.id + '" /><input type="hidden" name="fee" value="' + (parseFloat(obj.f) + parseFloat(obj.yf)) + '" /></button>';
 									}
 								});
 								//$('.AXYAjaxTopListTbody').html(str);
 								$('#AXYAjaxAuctionInGameBody').html(str);
 
 								//bind click when html ready
-								$('.AXYAjaxAuctionInGameButton').unbind('click touchend').bind('click touchend', function () {
+								$('.AXYAjaxAuctionInGameButton').unbind('click touchstart').bind('click touchstart', function () {
 									//console.log($(this));
 									//console.log($(this).index());
 									//console.log($(this).find("input[name='hbid']").val());
@@ -1861,7 +2167,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 									}
 									if ($('#AXYAjaxAuctionInGameButtonGold').find("input[name='balance']").val() == 0) {
 										$.toaster({
-											message: '余额不足，请先充值兑换！',
+											message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 余额不足，请先充值兑换！",
 											color: 'white'
 										});
 										return;
@@ -1887,7 +2193,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 									}, "normal");
 
 									AXY.AjaxNetStuff.Param.AuctionInGameFee = parseFloat($(this).find("input[name='fee']").val());
-									$('#AXYAjaxAuctionInGameConfirmFee').val(parseFloat($.formatMoney(AXY.AjaxNetStuff.Param.AuctionInGameFee, 8)) + 'DTC');
+									$('#AXYAjaxAuctionInGameConfirmFee').val(parseFloat($.formatMoney(AXY.AjaxNetStuff.Param.AuctionInGameFee, 2)) + '');
 									//$('#AXYAjaxAuctionInGameButtonGold').find("input[name='balance']").val(data['balance']);
 
 									var css = {
@@ -1903,7 +2209,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 											this.value = _name;
 										}
 									});
-									$('#AXYAjaxAuctionInGameConfirmInputPwd').unbind('click touchend').bind('click touchend', function () {
+									$('#AXYAjaxAuctionInGameConfirmInputPwd').unbind('click touchstart').bind('click touchstart', function () {
 										$('#AXYAjaxAuctionInGameConfirmInputPwd').focus();
 									});
 
@@ -1947,11 +2253,11 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 												if (data.status) {
 													//console.log(data);
 													$.toaster({
-														message: "支付成功！"
+														message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 支付成功！"
 													});
 													//console.log($('.AXYAjaxAuctionInGameGold').find("input[name='balance']").val());
 													//console.log(AXY.AjaxNetStuff.Param.AuctionInGameFee);
-													$('#AXYAjaxAuctionInGameButtonGold').val(parseFloat($.formatMoney(parseFloat($('.AXYAjaxAuctionInGameGold').find("input[name='balance']").val()) - AXY.AjaxNetStuff.Param.AuctionInGameFee, 8)) + 'DTC');
+													$('#AXYAjaxAuctionInGameButtonGold').val(parseFloat($.formatMoney(parseFloat($('.AXYAjaxAuctionInGameGold').find("input[name='balance']").val()) - AXY.AjaxNetStuff.Param.AuctionInGameFee, 2)) + '');
 													$('.AXYAjaxAuctionInGameGold').find("input[name='balance']").val(parseFloat($('.AXYAjaxAuctionInGameGold').find("input[name='balance']").val()) - AXY.AjaxNetStuff.Param.AuctionInGameFee);
 
 													var obj = $.parseJSON(data['content']);
@@ -1991,6 +2297,22 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 																	});
 																}
 																break;
+															case 4:
+																$gameSwitches.setValue(obj[index].id, obj[index].num);
+																if (AXY.AjaxNetStuff.Param.ShopInGame.displaySwitchesToggleInformation) {
+																	$.toaster({
+																		message: $dataSystem.switches[obj[index].id] + "=" + (obj[index].num ? 'On' : 'Off')
+																	});
+																}
+																break;
+															case 5:
+																$gameVariables.setValue(obj[index].id, obj[index].num);
+																if (AXY.AjaxNetStuff.Param.ShopInGame.displayVariablesChangeInformation) {
+																	$.toaster({
+																		message: $dataSystem.variables[obj[index].id] + "=" + obj[index].num
+																	});
+																}
+																break;
 															default:
 																//console.log(typeof(obj[index].num));
 																break;
@@ -1999,7 +2321,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 
 													setTimeout(function () {
 														$.toaster({
-															message: "众筹游戏《" + data.gamename + "》感谢您的支持！"
+															message: "托管在<a href='http://666rpg.com'>666RPG.com</a>的游戏<a href='" + AXY.AjaxNetStuff.Param.URL + "'>《" + data.gamename + "》</a>感谢您的支持！"
 														});
 														AXY_AjaxCoupon.hide();
 													}, 3000);
@@ -2094,17 +2416,17 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 		$('.AXYAjaxMenuButtonButtonImg').append('<style type="text/css">' + AXYAjaxMenuButtonStyleCss + '</style>');
 
 		//last bind the click
-		$('.AXYAjaxMenuButtonOpen').unbind('click touchend').bind('click touchend', function () {
+		$('.AXYAjaxMenuButtonOpen').unbind('click touchstart').bind('click touchstart', function () {
 			if (!$gameMap) {
 				$.toaster({
-					message: '请先进入游戏',
+					message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>666RPG.com</a>: 请先进入游戏",
 					color: 'white'
 				});
 				return false;
 			}
 			if (!$gameMap._mapId) {
 				$.toaster({
-					message: '请先进入游戏',
+					message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 请先进入游戏",
 					color: 'white'
 				});
 				return false;
@@ -2133,53 +2455,58 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 	}
 
 	//ajax shopingame
-	if (AXY.AjaxNetStuff.Param.EnableShopInGame) {
-		//=============================================================================
-		// ** Window MenuCommand
-		//=============================================================================	
+	if (AXY.AjaxNetStuff.Param.ShopInGame.enable) {
+		if (AXY.AjaxNetStuff.Param.AltTopList.ShowInMenu) {
+			//=============================================================================
+			// ** Window MenuCommand
+			//=============================================================================	
 
-		//==============================
-		// * make Command List
-		//==============================
-		AXY.AjaxNetStuff.Alias.addOriginalCommandsShopInGame = Window_MenuCommand.prototype.addOriginalCommands;
-		Window_MenuCommand.prototype.addOriginalCommands = function () {
-			AXY.AjaxNetStuff.Alias.addOriginalCommandsShopInGame.call(this);
-			this.addCommand(AXY.AjaxNetStuff.Param.ShopInGameText, 'ShopInGame', true);
-		};
+			//==============================
+			// * make Command List
+			//==============================
+			AXY.AjaxNetStuff.Alias.addOriginalCommandsShopInGame = Window_MenuCommand.prototype.addOriginalCommands;
+			Window_MenuCommand.prototype.addOriginalCommands = function () {
+				AXY.AjaxNetStuff.Alias.addOriginalCommandsShopInGame.call(this);
+				this.addCommand(AXY.AjaxNetStuff.Param.ShopInGame.commandText, 'ShopInGame', true);
+			};
 
-		//=============================================================================
-		// ** Scene Menu
-		//=============================================================================	
+			//=============================================================================
+			// ** Scene Menu
+			//=============================================================================	
 
-		//==============================
-		// * create Command Window
-		//==============================
-		AXY.AjaxNetStuff.Alias.createCommandWindowShopInGame = Scene_Menu.prototype.createCommandWindow;
-		Scene_Menu.prototype.createCommandWindow = function () {
-			AXY.AjaxNetStuff.Alias.createCommandWindowShopInGame.call(this);
-			this._commandWindow.setHandler('ShopInGame', this.commandShopInGame.bind(this));
-			/*if (Imported.MOG_TimeSystem && Moghunter.timeWindow_menu) {	
-				this._commandWindow.height -= this._commandWindow.itemHeight();
-			};*/
-		};
+			//==============================
+			// * create Command Window
+			//==============================
+			AXY.AjaxNetStuff.Alias.createCommandWindowShopInGame = Scene_Menu.prototype.createCommandWindow;
+			Scene_Menu.prototype.createCommandWindow = function () {
+				AXY.AjaxNetStuff.Alias.createCommandWindowShopInGame.call(this);
+				this._commandWindow.setHandler('ShopInGame', this.commandShopInGame.bind(this));
+				/*if (Imported.MOG_TimeSystem && Moghunter.timeWindow_menu) {	
+					this._commandWindow.height -= this._commandWindow.itemHeight();
+				};*/
+			};
 
-		//==============================
-		// * Shop In Game
-		//==============================
-		Scene_Menu.prototype.commandShopInGame = function () {
-			AXY_AjaxShopInGame.show();
-			// Close option window
-			SceneManager.pop();
-		};
+			//==============================
+			// * Shop In Game
+			//==============================
+			Scene_Menu.prototype.commandShopInGame = function () {
+				AXY_AjaxShopInGame.show();
+				// Close option window
+				SceneManager.pop();
+			};
+		}
 
 		//display html first
 		var AXYAjaxShopInGameTemplate =
 			'<div class="AXYAjaxShopInGame" id="AXYAjaxShopInGame">' +
 			'<div class="AXYAjaxShopInGameBG"></div><div class="AXYAjaxShopInGameGold">' +
-			'<input type="button" class="AXYAjaxShopInGameButtonGold" id="AXYAjaxShopInGameButtonGold" value="DTC" /><input type="hidden" name="balance" value="" />' +
+			'<input type="button" class="AXYAjaxShopInGameButtonGold" id="AXYAjaxShopInGameButtonGold" value="" /><input type="hidden" name="balance" value="" />' +
 			'<input type="button" class="AXYAjaxShopInGameButtonClose" id="AXYAjaxShopInGameButtonUp" value="上一页" />' +
 			'<input type="button" class="AXYAjaxShopInGameButtonClose" id="AXYAjaxShopInGameButtonDown" value="下一页" />' +
-			'<input type="button" class="AXYAjaxShopInGameButtonClose" id="AXYAjaxShopInGameButtonClose" value="关闭" /></div>' +
+			'<input type="button" class="AXYAjaxShopInGameButtonClose" id="AXYAjaxShopInGameButtonMyStore" value="仓库" />' +
+			'<input type="button" class="AXYAjaxShopInGameButtonClose" id="AXYAjaxShopInGameButtonNewGame" value="新档..." />' +
+			'<input type="button" class="AXYAjaxShopInGameButtonClose" id="AXYAjaxShopInGameButtonClose" value="关闭" />' +
+			'</div>' +
 			'<div id="AXYAjaxShopInGameBody"></div>' +
 			'</div>';
 		var AXYAjaxShopInGameStyleCss =
@@ -2188,16 +2515,16 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 			'.AXYAjaxShopInGame .AXYAjaxShopInGameGold{z-index:20000;margin-top:1%;width:100%;height:10%;}' +
 			'.AXYAjaxShopInGame .AXYAjaxShopInGameButtonClose, .AXYAjaxShopInGameButtonGold{position:relative;outline:0;border:1px solid #fff;border-radius:5px;background-color:rgba(0,0,0,0.7);opacity:1;color:#fff;font-size:24px;}' +
 			'.AXYAjaxShopInGame .AXYAjaxShopInGameButtonClose, .AXYAjaxShopInGameButtonGold{top:0;z-index:10000;margin-left:2%;width:10%;height:50px;cursor:pointer}' +
-			'.AXYAjaxShopInGame .AXYAjaxShopInGameButtonGold{width:40%;cursor:default;}' +
+			'.AXYAjaxShopInGame .AXYAjaxShopInGameButtonGold{width:20%;cursor:default;}' +
 			'.AXYAjaxShopInGame .AXYAjaxShopInGameBody{}' +
 			'.AXYAjaxShopInGameButton{position:relative;top:0;z-index:10000;margin:1%;padding:5px;width:' +
-			parseInt(100 / AXY.AjaxNetStuff.Param.ShopInGameColumn - 2) + '%;height:15pc;outline:0;border:1px solid #fff;border-radius:5px;background-color:rgba(0,0,0,0.5);color:#fff;font-size:24px;cursor:pointer}' +
-			'.AXYAjaxShopInGameButtonDiv1{display:block;overflow-y:auto;width:100%;height:190px;border-bottom:1px solid #fff;text-align:left;font-size:20px}' +
+			parseInt(100 / AXY.AjaxNetStuff.Param.ShopInGame.column - 2) + '%;height:15pc;outline:0;border:1px solid #fff;border-radius:5px;background-color:rgba(0,0,0,0.5);color:#fff;font-size:16px;cursor:pointer}' +
+			'.AXYAjaxShopInGameButtonDiv1{display:block;overflow-y:auto;width:100%;height:190px;border-bottom:1px solid #fff;text-align:left;font-size:16px}' +
 			'.AXYAjaxShopInGameButtonDiv2{display:block;width:100%;height:40px;line-height:40px}';
 		$('body').append(AXYAjaxShopInGameTemplate);
 		$('#AXYAjaxShopInGame').append('<style type="text/css">' + AXYAjaxShopInGameStyleCss + '</style>');
 
-		var AXYAjaxShopInGameConfirmTemplate =
+		/*var AXYAjaxShopInGameConfirmTemplate =
 			'<div class="AXYAjaxShopInGameConfirm" id="AXYAjaxShopInGameConfirm">' +
 			'<div class="AXYAjaxShopInGameConfirmBG"></div>' +
 			'<input type="text" readonly="readonly" class="" style="display:none;" id="" value="请确保你的游戏版本为最新版，否则有可能扣费后无法正常获得众筹奖励" />' +
@@ -2205,11 +2532,19 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 			'<input type="password" class="AXYAjaxShopInGameConfirmInput" id="AXYAjaxShopInGameConfirmInputPwd" placeholder="输入交易密码" />' +
 			'<input type="button" class="AXYAjaxShopInGameConfirmButton" id="AXYAjaxShopInGameConfirmButtonUse" value="确认" />' +
 			'<input type="button" class="AXYAjaxShopInGameConfirmButton" id="AXYAjaxShopInGameConfirmButtonClose" value="取消" />' +
+			'</div>';*/
+		var AXYAjaxShopInGameConfirmTemplate =
+			'<div class="AXYAjaxShopInGameConfirm" id="AXYAjaxShopInGameConfirm">' +
+			'<div class="AXYAjaxShopInGameConfirmBG"></div>' +
+			'<input type="text" readonly="readonly" class="AXYAjaxShopInGameConfirmInput" id="AXYAjaxShopInGameConfirmInfo" />' +
+			'<input type="text" readonly="readonly" class="AXYAjaxShopInGameConfirmInput" id="AXYAjaxShopInGameConfirmFee" />' +
+			'<input type="button" class="AXYAjaxShopInGameConfirmButton" id="AXYAjaxShopInGameConfirmButtonUse" value="确认" />' +
+			'<input type="button" class="AXYAjaxShopInGameConfirmButton" id="AXYAjaxShopInGameConfirmButtonClose" value="取消" />' +
 			'</div>';
 		var AXYAjaxShopInGameConfirmStyleCss =
 			'.AXYAjaxShopInGameConfirm{position:fixed;top:20%;left:20%;z-index:10000;display:none;margin:0 auto;width:0%;height:220px;text-align:center;}' +
 			'.AXYAjaxShopInGameConfirm .AXYAjaxShopInGameConfirmBG{position:absolute;width:100%;height:100%;border:3px solid #fff;border-radius:10px;background:#000;opacity:.9}' +
-			'.AXYAjaxShopInGameConfirm .AXYAjaxShopInGameConfirmInput{margin:15px 0;text-align:center;width:80%;height:50px;imeMode:active}' +
+			'.AXYAjaxShopInGameConfirm .AXYAjaxShopInGameConfirmInput{margin:15px 0;text-align:center;width:80%;height:50px;}' +
 			'.AXYAjaxShopInGameConfirm .AXYAjaxShopInGameConfirmButton,.AXYAjaxShopInGameConfirm .AXYAjaxShopInGameConfirmInput{position:relative;outline:0;border:1px solid #fff;border-radius:5px;background-color:rgba(0,0,0,1);color:#fff;font-size:24px;}' +
 			'.AXYAjaxShopInGameConfirm .AXYAjaxShopInGameConfirmButton{top:0;z-index:10000;margin-left:2%;width:30%;height:3pc;word-spacing:20px;cursor:pointer}';
 		$('body').append(AXYAjaxShopInGameConfirmTemplate);
@@ -2223,7 +2558,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 			show: function () {
 				if (!AXY.AjaxNetStuff.Param.Loggedin) {
 					$.toaster({
-						message: '请先登录',
+						message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 请先登录",
 						color: 'white'
 					});
 					return;
@@ -2255,7 +2590,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 					$('#AXYAjaxShopInGame').scrollTop(100);
 				});*/
 				var scrollTop = 0;
-				$('#AXYAjaxShopInGameButtonUp').unbind('click touchend').bind('click touchend', function () {
+				$('#AXYAjaxShopInGameButtonUp').unbind('click touchstart').bind('click touchstart', function () {
 					scrollTop -= 200;
 					if (scrollTop <= 0) {
 						scrollTop = 0;
@@ -2270,7 +2605,8 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 						color: 'white'
 					});
 				});
-				$('#AXYAjaxShopInGameButtonDown').unbind('click touchend').bind('click touchend', function () {
+
+				$('#AXYAjaxShopInGameButtonDown').unbind('click touchstart').bind('click touchstart', function () {
 					scrollTop += 200;
 					$('#AXYAjaxShopInGame').scrollTop(scrollTop);
 					$('.AXYAjaxShopInGameGold').css('position', 'fixed');
@@ -2280,11 +2616,277 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 					});
 				});
 
+				$('#AXYAjaxShopInGameButtonMyStore').unbind('click touchstart').bind('click touchstart', function () {
+					$.ajax({
+						url: AXY_AjaxShopInGameURL,
+						type: 'POST',
+						dataType: 'json',
+						data: {
+							sid: AXY.AjaxNetStuff.Param.sid,
+							action: 'fetchmy'
+						},
+						success: function (data) {
+							//console.log(data);
+							if (data.status) {
+								//console.log(data);
+								//$('.AXYAjaxTopListTbody').empty();
+								//console.log(data);
+								try {
+									var str = '';
+									str += '<div id="AXYAjaxShopInGameBodyMyStore"><div style="position:relative;opacity:1;color:#ff0;font-size:24px;font-weight:bold;">' + AXY.AjaxNetStuff.Param.ShopInGame.myStoreText + '</div>';
+									if (data['hb'] != null) {
+										$.each(data['hb'], function (index) {
+											var obj = data['hb'][index];
+											//console.log(obj1.jsonstr);
+											//var obj = $.parseJSON($.parseJSON(obj1.jsonstr));
+											//console.log(obj);
+											//var time1 = new Date((obj1.lasttime).replace(new RegExp("-","gm"),"/")).Format("hh:mm"); 
+											str += '<button class="AXYAjaxShopInGameButton"><span class="AXYAjaxShopInGameButtonDiv1">' + obj.nr + '</span><span class="AXYAjaxShopInGameButtonDiv2">' + AXY.AjaxNetStuff.Param.ShopInGame.amountText + obj.cnt + '</span></button>';
+										});
+										str += '</div>';
+									} else {
+										str += '<button class="AXYAjaxShopInGameButton"><span class="AXYAjaxShopInGameButtonDiv1">暂无数据，快去支持一下《<a href="' + AXY.AjaxNetStuff.Param.URL + '" target="_blank">' + AXY.AjaxNetStuff.Variables.gameName + '</a>》作者吧！</span><span class="AXYAjaxShopInGameButtonDiv2"></span></button>';
+										str += '</div>';
+									}
+									//$('.AXYAjaxTopListTbody').html(str);
+									if ($('#AXYAjaxShopInGameBodyMyStore')) {
+										$('#AXYAjaxShopInGameBodyMyStore').remove();
+									}
+									$('#AXYAjaxShopInGameBody').prepend(str);
+									//console.log($('#AXYAjaxShopInGameBody').height());
+									$('.AXYAjaxShopInGameBG').height(20 + $('.AXYAjaxShopInGameGold').height() + $('#AXYAjaxShopInGameBody').height());
+								} catch (error) {
+									console.log(error);
+								}
+							} else {
+								//console.log(data);
+								$.toaster({
+									message: data.info + ', ERRORCODE: ' + data.error,
+									color: 'red'
+								});
+							};
+						},
+						error: function (XMLHttpRequest, textStatus, errorThrown) {
+							//console.log(XMLHttpRequest);
+							//console.log(textStatus);
+							//console.log(errorThrown);
+							$.toaster({
+								title: 'ERROR: ',
+								message: textStatus + ' ' + errorThrown,
+								color: 'red'
+							});
+						},
+						complete: function (XMLHttpRequest, textStatus) {
+							//console.log(XMLHttpRequest);
+							//console.log(textStatus);
+							//$.toaster({ title: 'COMPLETE: ', message : textStatus, color:'white'});
+						}
+					});
+				});
+
+				$('#AXYAjaxShopInGameButtonNewGame').unbind('click touchstart').bind('click touchstart', function () {
+					//confirm
+					$('#AXYAjaxShopInGameConfirm').stop().show().animate({
+						"width": "60%"
+					}, "normal");
+
+					$('#AXYAjaxShopInGameConfirmInfo').val('开新档将自动重新发放之前的众筹，但会清空存档数据!');
+					$('#AXYAjaxShopInGameConfirmFee').val('确定要开新档吗？');
+
+					var css = {
+						'font-family': $gameSystem ? Window_Base.prototype.standardFontFace : 'GameFont'
+					};
+					$('#AXYAjaxShopInGameConfirm').css(css);
+
+					$('#AXYAjaxShopInGameConfirmButtonClose').unbind('click touchstart').bind('click touchstart', function () {
+						$('#AXYAjaxShopInGameConfirm').stop().animate({
+							"width": "0"
+						}, "normal", function () {
+							$(this).hide();
+							//$(this).remove();
+						});
+					});
+
+					$('#AXYAjaxShopInGameConfirmButtonUse').unbind('click touchstart').bind('click touchstart', function () {
+						$('#AXYAjaxShopInGameConfirm').stop().animate({
+							"width": "0"
+						}, "normal", function () {
+							$(this).hide();
+							//$(this).remove();
+						});
+						AXY_AjaxShopInGame.hide();
+						$.toaster({
+							message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 返回标题页面，请勿操作...",
+							color: 'white'
+						});
+
+						SceneManager.push(Scene_Title);
+						var tmpInterval = setInterval(function () {
+							if (SceneManager._scene.constructor.name == 'Scene_Title') {
+								clearInterval(tmpInterval);
+								DataManager.setupNewGame();
+								$.toaster({
+									message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 正在获取已众筹数据...",
+									color: 'white'
+								});
+								var AXY_AjaxCloudLoadURL = AXY.AjaxNetStuff.Param.URL.replace('zhongchou', 'rmmvgame').replace('product', 'rmmvgamecloudloadnewgame');
+								$.ajax({
+									url: AXY_AjaxCloudLoadURL,
+									type: 'POST',
+									dataType: 'json',
+									data: {
+										sid: AXY.AjaxNetStuff.Param.sid
+									},
+									success: function (data) {
+										console.log(data);
+										if (data.status) {
+											try {
+												$.toaster({
+													message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 获取成功！"
+												});
+												$.toaster({
+													message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 正在进入游戏，请勿操作...",
+													color: 'white'
+												});
+
+												// Initialize map
+												//console.log("Goto Scene_Map");
+												SceneManager.goto(Scene_Map);
+												if (SceneManager._scene) {
+													SceneManager._scene.fadeOutAll();
+												};
+
+												var tmpInterval = setInterval(function () {
+													if (SceneManager._scene.constructor.name == 'Scene_Map') {
+														clearInterval(tmpInterval);
+														$gameMessage.add("正在下发数据中。。。\\c[2]请勿操作\\c[0]");
+														$gameMap._interpreter.setWaitMode('message');
+														$gameSystem.setTouchMoveEnabled(false);
+
+														$.each(data['hb'], function (index, hb) {
+															var obj = $.parseJSON(hb['ct']);
+															//console.log(obj);
+															$.each(obj, function (index) {
+																//console.log(obj[index]);
+																switch (obj[index].item) {
+																	case 0:
+																		$gameParty.gainGold(obj[index].num, 0, 0);
+																		if (!AXY.Toast.Param.DisplayGainGold) {
+																			$.toaster({
+																				message: "+" + obj[index].num + TextManager.currencyUnit
+																			});
+																		}
+																		break;
+																	case 1:
+																		$gameParty.gainItem($dataItems[obj[index].id], obj[index].num, 0, 0);
+																		if (!AXY.Toast.Param.DisplayGainItem) {
+																			$.toaster({
+																				message: "+" + obj[index].num + $dataItems[obj[index].id].name
+																			});
+																		}
+																		break;
+																	case 2:
+																		$gameParty.gainItem($dataWeapons[obj[index].id], obj[index].num, 0, 0, 0);
+																		if (!AXY.Toast.Param.DisplayGainItem) {
+																			$.toaster({
+																				message: "+" + obj[index].num + $dataWeapons[obj[index].id].name
+																			});
+																		}
+																		break;
+																	case 3:
+																		$gameParty.gainItem($dataArmors[obj[index].id], obj[index].num, 0, 0, 0);
+																		if (!AXY.Toast.Param.DisplayGainItem) {
+																			$.toaster({
+																				message: "+" + obj[index].num + $dataArmors[obj[index].id].name
+																			});
+																		}
+																		break;
+																	case 4:
+																		$gameSwitches.setValue(obj[index].id, obj[index].num);
+																		if (AXY.AjaxNetStuff.Param.ShopInGame.displaySwitchesToggleInformation) {
+																			$.toaster({
+																				message: $dataSystem.switches[obj[index].id] + "=" + (obj[index].num ? 'On' : 'Off')
+																			});
+																		}
+																		break;
+																	case 5:
+																		$gameVariables.setValue(obj[index].id, obj[index].num);
+																		if (AXY.AjaxNetStuff.Param.ShopInGame.displayVariablesChangeInformation) {
+																			$.toaster({
+																				message: $dataSystem.variables[obj[index].id] + "=" + obj[index].num
+																			});
+																		}
+																		break;
+																	default:
+																		//console.log(typeof(obj[index].num));
+																		break;
+																}
+															});
+														});
+
+														$gameSystem.setTouchMoveEnabled(true);
+														AXY_Save.save(AXY.AjaxNetStuff.Param.ShopInGame.autoSaveAfterNewGame);
+														$gameMessage.add("\\c[3]数据下发完毕，请尽情享受游戏吧！\\c[0]");
+														$gameMap._interpreter.setWaitMode('message');
+														setTimeout(function () {
+															$.toaster({
+																message: "托管在<a href='http://666rpg.com'>666RPG.com</a>的游戏<a href='" + AXY.AjaxNetStuff.Param.URL + "'>《" + data.gamename + "》</a>感谢您的支持！"
+															});
+															AXY_AjaxCoupon.hide();
+														}, 3000);
+													}
+												}, 1000);
+											} catch (e) {
+												$.toaster({
+													message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 解析云存档失败，请进入游戏重试！"
+												});
+												console.log(e);
+											}
+										} else {
+											console.log(data);
+											$.toaster({
+												message: data.info + ', ERRORCODE: ' + data.error,
+												color: 'red'
+											});
+										};
+										//$('#AXYAjaxCloudSaveButtonRead').attr("disabled", false);
+										//$('#AXYAjaxCloudSaveButtonRead').val("读取");
+									},
+									error: function (XMLHttpRequest, textStatus, errorThrown) {
+										console.log(XMLHttpRequest);
+										console.log(textStatus);
+										console.log(errorThrown);
+										$.toaster({
+											title: 'ERROR: ',
+											message: textStatus + ' ' + errorThrown,
+											color: 'red'
+										});
+										//$('#AXYAjaxCloudSaveButtonRead').attr("disabled", false);
+										//$('#AXYAjaxCloudSaveButtonRead').val("读取");
+									},
+									complete: function (XMLHttpRequest, textStatus) {
+										//console.log(XMLHttpRequest);
+										//console.log(textStatus);
+										//$.toaster({
+										//	title: 'COMPLETE: ',
+										//	message: textStatus,
+										//	color: 'gray'
+										//});
+										//$('#AXYAjaxCloudSaveButtonRead').attr("disabled", false);
+										//$('#AXYAjaxCloudSaveButtonRead').val("读取");
+									}
+								});
+
+							}
+						}, 1000);
+					});
+				});
+
 				if (AXY.AjaxNetStuff.Param.ShopInGameFetchDone) {
 					return;
 				}
 
-				alert("请确保你的游戏版本为最新版，否则有可能扣费后无法正常获得众筹奖励");
+				//alert("请确保你的游戏版本为最新版，否则有可能扣费后无法正常获得众筹奖励");
 				$gameMessage.add("正在众筹中。。。");
 				$gameMessage.add("请勿打扰");
 				$gameMap._interpreter.setWaitMode('message');
@@ -2295,7 +2897,8 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 					dataType: 'json',
 					data: {
 						sid: AXY.AjaxNetStuff.Param.sid,
-						action: 'fetchall'
+						action: 'fetchall',
+						popularamount: AXY.AjaxNetStuff.Param.ShopInGame.popularAmount
 					},
 					success: function (data) {
 						//console.log(data);
@@ -2304,11 +2907,26 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 							//$('.AXYAjaxTopListTbody').empty();
 							//console.log(data);
 							try {
-								$('#AXYAjaxShopInGameButtonGold').val(data['balance'] + 'DTC');
+								$('#AXYAjaxShopInGameButtonGold').val($.formatMoney($.unformatMoney(data['balance']), 2) + AXY.AjaxNetStuff.Param.ShopInGame.currencyText);
 								$('.AXYAjaxShopInGameGold').find("input[name='balance']").val($.unformatMoney(data['balance']));
 
-
 								var str = '';
+								if (data['hbp'] != null) {
+									str += '<div style="position:relative;opacity:1;color:#ff0;font-size:24px;font-weight:bold;">' + AXY.AjaxNetStuff.Param.ShopInGame.popularText + '</div>';
+									$.each(data['hbp'], function (index) {
+										var obj = data['hbp'][index];
+										//console.log(obj1.jsonstr);
+										//var obj = $.parseJSON($.parseJSON(obj1.jsonstr));
+										//console.log(obj);
+										//var time1 = new Date((obj1.lasttime).replace(new RegExp("-","gm"),"/")).Format("hh:mm"); 
+										if (obj.endflag) {
+											str += '<button class="AXYAjaxShopInGameButton"><span class="AXYAjaxShopInGameButtonDiv1">' + obj.nr + '</span><span class="AXYAjaxShopInGameButtonDiv2">' + parseFloat($.formatMoney(parseFloat(obj.f) + parseFloat(obj.yf), 2)) + AXY.AjaxNetStuff.Param.ShopInGame.currencyText + ' (' + AXY.AjaxNetStuff.Param.ShopInGame.soldOutText + ')</span><input type="hidden" name="hbid" value="soldout" /></button>';
+										} else {
+											str += '<button class="AXYAjaxShopInGameButton"><span class="AXYAjaxShopInGameButtonDiv1">' + obj.nr + '</span><span class="AXYAjaxShopInGameButtonDiv2">' + parseFloat($.formatMoney(parseFloat(obj.f) + parseFloat(obj.yf), 2)) + AXY.AjaxNetStuff.Param.ShopInGame.currencyText + '</span><input type="hidden" name="hbid" value="' + obj.id + '" /><input type="hidden" name="fee" value="' + (parseFloat(obj.f) + parseFloat(obj.yf)) + '" /></button>';
+										}
+									});
+								}
+								str += '<div style="position:relative;opacity:1;color:#ff0;font-size:24px;font-weight:bold;">' + AXY.AjaxNetStuff.Param.ShopInGame.generalText + '</div>';
 								$.each(data['hb'], function (index) {
 									var obj = data['hb'][index];
 									//console.log(obj1.jsonstr);
@@ -2316,29 +2934,32 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 									//console.log(obj);
 									//var time1 = new Date((obj1.lasttime).replace(new RegExp("-","gm"),"/")).Format("hh:mm"); 
 									if (obj.endflag) {
-										str += '<button class="AXYAjaxShopInGameButton"><span class="AXYAjaxShopInGameButtonDiv1">' + obj.neirong + '</span><span class="AXYAjaxShopInGameButtonDiv2">' + AXY.AjaxNetStuff.Param.ShopInGameSoldOutText + '</span><input type="hidden" name="hbid" value="soldout" /></button>';
+										str += '<button class="AXYAjaxShopInGameButton"><span class="AXYAjaxShopInGameButtonDiv1">' + obj.nr + '</span><span class="AXYAjaxShopInGameButtonDiv2">' + parseFloat($.formatMoney(parseFloat(obj.f) + parseFloat(obj.yf), 2)) + AXY.AjaxNetStuff.Param.ShopInGame.currencyText + ' (' + AXY.AjaxNetStuff.Param.ShopInGame.soldOutText + ')</span><input type="hidden" name="hbid" value="soldout" /></button>';
 									} else {
-										str += '<button class="AXYAjaxShopInGameButton"><span class="AXYAjaxShopInGameButtonDiv1">' + obj.neirong + '</span><span class="AXYAjaxShopInGameButtonDiv2">' + parseFloat($.formatMoney(parseFloat(obj.fee) + parseFloat(obj.yunfei), 8)) + 'DTC</span><input type="hidden" name="hbid" value="' + obj.id + '" /><input type="hidden" name="fee" value="' + (parseFloat(obj.fee) + parseFloat(obj.yunfei)) + '" /></button>';
+										str += '<button class="AXYAjaxShopInGameButton"><span class="AXYAjaxShopInGameButtonDiv1">' + obj.nr + '</span><span class="AXYAjaxShopInGameButtonDiv2">' + parseFloat($.formatMoney(parseFloat(obj.f) + parseFloat(obj.yf), 2)) + AXY.AjaxNetStuff.Param.ShopInGame.currencyText + '</span><input type="hidden" name="hbid" value="' + obj.id + '" /><input type="hidden" name="fee" value="' + (parseFloat(obj.f) + parseFloat(obj.yf)) + '" /></button>';
 									}
 								});
 								//$('.AXYAjaxTopListTbody').html(str);
 								$('#AXYAjaxShopInGameBody').html(str);
+								//console.log($('#AXYAjaxShopInGameBody').height());
+								$('.AXYAjaxShopInGameBG').height(20 + $('.AXYAjaxShopInGameGold').height() + $('#AXYAjaxShopInGameBody').height());
+
 
 								//bind click when html ready
-								$('.AXYAjaxShopInGameButton').unbind('click touchend').bind('click touchend', function () {
+								$('.AXYAjaxShopInGameButton').unbind('click touchstart').bind('click touchstart', function () {
 									//console.log($(this));
 									//console.log($(this).index());
 									//console.log($(this).find("input[name='hbid']").val());
 									if ($(this).find("input[name='hbid']").val() == 'soldout') {
 										$.toaster({
-											message: AXY.AjaxNetStuff.Param.ShopInGameSoldOutText,
+											message: AXY.AjaxNetStuff.Param.ShopInGame.soldOutText,
 											color: 'white'
 										});
 										return;
 									}
 									if ($('#AXYAjaxShopInGameButtonGold').find("input[name='balance']").val() == 0) {
 										$.toaster({
-											message: '余额不足，请先充值兑换！',
+											message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 余额不足，请先充值兑换！",
 											color: 'white'
 										});
 										return;
@@ -2364,7 +2985,9 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 									}, "normal");
 
 									AXY.AjaxNetStuff.Param.ShopInGameFee = parseFloat($(this).find("input[name='fee']").val());
-									$('#AXYAjaxShopInGameConfirmFee').val(parseFloat($.formatMoney(AXY.AjaxNetStuff.Param.ShopInGameFee, 8)) + 'DTC');
+									//$('#AXYAjaxShopInGameConfirmFee').val(parseFloat($.formatMoney(AXY.AjaxNetStuff.Param.ShopInGameFee, 2)) + '');
+									$('#AXYAjaxShopInGameConfirmInfo').val('请确保游戏版本为最新，否则扣费后无法获得对应奖励');
+									$('#AXYAjaxShopInGameConfirmFee').val(parseFloat($.formatMoney(AXY.AjaxNetStuff.Param.ShopInGameFee, 2)) + AXY.AjaxNetStuff.Param.ShopInGame.currencyText);
 									//$('#AXYAjaxShopInGameButtonGold').find("input[name='balance']").val(data['balance']);
 
 									var css = {
@@ -2372,7 +2995,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 									};
 									$('#AXYAjaxShopInGameConfirm').css(css);
 
-									$('#AXYAjaxShopInGameConfirmInputPwd').focus();
+									/*$('#AXYAjaxShopInGameConfirmInputPwd').focus();
 
 									$('#AXYAjaxShopInGameConfirmInputPwd').keydown(function (e) {
 										if (e.keyCode == 8) {
@@ -2380,9 +3003,9 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 											this.value = _name;
 										}
 									});
-									$('#AXYAjaxShopInGameConfirmInputPwd').unbind('click touchend').bind('click touchend', function () {
+									$('#AXYAjaxShopInGameConfirmInputPwd').unbind('click touchstart').bind('click touchstart', function () {
 										$('#AXYAjaxShopInGameConfirmInputPwd').focus();
-									});
+									});*/
 
 									$('#AXYAjaxShopInGameConfirmButtonClose').unbind('click touchstart').bind('click touchstart', function () {
 										$('#AXYAjaxShopInGameConfirm').stop().animate({
@@ -2399,13 +3022,13 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 									//console.log($(this).find("input[name='hbid']").val());
 									$('#AXYAjaxShopInGameConfirmButtonUse').unbind('click touchstart').bind('click touchstart', function () {
 										//console.log(AXY.AjaxNetStuff.Param.ShopInGameFetchHbid);
-										if ($('#AXYAjaxShopInGameConfirmInputPwd').val() == '') {
+										/*if ($('#AXYAjaxShopInGameConfirmInputPwd').val() == '') {
 											$.toaster({
 												message: '不能为空',
 												color: 'red'
 											});
 											return;
-										}
+										}*/
 										//console.log($('#AXYAjaxShopInGameConfirmInputPwd').val());
 										$(this).attr("disabled", true);
 										$(this).val("sending");
@@ -2417,18 +3040,18 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 												sid: AXY.AjaxNetStuff.Param.sid,
 												action: 'fetchone',
 												hbid: AXY.AjaxNetStuff.Param.ShopInGameFetchHbid,
-												pw: $('#AXYAjaxShopInGameConfirmInputPwd').val()
+												//pw: $('#AXYAjaxShopInGameConfirmInputPwd').val()
 											},
 											success: function (data) {
 												//console.log(data);
 												if (data.status) {
 													//console.log(data);
 													$.toaster({
-														message: "支付成功！"
+														message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 支付成功！"
 													});
 													//console.log($('.AXYAjaxShopInGameGold').find("input[name='balance']").val());
 													//console.log(AXY.AjaxNetStuff.Param.ShopInGameFee);
-													$('#AXYAjaxShopInGameButtonGold').val(parseFloat($.formatMoney(parseFloat($('.AXYAjaxShopInGameGold').find("input[name='balance']").val()) - AXY.AjaxNetStuff.Param.ShopInGameFee, 8)) + 'DTC');
+													$('#AXYAjaxShopInGameButtonGold').val(parseFloat($.formatMoney(parseFloat($('.AXYAjaxShopInGameGold').find("input[name='balance']").val()) - AXY.AjaxNetStuff.Param.ShopInGameFee, 2)) + AXY.AjaxNetStuff.Param.ShopInGame.currencyText);
 													$('.AXYAjaxShopInGameGold').find("input[name='balance']").val(parseFloat($('.AXYAjaxShopInGameGold').find("input[name='balance']").val()) - AXY.AjaxNetStuff.Param.ShopInGameFee);
 
 													var obj = $.parseJSON(data['content']);
@@ -2468,6 +3091,22 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 																	});
 																}
 																break;
+															case 4:
+																$gameSwitches.setValue(obj[index].id, obj[index].num);
+																if (AXY.AjaxNetStuff.Param.ShopInGame.displaySwitchesToggleInformation) {
+																	$.toaster({
+																		message: $dataSystem.switches[obj[index].id] + "=" + (obj[index].num ? 'On' : 'Off')
+																	});
+																}
+																break;
+															case 5:
+																$gameVariables.setValue(obj[index].id, obj[index].num);
+																if (AXY.AjaxNetStuff.Param.ShopInGame.displayVariablesChangeInformation) {
+																	$.toaster({
+																		message: $dataSystem.variables[obj[index].id] + "=" + obj[index].num
+																	});
+																}
+																break;
 															default:
 																//console.log(typeof(obj[index].num));
 																break;
@@ -2475,14 +3114,14 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 													});
 
 													$gameSystem.setTouchMoveEnabled(true);
-													AXY_Save.save(AXY.AjaxNetStuff.Param.AutoSaveAfterShopping);
+													AXY_Save.save(AXY.AjaxNetStuff.Param.ShopInGame.autoSaveAfterShopping);
 													$gameSystem.setTouchMoveEnabled(false);
 													$gameMessage.add("众筹完毕，感谢支持！");
 													$gameMap._interpreter.setWaitMode('message');
 
 													setTimeout(function () {
 														$.toaster({
-															message: "众筹游戏《" + data.gamename + "》感谢您的支持！"
+															message: "托管在<a href='http://666rpg.com'>666RPG.com</a>的游戏<a href='" + AXY.AjaxNetStuff.Param.URL + "'>《" + data.gamename + "》</a>感谢您的支持！"
 														});
 														AXY_AjaxCoupon.hide();
 													}, 3000);
@@ -2605,14 +3244,14 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 			show: function () {
 				if (!$gameMap) {
 					$.toaster({
-						message: '请先进入游戏',
+						message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 请先进入游戏",
 						color: 'white'
 					});
 					return;
 				}
 				if (!$gameMap._mapId) {
 					$.toaster({
-						message: '请先进入游戏',
+						message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 请先进入游戏",
 						color: 'white'
 					});
 					return;
@@ -2671,7 +3310,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 						this.value = _name;
 					}
 				});
-				$('#AXYAjaxDanmuInput').unbind('click touchend').bind('click touchend', function () {
+				$('#AXYAjaxDanmuInput').unbind('click touchstart').bind('click touchstart', function () {
 					$('#AXYAjaxDanmuInput').focus();
 				});
 				//console.log($('#AXYAjaxDanmuInput'));
@@ -2680,10 +3319,10 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 						$('#AXYAjaxDanmuButtonUse').click();
 					}
 				});
-				$('#AXYAjaxDanmuButtonUse').unbind('click touchend').bind('click touchend', function () {
+				$('#AXYAjaxDanmuButtonUse').unbind('click touchstart').bind('click touchstart', function () {
 					if (!AXY.AjaxNetStuff.Param.Loggedin) {
 						$.toaster({
-							message: '请先登录',
+							message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 请先登录",
 							color: 'white'
 						});
 						return;
@@ -2691,7 +3330,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 
 					if (!AXY.AjaxNetStuff.Param.DanmuSwitch) {
 						$.toaster({
-							message: '请先启用弹幕',
+							message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 请先启用弹幕",
 							color: 'white'
 						});
 						return;
@@ -2900,7 +3539,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 		};
 
 		//last bind the click
-		$('.AXYAjaxDanmuOpen').unbind('click touchend').bind('click touchend', function () {
+		$('.AXYAjaxDanmuOpen').unbind('click touchstart').bind('click touchstart', function () {
 			AXY_AjaxDanmu.show();
 		});
 
@@ -3184,7 +3823,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 				show: function () {
 					if (!AXY.AjaxNetStuff.Param.Loggedin) {
 						$.toaster({
-							message: '请先登录',
+							message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 请先登录",
 							color: 'white'
 						});
 						return;
@@ -3219,7 +3858,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 							this.value = _name;
 						}
 					});
-					$('#AXYAjaxChatInput').unbind('click touchend').bind('click touchend', function () {
+					$('#AXYAjaxChatInput').unbind('click touchstart').bind('click touchstart', function () {
 						$('#AXYAjaxChatInput').focus();
 					});
 					//console.log($('#AXYAjaxChatInput'));
@@ -3228,7 +3867,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 							$('#AXYAjaxChatButtonUse').click();
 						}
 					});
-					$('#AXYAjaxChatButtonUse').unbind('click touchend').bind('click touchend', function () {
+					$('#AXYAjaxChatButtonUse').unbind('click touchstart').bind('click touchstart', function () {
 						if ($('#AXYAjaxChatButtonUse')[0].disabled) {
 							//console.log($('#AXYAjaxChatButtonUse')[0].disabled);
 							return;
@@ -3353,7 +3992,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 				}
 			};
 			//last bind the click
-			$('.AXYAjaxChatOpen').unbind('click touchend').bind('click touchend', function () {
+			$('.AXYAjaxChatOpen').unbind('click touchstart').bind('click touchstart', function () {
 				AXY_AjaxChat.show();
 			});
 
@@ -3474,7 +4113,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 		show: function () {
 			if (!AXY.AjaxNetStuff.Param.Loggedin) {
 				$.toaster({
-					message: '请先登录',
+					message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 请先登录",
 					color: 'white'
 				});
 				return;
@@ -3483,9 +4122,13 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 			var AXYAjaxCloudSaveTemplate =
 				'<div class="AXYAjaxCloudSave" id="AXYAjaxCloudSave">' +
 				'<div class="AXYAjaxCloudSaveBG"></div>' +
-				'<input type="button" class="AXYAjaxCloudSaveButton" id="AXYAjaxCloudSaveButtonUse" value="保存" />' +
-				'<input type="button" class="AXYAjaxCloudSaveButton" id="AXYAjaxCloudSaveButtonClear" value="读取" />' +
-				'<input type="button" class="AXYAjaxCloudSaveButton" id="AXYAjaxCloudSaveButtonClose" value="关闭" />' +
+				'<input type="button" class="AXYAjaxCloudSaveButton" id="AXYAjaxCloudSaveButtonWrite" value="保存" />' +
+				'<input type="button" class="AXYAjaxCloudSaveButton" id="AXYAjaxCloudSaveButtonRead" value="读取" />';
+			if (AXY.AjaxNetStuff.Param.episodeSelectionCommonEventId) {
+				AXYAjaxCloudSaveTemplate += '<input type="button" class="AXYAjaxCloudSaveButton" id="AXYAjaxCloudSaveButtonEpisodeSelection" value="选集" />';
+			}
+
+			AXYAjaxCloudSaveTemplate += '<input type="button" class="AXYAjaxCloudSaveButton" id="AXYAjaxCloudSaveButtonClose" value="关闭" />' +
 				'</div>';
 			var AXYAjaxCloudSaveStyleCss =
 				'.AXYAjaxCloudSave{position:fixed;top:10px;left:.5%;z-index:10000;display:none;margin:0 auto;width:0%;height:80px;text-align:center;}' +
@@ -3510,18 +4153,18 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 			$gameSystem.setTouchMoveEnabled(false);
 
 			//save button
-			$('#AXYAjaxCloudSaveButtonUse').unbind('click touchend').bind('click touchend', function () {
+			$('#AXYAjaxCloudSaveButtonWrite').unbind('click touchstart').bind('click touchstart', function () {
 				AXY_AjaxCloudSave.hide();
-				/*if($('#AXYAjaxCloudSaveButtonUse')[0].disabled){
-					//console.log($('#AXYAjaxCloudSaveButtonUse')[0].disabled);
+				/*if($('#AXYAjaxCloudSaveButtonWrite')[0].disabled){
+					//console.log($('#AXYAjaxCloudSaveButtonWrite')[0].disabled);
 					return;
 				}*/
-				//console.log($('#AXYAjaxCloudSaveButtonUse'));
-				//console.log($('#AXYAjaxCloudSaveButtonUse')[0].disabled);
+				//console.log($('#AXYAjaxCloudSaveButtonWrite'));
+				//console.log($('#AXYAjaxCloudSaveButtonWrite')[0].disabled);
 
-				//$('#AXYAjaxCloudSaveButtonUse').attr("disabled", true);
-				//$('#AXYAjaxCloudSaveButtonUse').val("saving");
-				//console.log($('#AXYAjaxCloudSaveButtonUse'));
+				//$('#AXYAjaxCloudSaveButtonWrite').attr("disabled", true);
+				//$('#AXYAjaxCloudSaveButtonWrite').val("saving");
+				//console.log($('#AXYAjaxCloudSaveButtonWrite'));
 				//console.log(AXY.AjaxNetStuff.Param.sid);
 				//alert(AXY.AjaxNetStuff.Param.sid);
 
@@ -3530,12 +4173,14 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 				var savedata = LZString.compressToBase64(LZString.compressToBase64(JsonEx.stringify(DataManager.makeSaveContents())));
 				//console.log(saveinfo);
 				//console.log(savedata);
+				console.log(DataManager.makeSavefileInfo());
+				console.log(DataManager.makeSaveContents());
 				if (savedata.length >= 200000) {
 					console.log("Save data too big");
 				};
 
 				$.toaster({
-					message: '正在保存至云端...',
+					message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 正在保存至云端...",
 					color: 'white'
 				});
 				var AXY_AjaxCloudSaveURL = AXY.AjaxNetStuff.Param.URL.replace('zhongchou', 'rmmvgame').replace('product', 'rmmvgamecloudsave');
@@ -3555,11 +4200,11 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 						//alert(data.ssid);
 						if (data.status) {
 							$.toaster({
-								message: "保存成功！"
+								message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 保存成功！"
 							});
 							setTimeout(function () {
 								$.toaster({
-									message: "云端存储成本较高，众筹游戏《" + data.gamename + "》诚邀您参与众筹！"
+									message: "云端存储成本较高，托管在<a href='http://666rpg.com'>666RPG.com</a>的游戏<a href='" + AXY.AjaxNetStuff.Param.URL + "'>《" + data.gamename + "》</a>诚邀您的支持！"
 								});
 							}, 3000);
 						} else {
@@ -3569,8 +4214,8 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 								color: 'red'
 							});
 						};
-						//$('#AXYAjaxCloudSaveButtonUse').attr("disabled", false);
-						//$('#AXYAjaxCloudSaveButtonUse').val("保存");
+						//$('#AXYAjaxCloudSaveButtonWrite').attr("disabled", false);
+						//$('#AXYAjaxCloudSaveButtonWrite').val("保存");
 					},
 					error: function (XMLHttpRequest, textStatus, errorThrown) {
 						console.log(XMLHttpRequest);
@@ -3581,45 +4226,45 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 							message: textStatus + ' ' + errorThrown,
 							color: 'red'
 						});
-						//$('#AXYAjaxCloudSaveButtonUse').attr("disabled", false);
-						//$('#AXYAjaxCloudSaveButtonUse').val("保存");
+						//$('#AXYAjaxCloudSaveButtonWrite').attr("disabled", false);
+						//$('#AXYAjaxCloudSaveButtonWrite').val("保存");
 					},
 					complete: function (XMLHttpRequest, textStatus) {
-						console.log(XMLHttpRequest);
-						console.log(textStatus);
-						$.toaster({
-							title: 'COMPLETE: ',
-							message: textStatus,
-							color: 'gray'
-						});
-						//$('#AXYAjaxCloudSaveButtonUse').attr("disabled", false);
-						//$('#AXYAjaxCloudSaveButtonUse').val("保存");
+						//console.log(XMLHttpRequest);
+						//console.log(textStatus);
+						//$.toaster({
+						//	title: 'COMPLETE: ',
+						//	message: textStatus,
+						//	color: 'gray'
+						//});
+						//$('#AXYAjaxCloudSaveButtonWrite').attr("disabled", false);
+						//$('#AXYAjaxCloudSaveButtonWrite').val("保存");
 					}
 				});
 			});
 
 			//load button
-			$('#AXYAjaxCloudSaveButtonClear').unbind('click touchstart').bind('click touchstart', function () {
+			$('#AXYAjaxCloudSaveButtonRead').unbind('click touchstart').bind('click touchstart', function () {
 				AXY_AjaxCloudSave.hide();
 				$.toaster({
-					message: '返回标题页面，请勿操作...',
+					message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 返回标题页面，请勿操作...",
 					color: 'white'
 				});
 				SceneManager.push(Scene_Title);
 
-				/*if($('#AXYAjaxCloudSaveButtonClear')[0].disabled){
-					//console.log($('#AXYAjaxCloudSaveButtonUse')[0].disabled);
+				/*if($('#AXYAjaxCloudSaveButtonRead')[0].disabled){
+					//console.log($('#AXYAjaxCloudSaveButtonWrite')[0].disabled);
 					return;
 				}*/
-				//console.log($('#AXYAjaxCloudSaveButtonUse'));
-				//console.log($('#AXYAjaxCloudSaveButtonUse')[0].disabled);
+				//console.log($('#AXYAjaxCloudSaveButtonWrite'));
+				//console.log($('#AXYAjaxCloudSaveButtonWrite')[0].disabled);
 
-				//$('#AXYAjaxCloudSaveButtonClear').attr("disabled", true);
-				//$('#AXYAjaxCloudSaveButtonClear').val("loading");
+				//$('#AXYAjaxCloudSaveButtonRead').attr("disabled", true);
+				//$('#AXYAjaxCloudSaveButtonRead').val("loading");
 
 				setTimeout(function () {
 					$.toaster({
-						message: '正在从云端读取...',
+						message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 正在从云端读取...",
 						color: 'white'
 					});
 					var AXY_AjaxCloudLoadURL = AXY.AjaxNetStuff.Param.URL.replace('zhongchou', 'rmmvgame').replace('product', 'rmmvgamecloudload');
@@ -3631,19 +4276,33 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 							sid: AXY.AjaxNetStuff.Param.sid
 						},
 						success: function (data) {
-							//console.log(data);
+							console.log(data);
 							if (data.status) {
 								try {
 									$.toaster({
-										message: "读取成功！"
+										message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 读取成功！"
 									});
 
 									// Extract data from savegame
 									console.log("Extract save contents");
+									//si = data.saveinfo;
+									//console.log(si);
+									//si = LZString.decompressFromBase64(si);
+									//console.log(si);
+									//si = LZString.decompressFromBase64(si);
+									//console.log(si);
+									//si = JsonEx.parse(si);
+									//console.log(si);
+									//sd = data.savedata;
+									//console.log(sd);
+									//sd = LZString.decompressFromBase64(sd);
+									//console.log(sd);
+									//sd = LZString.decompressFromBase64(sd);
+									//console.log(sd);
+									//sd = JsonEx.parse(sd);
+									//console.log(sd);
 									DataManager.createGameObjects();
 									DataManager.extractSaveContents(JsonEx.parse(LZString.decompressFromBase64(LZString.decompressFromBase64(data.savedata))));
-									//console.log(LZString.decompressFromBase64(data.savedata));
-									//console.log(JsonEx.parse(LZString.decompressFromBase64(data.savedata)));
 
 									// Move player
 									console.log("Reserve transfer player");
@@ -3668,11 +4327,14 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 
 									setTimeout(function () {
 										$.toaster({
-											message: "云端存储成本较高，众筹游戏《" + data.gamename + "》诚邀您参与众筹！"
+											message: "云端存储成本较高，托管在<a href='http://666rpg.com'>666RPG.com</a>的游戏<a href='" + AXY.AjaxNetStuff.Param.URL + "'>《" + data.gamename + "》</a>《" + data.gamename + "》诚邀您的支持！"
 										});
 										$gameSystem.setTouchMoveEnabled(true);
 									}, 3000);
 								} catch (e) {
+									$.toaster({
+										message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 解析云存档失败，请进入游戏重试！"
+									});
 									console.log(e);
 								}
 							} else {
@@ -3682,8 +4344,8 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 									color: 'red'
 								});
 							};
-							//$('#AXYAjaxCloudSaveButtonClear').attr("disabled", false);
-							//$('#AXYAjaxCloudSaveButtonClear').val("读取");
+							//$('#AXYAjaxCloudSaveButtonRead').attr("disabled", false);
+							//$('#AXYAjaxCloudSaveButtonRead').val("读取");
 						},
 						error: function (XMLHttpRequest, textStatus, errorThrown) {
 							console.log(XMLHttpRequest);
@@ -3694,27 +4356,105 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 								message: textStatus + ' ' + errorThrown,
 								color: 'red'
 							});
-							//$('#AXYAjaxCloudSaveButtonClear').attr("disabled", false);
-							//$('#AXYAjaxCloudSaveButtonClear').val("读取");
+							//$('#AXYAjaxCloudSaveButtonRead').attr("disabled", false);
+							//$('#AXYAjaxCloudSaveButtonRead').val("读取");
 						},
 						complete: function (XMLHttpRequest, textStatus) {
-							console.log(XMLHttpRequest);
-							console.log(textStatus);
-							$.toaster({
-								title: 'COMPLETE: ',
-								message: textStatus,
-								color: 'gray'
-							});
-							//$('#AXYAjaxCloudSaveButtonClear').attr("disabled", false);
-							//$('#AXYAjaxCloudSaveButtonClear').val("读取");
+							//console.log(XMLHttpRequest);
+							//console.log(textStatus);
+							//$.toaster({
+							//	title: 'COMPLETE: ',
+							//	message: textStatus,
+							//	color: 'gray'
+							//});
+							//$('#AXYAjaxCloudSaveButtonRead').attr("disabled", false);
+							//$('#AXYAjaxCloudSaveButtonRead').val("读取");
 						}
 					});
-				}, 3000);
+				}, 1000);
 			});
 
 			//close button
 			$('#AXYAjaxCloudSaveButtonClose').unbind('click touchstart').bind('click touchstart', function () {
 				AXY_AjaxCloudSave.hide();
+			});
+
+			//Episode Selection button
+			$('#AXYAjaxCloudSaveButtonEpisodeSelection').unbind('click touchstart').bind('click touchstart', function () {
+				AXY_AjaxCloudSave.hide();
+				$.toaster({
+					message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 正在从云端获取数据。。。"
+				});
+				var AXY_AjaxEpisodeSelectionURL = AXY.AjaxNetStuff.Param.URL.replace('zhongchou', 'rmmvgame').replace('product', 'rmmvgameepisodechoose');
+				$.ajax({
+					url: AXY_AjaxEpisodeSelectionURL,
+					type: 'POST',
+					dataType: 'json',
+					data: {
+						sid: AXY.AjaxNetStuff.Param.sid
+					},
+					success: function (data) {
+						//console.log(data);
+						if (data.status) {
+							try {
+								$.toaster({
+									message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 获取成功！"
+								});
+								if (AXY.AjaxNetStuff.Param.episodeSelectionCommonEventId > 0) {
+									if (data.ops < AXY.AjaxNetStuff.Param.episodeSelectionThreshold) {
+										$.toaster({
+											message: "您的众筹累计(" + data.ops + ")小于作者的设定：" + AXY.AjaxNetStuff.Param.episodeSelectionThreshold + "，因此无法使用此功能！"
+										});
+										return false;
+									}
+									if (!$gameMap._mapId) {
+										$.toaster({
+											message: "请先进入游戏！"
+										});
+										return false;
+									}
+									$gameTemp.reserveCommonEvent(AXY.AjaxNetStuff.Param.episodeSelectionCommonEventId);
+								}
+							} catch (e) {
+								$.toaster({
+									message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 获取失败，请稍后重试！"
+								});
+								console.log(e);
+							}
+						} else {
+							console.log(data);
+							$.toaster({
+								message: data.info + ', ERRORCODE: ' + data.error,
+								color: 'red'
+							});
+						};
+						//$('#AXYAjaxCloudSaveButtonRead').attr("disabled", false);
+						//$('#AXYAjaxCloudSaveButtonRead').val("读取");
+					},
+					error: function (XMLHttpRequest, textStatus, errorThrown) {
+						console.log(XMLHttpRequest);
+						console.log(textStatus);
+						console.log(errorThrown);
+						$.toaster({
+							title: 'ERROR: ',
+							message: textStatus + ' ' + errorThrown,
+							color: 'red'
+						});
+						//$('#AXYAjaxCloudSaveButtonRead').attr("disabled", false);
+						//$('#AXYAjaxCloudSaveButtonRead').val("读取");
+					},
+					complete: function (XMLHttpRequest, textStatus) {
+						//console.log(XMLHttpRequest);
+						//console.log(textStatus);
+						//$.toaster({
+						//	title: 'COMPLETE: ',
+						//	message: textStatus,
+						//	color: 'gray'
+						//});
+						//$('#AXYAjaxCloudSaveButtonRead').attr("disabled", false);
+						//$('#AXYAjaxCloudSaveButtonRead').val("读取");
+					}
+				});
 			});
 		},
 		hide: function () {
@@ -3822,7 +4562,9 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 					return;
 				}
 				//console.log($gameVariables)
-				if ($gameVariables._AXY && $gameVariables._AXY.AjaxNetStuff && $gameVariables._AXY.AjaxNetStuff.Loggedin) {
+				if (AXY.AjaxNetStuff.Param.Loggedin && AXY.AjaxNetStuff.Param.sid) {
+					//do nothing
+				} else if ($gameVariables._AXY && $gameVariables._AXY.AjaxNetStuff && $gameVariables._AXY.AjaxNetStuff.Loggedin) {
 					$('#AXYAjaxTopListLoginButton').css('display', 'none')
 					$('#AXYAjaxTopListLogoutButton').css('display', '')
 					AXY.AjaxNetStuff.Param.Loggedin = $gameVariables._AXY.AjaxNetStuff.Loggedin;
@@ -3837,17 +4579,19 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 				}
 			}, 3000)
 			setInterval(function () {
-				if (!$gameParty) {
-					return;
+				if ($gameParty._actors.length < 1) {
+					return false;
 				}
-				if (!$gameActors) {
-					return;
+				if ($gameActors._data.length < 1) {
+					return false;
 				}
-				if (!$gameVariables) {
-					return;
+				if ($gameVariables._data.length < 1) {
+					return false;
 				}
 				//console.log($gameVariables)
-				if ($gameVariables._AXY && $gameVariables._AXY.AjaxNetStuff && $gameVariables._AXY.AjaxNetStuff.Loggedin) {
+				if (AXY.AjaxNetStuff.Param.Loggedin && AXY.AjaxNetStuff.Param.sid) {
+					//do nothing
+				} else if ($gameVariables._AXY && $gameVariables._AXY.AjaxNetStuff && $gameVariables._AXY.AjaxNetStuff.Loggedin) {
 					$('#AXYAjaxTopListLoginButton').css('display', 'none')
 					$('#AXYAjaxTopListLogoutButton').css('display', '')
 					AXY.AjaxNetStuff.Param.Loggedin = $gameVariables._AXY.AjaxNetStuff.Loggedin;
@@ -4399,10 +5143,10 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 										return;
 									}
 									var arrLoginGift = String(AXY.AjaxNetStuff.Parameters['LoginGift']).split(';');
-									console.log(arrLoginGift);
+									//console.log(arrLoginGift);
 									$.each(arrLoginGift, function (index) {
 										var arrLoginGiftItem = arrLoginGift[index].split(':');
-										console.log(arrLoginGiftItem);
+										//console.log(arrLoginGiftItem);
 										arrLoginGiftItem[0] = parseInt(arrLoginGiftItem[0]);
 										arrLoginGiftItem[1] = parseInt(arrLoginGiftItem[1]);
 										arrLoginGiftItem[2] = parseInt(arrLoginGiftItem[2]);
@@ -4447,7 +5191,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 
 									setTimeout(function () {
 										$.toaster({
-											message: "众筹游戏《" + data.gamename + "》诚邀您参与众筹！"
+											message: "托管在<a href='http://666rpg.com'>666RPG.com</a>的游戏<a href='" + AXY.AjaxNetStuff.Param.URL + "'>《" + data.gamename + "》</a>诚邀您的支持！"
 										});
 										//AXY_AjaxLogin.hide();
 									}, 3000);
@@ -4548,7 +5292,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 				'</div>' +
 				'<div class="form-group form-check">' +
 				'<input type="checkbox" class="form-check-input AXYAjaxLoginInput" id="AXYAjaxLoginInputAutoLogin" />' +
-				'<label for="AXYAjaxLoginInputAutoLogin" class="form-check-label">自动登录</label>' +
+				'<label for="AXYAjaxLoginInputAutoLogin" id="AXYAjaxLoginInputAutoLoginLabel" class="form-check-label">自动登录</label>' +
 				'</div>' +
 				'</form>' +
 				'</div>' +
@@ -4581,7 +5325,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 					this.value = _name;
 				}
 			});
-			$('#AXYAjaxLoginInputName').unbind('click touchend').bind('click touchend', function () {
+			$('#AXYAjaxLoginInputName').unbind('click touchstart').bind('click touchstart', function () {
 				$('#AXYAjaxLoginInputName').focus();
 			});
 			$('#AXYAjaxLoginInputPwd').keydown(function (e) {
@@ -4590,18 +5334,25 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 					this.value = _name;
 				}
 			});
-			$('#AXYAjaxLoginInputPwd').unbind('click touchend').bind('click touchend', function () {
+			$('#AXYAjaxLoginInputPwd').unbind('click touchstart').bind('click touchstart', function () {
 				$('#AXYAjaxLoginInputPwd').focus();
 			});
-			$('#AXYAjaxLoginButtonReg').unbind('click touchend').bind('click touchend', function () {
+			$('#AXYAjaxLoginInputAutoLogin,#AXYAjaxLoginInputAutoLoginLabel').unbind('click touchstart').bind('click touchstart', function () {
+				if ($('#AXYAjaxLoginInputAutoLogin').prop("checked")) {
+					$('#AXYAjaxLoginInputAutoLogin').attr("checked", false);
+				} else {
+					$('#AXYAjaxLoginInputAutoLogin').attr("checked", true);
+				}
+			});
+			$('#AXYAjaxLoginButtonReg').unbind('click touchstart').bind('click touchstart', function () {
 				window.open(AXY_LoginURL);
 			});
 			//console.log($('#AXYAjaxLoginInput'));
 
-			$('#AXYAjaxLoginButtonUse').unbind('click touchend').bind('click touchend', function () {
+			$('#AXYAjaxLoginButtonUse').unbind('click touchstart').bind('click touchstart', function () {
 				if ($gameVariables == null) {
 					$.toaster({
-						message: '进入游戏后再试',
+						message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 进入游戏后再试",
 						color: 'red'
 					});
 					return;
@@ -4637,7 +5388,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 				if (!inputName || !inputPwd) {
 					//console.log('代码不能为空');
 					$.toaster({
-						message: '用户名和密码不能为空',
+						message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 用户名和密码不能为空",
 						color: 'red'
 					});
 					$('#AXYAjaxLoginButtonUse').attr("disabled", false);
@@ -4646,7 +5397,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 				}
 				//else{
 				$.toaster({
-					message: '正在登录...',
+					message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 正在登录...",
 					color: 'white'
 				});
 				var AXY_AjaxLoginURL = AXY.AjaxNetStuff.Param.URL.replace('zhongchou', 'rmmvgame').replace('product', 'rmmvgamelogin');
@@ -4666,7 +5417,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 							if (data.uid != null) {
 								AXY.AjaxNetStuff.Param.Loggedin = true;
 								AXY.AjaxNetStuff.Param.sid = data.sid;
-								if (AXYAjaxLoginInputAutoLogin) {
+								if ($('#AXYAjaxLoginInputAutoLogin').prop('checked')) {
 									$gameVariables._AXY = {};
 									$gameVariables._AXY.AjaxNetStuff = {};
 									$gameVariables._AXY.AjaxNetStuff.Loggedin = true;
@@ -4685,7 +5436,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 								AXY_AjaxLoginConnect2RMMVOL.Connect2RMMVOL(inputName, inputPwd);
 								setTimeout(function () {
 									$.toaster({
-										message: "众筹游戏《" + data.gamename + "》诚邀您参与众筹！"
+										message: "托管在<a href='http://666rpg.com'>666RPG.com</a>的游戏<a href='" + AXY.AjaxNetStuff.Param.URL + "'>《" + data.gamename + "》</a>诚邀您的支持！"
 									});
 								}, 3000);
 
@@ -4788,11 +5539,11 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 					complete: function (XMLHttpRequest, textStatus) {
 						//console.log(XMLHttpRequest);
 						//console.log(textStatus);
-						$.toaster({
-							title: 'COMPLETE: ',
-							message: textStatus,
-							color: 'gray'
-						});
+						//$.toaster({
+						//	title: 'COMPLETE: ',
+						//	message: textStatus,
+						//	color: 'gray'
+						//});
 						$('#AXYAjaxLoginButtonUse').attr("disabled", false);
 						$('#AXYAjaxLoginButtonUse').val(AXYAjaxTopListButtonTemplate);
 					}
@@ -4933,7 +5684,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 							//SceneManager.pop();	
 							//$('.AXYAjaxMenuButtonOpen').click();
 							//$('.AXYAjaxMenuButtonOpen').click();
-							//$('.AXYAjaxMenuButtonOpen').touchend();
+							//$('.AXYAjaxMenuButtonOpen').touchstart();
 							//
 
 							//SceneManager.pop();
@@ -5185,12 +5936,12 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 						this.value = _name;
 					}
 				});
-				$('#AXYAjaxCouponInput').unbind('click touchend').bind('click touchend', function () {
+				$('#AXYAjaxCouponInput').unbind('click touchstart').bind('click touchstart', function () {
 					$('#AXYAjaxCouponInput').focus();
 				});
 				//console.log($('#AXYAjaxCouponInput'));
 
-				$('#AXYAjaxCouponButtonUse').unbind('click touchend').bind('click touchend', function () {
+				$('#AXYAjaxCouponButtonUse').unbind('click touchstart').bind('click touchstart', function () {
 					if ($('#AXYAjaxCouponButtonUse')[0].disabled) {
 						//console.log($('#AXYAjaxCouponButtonUse')[0].disabled);
 						return;
@@ -5218,7 +5969,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 					if (!inputcoupon) {
 						//console.log('代码不能为空');
 						$.toaster({
-							message: '代码不能为空',
+							message: "<a href='http://666rpg.com' target='_blank'>666rpg.com</a>平台提醒您：兑换码不能为空",
 							color: 'red'
 						});
 						$('#AXYAjaxCouponButtonUse').attr("disabled", false);
@@ -5227,7 +5978,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 					}
 					//else{
 					$.toaster({
-						message: '正在验证...',
+						message: "正在发送至<a href='http://666rpg.com' target='_blank'>666rpg.com</a>平台进行验证...",
 						color: 'white'
 					});
 					var AXY_AjaxCouponURL = AXY.AjaxNetStuff.Param.URL.replace('zhongchou', 'rmmvgame').replace('product', 'rmmvgamecoupon');
@@ -5279,6 +6030,22 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 												});
 											}
 											break;
+										case 4:
+											$gameSwitches.setValue(obj[index].id, obj[index].num);
+											if (AXY.AjaxNetStuff.Param.ShopInGame.displaySwitchesToggleInformation) {
+												$.toaster({
+													message: $dataSystem.switches[obj[index].id] + "=" + (obj[index].num ? 'On' : 'Off')
+												});
+											}
+											break;
+										case 5:
+											$gameVariables.setValue(obj[index].id, obj[index].num);
+											if (AXY.AjaxNetStuff.Param.ShopInGame.displayVariablesChangeInformation) {
+												$.toaster({
+													message: $dataSystem.variables[obj[index].id] + "=" + obj[index].num
+												});
+											}
+											break;
 										default:
 											//console.log(typeof(obj[index].num));
 											break;
@@ -5287,7 +6054,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 
 								setTimeout(function () {
 									$.toaster({
-										message: "众筹游戏《" + data.gamename + "》感谢您的支持！"
+										message: "托管在<a href='http://666rpg.com'>666RPG.com</a>的游戏<a href='" + AXY.AjaxNetStuff.Param.URL + "'>《" + data.gamename + "》</a>感谢您的支持！"
 									});
 									AXY_AjaxCoupon.hide();
 								}, 3000);
@@ -5315,13 +6082,13 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 							$('#AXYAjaxCouponButtonUse').val("兑换");
 						},
 						complete: function (XMLHttpRequest, textStatus) {
-							console.log(XMLHttpRequest);
-							console.log(textStatus);
-							$.toaster({
-								title: 'COMPLETE: ',
-								message: textStatus,
-								color: 'gray'
-							});
+							//console.log(XMLHttpRequest);
+							//console.log(textStatus);
+							//$.toaster({
+							//	title: 'COMPLETE: ',
+							//	message: textStatus,
+							//	color: 'gray'
+							//});
 							$('#AXYAjaxCouponButtonUse').attr("disabled", false);
 							$('#AXYAjaxCouponButtonUse').val("兑换");
 						}
