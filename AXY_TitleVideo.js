@@ -1,11 +1,11 @@
 //=============================================================================
 // A XueYu Plugins - Title Video
 // AXY_TitleVideo.js
-// Version: 1.01
+// Version: 1.02
 // License: MIT(or respect PrimeHover's Creative Commons Attribution 4.0 International License)
 //=============================================================================
 /*:
- * @plugindesc v1.01 Allows to Change Title Screen Background to Video.
+ * @plugindesc v1.02 Allows to Change Title Screen Background to Video.
  * @author A XueYu Plugins
  * 
  * @help
@@ -16,6 +16,9 @@
  * To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/
  *
  * changelog
+ * 1.02 2019.11.14
+ * add: click or touch event, pause or play video;
+ * add: support system title2 layer, so you can put a title image on the video;
  * 1.01 2019.11.13
  * add: support mobile device;
  * fix: black title screen background when play video but sound is normal play;
@@ -223,6 +226,17 @@ AXY.TitleVideo.VideoTitle.prototype.removeVideo = function () {
 	this._video.load();
 };
 
+AXY.TitleVideo.VideoTitle.prototype.update = function () {
+	this._texture.update();
+	if (Input.isTriggered("ok") || TouchInput.isTriggered()) {
+		if (this._video.paused) {
+			this.playVideo();
+		} else {
+			this.pauseVideo();
+		}
+	}
+};
+
 /* Overwritten Scene_Title methods */
 Scene_Title.prototype.create = function () {
 
@@ -234,6 +248,9 @@ Scene_Title.prototype.create = function () {
 	this.videoTitle = new AXY.TitleVideo.VideoTitle();
 	//this.videoTitle.playVideo();
 	this.addChild(this.videoTitle._spriteVideo);
+	//this.createBackground();
+	this._backSprite2 = new Sprite(ImageManager.loadTitle2($dataSystem.title2Name));
+	this.addChild(this._backSprite2);
 	this.createForeground();
 	this.createWindowLayer();
 	this.createCommandWindow();
@@ -253,4 +270,10 @@ Scene_Title.prototype.terminate = function () {
 	this.videoTitle.pauseVideo();
 	//this.videoTitle.removeVideo();
 	SceneManager.snapForBackground();
+};
+
+AXY.TitleVideo.Alias.Scene_Title_update = Scene_Title.prototype.update;
+Scene_Title.prototype.update = function () {
+	AXY.TitleVideo.Alias.Scene_Title_update.call(this);
+	this.videoTitle.update();
 };
