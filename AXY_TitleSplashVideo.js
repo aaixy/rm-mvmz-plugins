@@ -1,11 +1,11 @@
 //=============================================================================
 // A XueYu Plugins - Title Splash Video
 // AXY_TitleSplashVideo.js
-// Version: 1.00
+// Version: 1.01
 // License: MIT
 //=============================================================================
 /*:
- * @plugindesc v1.00 Display Splash Video before the Title Screen.
+ * @plugindesc v1.01 Display Splash Video before the Title Screen.
  * @author A XueYu Plugins
  * 
  * @help
@@ -14,6 +14,8 @@
  * to your boot page before the title screen.
  * 
  * changelog
+ * 1.01 2019.11.14
+ * add: param: notice and notice color; this depends on AXY_Toast.js
  * 1.00 2019.11.13
  * first release.
  * 
@@ -80,6 +82,18 @@
  * @desc Splash Fade Speed
  * @type number
  * @default 2
+ * 
+ * @param notice
+ * @text Notice
+ * @desc Display notice. Leave blank to disable. Depends on AXY_Toast.js
+ * @type text
+ * @default Touch screen to skip Splash.
+ * 
+ * @param noticeColor
+ * @text Notice Color
+ * @desc Display notice with this color. default:yellow
+ * @type text
+ * @default yellow
  *
  * 
  */
@@ -186,6 +200,16 @@ AXY_TitleSplashVideo_Scene_Splash_Screen.prototype.create = function () {
 	})
 	//this._videoSource.onended = this.terminate();
 
+	//this._videoSource.setAttribute('playsinline', '');
+	//this._videoSource.setAttribute('x5-video-player-type', 'h5');
+	//this._videoSource.setAttribute('x5-video-orientation', 'landscape');
+	//this._videoSource.setAttribute('x5-video-player-fullscreen', 'true');
+	//this._videoSource.setAttribute('controls', '');
+	//this._videoSource.setAttribute('x5-playsinline', '');
+	//this._videoSource.setAttribute('webkit-playsinline', '');
+	//this._videoSource.setAttribute('x-webkit-airplay', 'allow');
+	//this._videoSource.setAttribute('preload', 'auto');
+
 	this._spriteVideo = new PIXI.Sprite(this._texture);
 	this._spriteVideo.width = AXY.TitleSplashVideo.Param.width;
 	this._spriteVideo.height = AXY.TitleSplashVideo.Param.height;
@@ -199,6 +223,12 @@ AXY_TitleSplashVideo_Scene_Splash_Screen.prototype.create = function () {
 	this.addChild(this._spriteVideo);
 
 	//this.refresh_splash_screen();
+	if (AXY.TitleSplashVideo.Param.notice && typeof $.toaster == 'function') {
+		$.toaster({
+			message: AXY.TitleSplashVideo.Param.notice,
+			color: AXY.TitleSplashVideo.Param.noticeColor
+		});
+	}
 };
 
 AXY_TitleSplashVideo_Scene_Splash_Screen.prototype.refresh_splash_screen = function () {
