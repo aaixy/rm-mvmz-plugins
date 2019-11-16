@@ -1,11 +1,11 @@
 //=============================================================================
 // A XueYu Plugins - Title Splash Video
 // AXY_TitleSplashVideo.js
-// Version: 1.02
+// Version: 1.03
 // License: MIT
 //=============================================================================
 /*:
- * @plugindesc v1.02 Display Splash Video before the Title Screen.
+ * @plugindesc v1.03 Display Splash Video before the Title Screen.
  * @author A XueYu Plugins
  * 
  * @help
@@ -14,6 +14,8 @@
  * to your boot page before the title screen.
  * 
  * changelog
+ * 1.03 2019.11.16
+ * add: autoPlay = false;setAttribute('controls', '');setAttribute('preload', 'auto');pause(); in create();
  * 1.02 2019.11.15
  * add: Closure;
  * 1.01 2019.11.14
@@ -197,6 +199,10 @@ Object.keys(AXY.TitleSplashVideo.Parameters).forEach(function (key) {
 		if (this.imageName.trim() != '') {
 			this._videoSource.poster = this.imageName;
 		}
+		this._videoSource.autoPlay = false;
+		this._videoSource.setAttribute('controls', '');
+		this._videoSource.setAttribute('preload', 'auto');
+		this._videoSource.pause();
 		var _that = this;
 		this._videoSource.addEventListener('ended', function (event) {
 			_that.terminate();

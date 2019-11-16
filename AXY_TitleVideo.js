@@ -1,11 +1,11 @@
 //=============================================================================
 // A XueYu Plugins - Title Video
 // AXY_TitleVideo.js
-// Version: 1.04
+// Version: 1.05
 // License: MIT(or respect PrimeHover's Creative Commons Attribution 4.0 International License)
 //=============================================================================
 /*:
- * @plugindesc v1.04 Allows to Change Title Screen Background to Video.
+ * @plugindesc v1.05 Allows to Change Title Screen Background to Video.
  * @author A XueYu Plugins
  *
  * @help
@@ -16,9 +16,13 @@
  * To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/
  *
  * changelog
+ * 1.05 2019.11.16
+ * add: pause() in setVideoTexture();
+ * add: autoPlay = false;setAttribute('controls', '');setAttribute('preload', 'auto'); in setControlOptions();
+ * add: playPromise in playVideo();
  * 1.04 2019.11.15
  * add: Continue the video after returning from other scenes;
- * fix: In some cases the problem of the video staying in the first frame;
+ * fix: In some cases the problem of the video staying on the first frame;
  * 1.03 2019.11.14
  * add: param: title1Alpha, videoAlpha, title2Alpha. If you want to set the transparent of the video, title1 or title2 ;
  * 1.02 2019.11.13
@@ -178,6 +182,7 @@ AXY.TitleVideo.Variables.lastRunTime = Date.now();
 			'movies/' +
 			AXY.TitleVideo.Param.videoName +
 			Game_Interpreter.prototype.videoFileExt();
+		//this.videoName ='movies/' + AXY.TitleVideo.Param.videoName + '.webm';
 		this.imageName = 'img/' + AXY.TitleVideo.Param.imageName + '.png';
 		if (Decrypter.hasEncryptedImages) {
 			this.imageName = Decrypter.extToEncryptExt(this.imageName);
@@ -224,7 +229,7 @@ AXY.TitleVideo.Variables.lastRunTime = Date.now();
 		this._texture = PIXI.Texture.from(this.videoName);
 		this._videoSource = this._texture.baseTexture.source;
 		this.setControlOptions();
-		//this._videoSource.pause();
+		this._videoSource.pause();
 		//this._texture.baseTexture.source.pause();
 
 		this._spriteVideo = new PIXI.Sprite(this._texture);
@@ -260,6 +265,10 @@ AXY.TitleVideo.Variables.lastRunTime = Date.now();
 		pauseBtn.addEventListener("click", function () {
 			this._videoSource.pause()
 		});*/
+
+		this._videoSource.autoPlay = false;
+		this._videoSource.setAttribute('controls', '');
+		this._videoSource.setAttribute('preload', 'auto');
 	};
 
 	TitleVideo.prototype.pauseVideo = function () {
@@ -267,7 +276,7 @@ AXY.TitleVideo.Variables.lastRunTime = Date.now();
 	};
 
 	TitleVideo.prototype.playVideo = function () {
-		this._videoSource.play();
+		//this._videoSource.play();
 		/*this._videoSource.play().then(() => {
 			console.log("done.");
 		}).catch((e) => {
@@ -275,7 +284,7 @@ AXY.TitleVideo.Variables.lastRunTime = Date.now();
 		});
 		*/
 		//this._videoSource.load();
-		/*let playPromise = this._videoSource.play();
+		let playPromise = this._videoSource.play();
 		if (playPromise !== undefined) {
 			playPromise.then(() => {
 				this._videoSource.play();
@@ -284,7 +293,7 @@ AXY.TitleVideo.Variables.lastRunTime = Date.now();
 				this._videoSource.load();
 				this.playVideo();
 			})
-		}*/
+		}
 	}
 
 	TitleVideo.prototype.removeVideo = function () {
