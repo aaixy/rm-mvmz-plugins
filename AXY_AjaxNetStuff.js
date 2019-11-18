@@ -1,14 +1,14 @@
 var AXY = AXY || {};
 AXY.AjaxNetStuff = AXY.AjaxNetStuff || {};
-AXY.AjaxNetStuff.VERSION = 1.46;
+AXY.AjaxNetStuff.VERSION = 1.47;
 //=============================================================================
 // A XueYu Plugin - Ajax Net Stuff
 // AXY_AjaxNetStuff.js
-// Version: 1.46
+// Version: 1.47
 // License: MIT
 //=============================================================================
 /*:
- * @plugindesc v1.46 This plugin support rmmv with ajax net stuff.
+ * @plugindesc v1.47 This plugin support rmmv with ajax net stuff.
  * @author A XueYu Plugin
  *
  * @help
@@ -56,6 +56,10 @@ AXY.AjaxNetStuff.VERSION = 1.46;
  * AXY.AjaxNetStuff.Variables.loggedin;
  *
  * changelog
+ * 1.47 2019.11.18
+ * modify: coupon paste input placeholder;
+ * Deprecated: AXY.AjaxNetStuff.Param.HandleShowTextLanguageObj, Use new one: AXY.AjaxNetStuff.Variables.HandleShowTextLanguageObj;
+ * Deprecated: AXY.AjaxNetStuff.Param.HandleShowTextDefaultLanguageId, Use new one: AXY.AjaxNetStuff.Variables.HandleShowTextDefaultLanguageId;
  * 1.46 2019.11.16
  * add: reserve CommonEvent with coupon/shopingame; see issues #2: https://github.com/aaixy/rmmv-plugins/issues/2
  * add: param: displayGoldChangeInformation in ShopInGame struct;
@@ -1740,14 +1744,14 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 		Game_System.prototype.initialize = function () {
 			AXY.AjaxNetStuff.Alias.Game_System_initialize_HandleShowText.call(this);
 			AXY_AjaxHandleShowText.fetchsupportlanguage();
-			this._languageObj = AXY.AjaxNetStuff.Param.HandleShowTextLanguageObj;
+			this._languageObj = AXY.AjaxNetStuff.Variables.HandleShowTextLanguageObj;
 			if (this._languageIndex === undefined) {
-				this._languageIndex = AXY_AjaxHandleShowText.getlanguageindex(AXY.AjaxNetStuff.Param.HandleShowTextDefaultLanguageId);
+				this._languageIndex = AXY_AjaxHandleShowText.getlanguageindex(AXY.AjaxNetStuff.Variables.HandleShowTextDefaultLanguageId);
 			} else {
 				this._languageIndex = AXY_AjaxHandleShowText.getlanguageindex(this._languageId);
 			}
 			if (this._languageId === undefined) {
-				this._languageId = AXY.AjaxNetStuff.Param.HandleShowTextDefaultLanguageId;
+				this._languageId = AXY.AjaxNetStuff.Variables.HandleShowTextDefaultLanguageId;
 			}
 		};
 
@@ -1764,7 +1768,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 			var value = this.getConfigValue(symbol);
 			if (symbol === 'handleShowText') {
 				value = value ? value : $gameSystem._languageIndex;
-				$gameSystem._languageObj = AXY.AjaxNetStuff.Param.HandleShowTextLanguageObj ? AXY.AjaxNetStuff.Param.HandleShowTextLanguageObj : [{
+				$gameSystem._languageObj = AXY.AjaxNetStuff.Variables.HandleShowTextLanguageObj ? AXY.AjaxNetStuff.Variables.HandleShowTextLanguageObj : [{
 					l: '0',
 					n: 'err'
 				}];
@@ -1902,10 +1906,10 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 					},
 					success: function (data) {
 						if (data.status) {
-							var obj = AXY.AjaxNetStuff.Param.HandleShowTextLanguageObj = data['rs'];
+							var obj = AXY.AjaxNetStuff.Variables.HandleShowTextLanguageObj = data['rs'];
 							$.each(obj, function (index) {
 								if (obj[index].d == '1') {
-									AXY.AjaxNetStuff.Param.HandleShowTextDefaultLanguageId = obj[index].l;
+									AXY.AjaxNetStuff.Variables.HandleShowTextDefaultLanguageId = obj[index].l;
 								}
 							});
 							if (this._languageIndex !== undefined) {
@@ -1937,7 +1941,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 				});
 			},
 			getlanguageindex: function (id) {
-				var obj = AXY.AjaxNetStuff.Param.HandleShowTextLanguageObj;
+				var obj = AXY.AjaxNetStuff.Variables.HandleShowTextLanguageObj;
 				var langindex = 0;
 				$.each(obj, function (index) {
 					if (obj[index].l == id) {
@@ -5952,7 +5956,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 		};
 
 		//==============================
-		// * Cloud Save
+		// * Coupon
 		//==============================
 		Scene_Menu.prototype.commandCoupon = function () {
 			AXY_AjaxCoupon.show();
@@ -5966,7 +5970,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 				var AXYAjaxCouponTemplate =
 					'<div class="AXYAjaxCoupon" id="AXYAjaxCoupon">' +
 					'<div class="AXYAjaxCouponBG"></div>' +
-					'<input type="text" class="AXYAjaxCouponInput" id="AXYAjaxCouponInput" placeholder="按 Ctrl+V 粘贴" />' +
+					'<input type="text" class="AXYAjaxCouponInput" id="AXYAjaxCouponInput" placeholder="粘贴兑换码" />' +
 					'<input type="button" class="AXYAjaxCouponButton" id="AXYAjaxCouponButtonUse" value="兑换" />' +
 					'<input type="button" class="AXYAjaxCouponButton" id="AXYAjaxCouponButtonClear" value="清空" />' +
 					'<input type="button" class="AXYAjaxCouponButton" id="AXYAjaxCouponButtonClose" value="关闭" />' +
