@@ -1,16 +1,16 @@
 //=============================================================================
 // A XueYu Plugins - Enemy
 // AXY_Enemy.js
-// Version: 1.02
+// Version: 1.03
 // License: MIT
 //=============================================================================
 /*:
- * @plugindesc v1.02 Allows add Enemy in battle.
+ * @plugindesc v1.03 Allows add Enemy in battle and enemy's staff.
  * @author A XueYu Plugins
  *
  * @help
  * Introduction
- * This plugin allows add Enemy in battle.
+ * This plugin allows add Enemy in battle and enemy's staff.
  *
  * Example: 
  * add one enemy on x=100,y=200 and enemy id is 1 in battle:
@@ -21,6 +21,8 @@
  * AXY.Enemy.bulkAdd(10,[1,10],[100,200],[300,400]);
  *
  * changelog
+ * 1.03 2019.11.20
+ * add: param: letterTable;
  * 1.02 2019.11.10
  * add: AXY.Enemy.Alias;
  * add: AXY.Enemy.Variables;
@@ -30,6 +32,47 @@
  * fix some bug that add if Troops and release Enemys when used;
  * 1.00 2017.2.9
  * first release;
+ * 
+ * @param letterTable
+ * @text Letter Table Settings
+ * @type struct<letterTableStruct>
+ * @default
+ * 
+ * 
+ */
+
+/*~struct~letterTableStruct:
+ * @param enable
+ * @text Enable Letter Table
+ * @desc Enable Letter Table? true/false
+ * @type boolean
+ * @default false
+ * 
+ * @param useNumber
+ * @text Use Number
+ * @desc Use Number when enemy amount more than table length? true/false
+ * @type boolean
+ * @default false
+ * 
+ * @param symbol
+ * @text Symbol
+ * @type text
+ * @default  - 
+ * 
+ * @param numberSymbol
+ * @text Number Symbol
+ * @type text
+ * @default #
+ * 
+ * @param letterTableHalf
+ * @text Letter Table Half
+ * @type text[]
+ * @default 
+ * 
+ * @param letterTableFull
+ * @text Letter Table Full
+ * @type text[]
+ * @default 
  */
 
 // Imported
@@ -49,7 +92,70 @@ AXY.Enemy.Variables.enemys = [];
 AXY.Enemy.Variables.troops = [];
 //AXY.Enemy.Variables.ratio = 0;
 
+//=============================================================================
+// Utils
+//=============================================================================
+// Create a utility function to parse complex parameters.
+//=============================================================================
+Utils.recursiveParse = function (param) {
+	try {
+		if (typeof JSON.parse(param) == "object") {
+			return JSON.parse(param, function (key, value) {
+				try {
+					return this.recursiveParse(value);
+				} catch (e) {
+					return value;
+				}
+			}.bind(this));
+		} else {
+			return JSON.parse(param, function (key, value) {
+				return value;
+			}.bind(this));
+		}
+	} catch (e) {
+		return param;
+	}
+};
+
+//=============================================================================
+// Parameters
+//=============================================================================
+// Read and parse parameters into a locally scoped Parameters object.
+//=============================================================================
+Object.keys(AXY.Enemy.Parameters).forEach(function (key) {
+	return AXY.Enemy.Param[key] = Utils.recursiveParse(AXY.Enemy.Parameters[key]);
+});
+
 // Main
+if (AXY.Enemy.Param.letterTable.enable) {
+	Game_Troop.LETTER_TABLE_HALF = AXY.Enemy.Param.letterTable.letterTableHalf;
+	Game_Troop.LETTER_TABLE_FULL = AXY.Enemy.Param.letterTable.letterTableFull;
+	if (AXY.Enemy.Param.letterTable.useNumber) {
+		Game_Troop.prototype.makeUniqueNames = function () {
+			var table = this.letterTable();
+			this.members().forEach(function (enemy) {
+				if (enemy.isAlive() && enemy.isLetterEmpty()) {
+					var name = enemy.originalName();
+					var n = this._namesCount[name] || 0;
+					if (n >= table.length) {
+						var _letter = AXY.Enemy.Param.letterTable.numberSymbol + n;
+					} else {
+						var _letter = AXY.Enemy.Param.letterTable.symbol + table[n % table.length];
+					}
+					enemy.setLetter(_letter);
+					this._namesCount[name] = n + 1;
+				}
+			}, this);
+			this.members().forEach(function (enemy) {
+				var name = enemy.originalName();
+				if (this._namesCount[name] >= 2) {
+					enemy.setPlural(true);
+				}
+			}, this);
+		};
+	}
+}
+
 AXY.Enemy.add = function (enemyId, x, y) {
 	AXY.Enemy.Variables.enemys.push({
 		enemyId: enemyId,
