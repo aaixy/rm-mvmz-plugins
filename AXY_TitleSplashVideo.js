@@ -7,12 +7,12 @@
 /*:
  * @plugindesc v1.03 Display Splash Video before the Title Screen.
  * @author A XueYu Plugins
- * 
+ *
  * @help
  * Introduction
- * This plugin allows you to place a Splash video 
+ * This plugin allows you to place a Splash video
  * to your boot page before the title screen.
- * 
+ *
  * changelog
  * 1.03 2019.11.16
  * add: autoPlay = false;setAttribute('controls', '');setAttribute('preload', 'auto');pause(); in create();
@@ -22,7 +22,7 @@
  * add: param: notice and notice color; This is depends on AXY_Toast.js
  * 1.00 2019.11.13
  * first release.
- * 
+ *
  * //=============================================================================
  * End of Help File
  * //=============================================================================
@@ -31,14 +31,14 @@
  * @text Video Name
  * @desc File name for the video without ext name in movies folder
  * @type text
- * 
+ *
  * @param imageName
  * @text Image Name
  * @desc File path for the image shown when the video is loading
  * @type file
  * @dir img
  * @require 1
- * 
+ *
  * @param x
  * @text X
  * @desc The x position of video upper left corner. default:0
@@ -62,13 +62,13 @@
  * @desc The video box height. default:624
  * @type number
  * @default 624
- * 
+ *
  * @param muted
  * @text Muted
  * @desc Video muted? true/false default:false
  * @type boolean
  * @default false
- * 
+ *
  * @param loop
  * @text Loop
  * @desc Video loop? true/false default:false
@@ -86,20 +86,20 @@
  * @desc Splash Fade Speed
  * @type number
  * @default 2
- * 
+ *
  * @param notice
  * @text Notice
  * @desc Display notice. Leave blank to disable. Depends on AXY_Toast.js
  * @type text
  * @default Touch screen to skip Splash.
- * 
+ *
  * @param noticeColor
  * @text Notice Color
  * @desc Display notice with this color. default:yellow
  * @type text
  * @default yellow
  *
- * 
+ *
  */
 
 // Imported
@@ -110,7 +110,9 @@ Imported.AXY_TitleSplashVideo = true;
 var AXY = AXY || {};
 AXY.TitleSplashVideo = AXY.TitleSplashVideo || {};
 
-AXY.TitleSplashVideo.Parameters = PluginManager.parameters('AXY_TitleSplashVideo');
+AXY.TitleSplashVideo.Parameters = PluginManager.parameters(
+	'AXY_TitleSplashVideo'
+);
 AXY.TitleSplashVideo.Param = AXY.TitleSplashVideo.Param || {};
 AXY.TitleSplashVideo.Alias = AXY.TitleSplashVideo.Alias || {};
 AXY.TitleSplashVideo.Variables = AXY.TitleSplashVideo.Variables || {};
@@ -120,20 +122,26 @@ AXY.TitleSplashVideo.Variables = AXY.TitleSplashVideo.Variables || {};
 //=============================================================================
 // Create a utility function to parse complex parameters.
 //=============================================================================
-Utils.recursiveParse = function (param) {
+Utils.recursiveParse = function(param) {
 	try {
-		if (typeof JSON.parse(param) == "object") {
-			return JSON.parse(param, function (key, value) {
-				try {
-					return this.recursiveParse(value);
-				} catch (e) {
-					return value;
-				}
-			}.bind(this));
+		if (typeof JSON.parse(param) == 'object') {
+			return JSON.parse(
+				param,
+				function(key, value) {
+					try {
+						return this.recursiveParse(value);
+					} catch (e) {
+						return value;
+					}
+				}.bind(this)
+			);
 		} else {
-			return JSON.parse(param, function (key, value) {
-				return value;
-			}.bind(this));
+			return JSON.parse(
+				param,
+				function(key, value) {
+					return value;
+				}.bind(this)
+			);
 		}
 	} catch (e) {
 		return param;
@@ -145,17 +153,20 @@ Utils.recursiveParse = function (param) {
 //=============================================================================
 // Read and parse parameters into a locally scoped Parameters object.
 //=============================================================================
-Object.keys(AXY.TitleSplashVideo.Parameters).forEach(function (key) {
-	return AXY.TitleSplashVideo.Param[key] = Utils.recursiveParse(AXY.TitleSplashVideo.Parameters[key]);
+Object.keys(AXY.TitleSplashVideo.Parameters).forEach(function(key) {
+	return (AXY.TitleSplashVideo.Param[key] = Utils.recursiveParse(
+		AXY.TitleSplashVideo.Parameters[key]
+	));
 });
 
 // Main
-(function () {
-	AXY.TitleSplashVideo.Alias.Scene_Boot_Display_Splash = Scene_Boot.prototype.start
-	Scene_Boot.prototype.start = function () {
+(function() {
+	AXY.TitleSplashVideo.Alias.Scene_Boot_Display_Splash =
+		Scene_Boot.prototype.start;
+	Scene_Boot.prototype.start = function() {
 		if (!DataManager.isBattleTest() && !DataManager.isEventTest()) {
 			SceneManager.push(AXY_TitleSplashVideo_Scene_Splash_Screen);
-			return
+			return;
 		}
 		AXY.TitleSplashVideo.Alias.Scene_Boot_Display_Splash.call(this);
 	};
@@ -163,19 +174,29 @@ Object.keys(AXY.TitleSplashVideo.Parameters).forEach(function (key) {
 	function AXY_TitleSplashVideo_Scene_Splash_Screen() {
 		this.initialize.apply(this, arguments);
 	}
-	AXY_TitleSplashVideo_Scene_Splash_Screen.prototype = Object.create(Scene_Base.prototype);
+	AXY_TitleSplashVideo_Scene_Splash_Screen.prototype = Object.create(
+		Scene_Base.prototype
+	);
 	AXY_TitleSplashVideo_Scene_Splash_Screen.prototype.constructor = AXY_TitleSplashVideo_Scene_Splash_Screen;
 
-	AXY_TitleSplashVideo_Scene_Splash_Screen.prototype.initialize = function () {
+	AXY_TitleSplashVideo_Scene_Splash_Screen.prototype.initialize = function() {
 		Scene_Base.prototype.initialize.call(this);
 	};
 
-	AXY_TitleSplashVideo_Scene_Splash_Screen.prototype.create = function () {
+	AXY_TitleSplashVideo_Scene_Splash_Screen.prototype.create = function() {
 		Scene_Base.prototype.create.call(this);
-		this._splashData = [0, 0, Math.max(AXY.TitleSplashVideo.Param.SplashDuration, 1), Math.max(AXY.TitleSplashVideo.Param.SplashFadeSpeed, 1)];
+		this._splashData = [
+			0,
+			0,
+			Math.max(AXY.TitleSplashVideo.Param.SplashDuration, 1),
+			Math.max(AXY.TitleSplashVideo.Param.SplashFadeSpeed, 1)
+		];
 		this._splashSprite = [];
 
-		this.videoName = 'movies/' + AXY.TitleSplashVideo.Param.videoName + Game_Interpreter.prototype.videoFileExt();
+		this.videoName =
+			'movies/' +
+			AXY.TitleSplashVideo.Param.videoName +
+			Game_Interpreter.prototype.videoFileExt();
 		this.imageName = 'img/' + AXY.TitleSplashVideo.Param.imageName + '.png';
 		if (Decrypter.hasEncryptedImages) {
 			this.imageName = Decrypter.extToEncryptExt(this.imageName);
@@ -204,9 +225,9 @@ Object.keys(AXY.TitleSplashVideo.Parameters).forEach(function (key) {
 		this._videoSource.setAttribute('preload', 'auto');
 		this._videoSource.pause();
 		var _that = this;
-		this._videoSource.addEventListener('ended', function (event) {
+		this._videoSource.addEventListener('ended', function(event) {
 			_that.terminate();
-		})
+		});
 		//this._videoSource.onended = this.terminate();
 
 		//this._videoSource.setAttribute('playsinline', '');
@@ -232,7 +253,10 @@ Object.keys(AXY.TitleSplashVideo.Parameters).forEach(function (key) {
 		this.addChild(this._spriteVideo);
 
 		//this.refresh_splash_screen();
-		if (AXY.TitleSplashVideo.Param.notice && typeof $.toaster == 'function') {
+		if (
+			AXY.TitleSplashVideo.Param.notice &&
+			typeof $.toaster == 'function'
+		) {
 			$.toaster({
 				message: AXY.TitleSplashVideo.Param.notice,
 				color: AXY.TitleSplashVideo.Param.noticeColor
@@ -240,30 +264,30 @@ Object.keys(AXY.TitleSplashVideo.Parameters).forEach(function (key) {
 		}
 	};
 
-	AXY_TitleSplashVideo_Scene_Splash_Screen.prototype.refresh_splash_screen = function () {
+	AXY_TitleSplashVideo_Scene_Splash_Screen.prototype.refresh_splash_screen = function() {
 		if (this._splashData[0] >= this._splashSprite.length) {
 			this.terminate();
-		};
+		}
 		//this._titleSplashSprite.bitmap = this._spriteVideo.bitmap;
 		this._spriteVideo.opacity = 0;
 		this._splashData[0] += 1;
 		this._splashData[1] = this._splashData[2];
 	};
 
-	AXY_TitleSplashVideo_Scene_Splash_Screen.prototype.start = function () {
+	AXY_TitleSplashVideo_Scene_Splash_Screen.prototype.start = function() {
 		Scene_Base.prototype.start.call(this);
 		this.startFadeIn(this.fadeSpeed(), false);
 	};
 
-	AXY_TitleSplashVideo_Scene_Splash_Screen.prototype.update = function () {
+	AXY_TitleSplashVideo_Scene_Splash_Screen.prototype.update = function() {
 		Scene_Base.prototype.update.call(this);
 		//this.refresh_splash_screen();
-		if (Input.isTriggered("ok") || TouchInput.isTriggered()) {
+		if (Input.isTriggered('ok') || TouchInput.isTriggered()) {
 			this.terminate();
 		}
-	}
+	};
 
-	AXY_TitleSplashVideo_Scene_Splash_Screen.prototype.terminate = function () {
+	AXY_TitleSplashVideo_Scene_Splash_Screen.prototype.terminate = function() {
 		Scene_Base.prototype.terminate.call(this);
 		//console.log(this);
 		//console.log(this._videoSource.paused);
@@ -273,8 +297,8 @@ Object.keys(AXY.TitleSplashVideo.Parameters).forEach(function (key) {
 		}
 
 		//this.videoTitle.removeVideo();
-		SceneManager.snapForBackground();
-		if (typeof XY_TitleSplash_Scene_Splash_Screen === "function") {
+		//SceneManager.snapForBackground();
+		if (typeof XY_TitleSplash_Scene_Splash_Screen === 'function') {
 			SceneManager.goto(XY_TitleSplash_Scene_Splash_Screen);
 			//SceneManager.pop();
 		} else {
@@ -285,19 +309,18 @@ Object.keys(AXY.TitleSplashVideo.Parameters).forEach(function (key) {
 		//SceneManager.push();
 		//SceneManager.pop();
 
-
 		return;
 	};
 
-	AXY_TitleSplashVideo_Scene_Splash_Screen.prototype.pauseVideo = function () {
+	AXY_TitleSplashVideo_Scene_Splash_Screen.prototype.pauseVideo = function() {
 		this._videoSource.pause();
 	};
 
-	AXY_TitleSplashVideo_Scene_Splash_Screen.prototype.playVideo = function () {
+	AXY_TitleSplashVideo_Scene_Splash_Screen.prototype.playVideo = function() {
 		this._videoSource.play();
 	};
 
-	AXY_TitleSplashVideo_Scene_Splash_Screen.prototype.removeVideo = function () {
+	AXY_TitleSplashVideo_Scene_Splash_Screen.prototype.removeVideo = function() {
 		this._videoSource.pause();
 		this._videoSource.src = null;
 		this._videoSource.removeAttribute('src');
