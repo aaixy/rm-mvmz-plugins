@@ -1,14 +1,14 @@
 var AXY = AXY || {};
 AXY.AjaxNetStuff = AXY.AjaxNetStuff || {};
-AXY.AjaxNetStuff.VERSION = 1.47;
+AXY.AjaxNetStuff.VERSION = 1.48;
 //=============================================================================
 // A XueYu Plugin - Ajax Net Stuff
 // AXY_AjaxNetStuff.js
-// Version: 1.47
+// Version: 1.48
 // License: MIT
 //=============================================================================
 /*:
- * @plugindesc v1.47 This plugin support rmmv with ajax net stuff.
+ * @plugindesc v1.48 This plugin support rmmv with ajax net stuff.
  * @author A XueYu Plugin
  *
  * @help
@@ -16,6 +16,7 @@ AXY.AjaxNetStuff.VERSION = 1.47;
  * This plugin support rmmv with ajax net stuff.
  * Easy to use of you just copy your own url to here.
  * And then you will see it worked.
+ * Github: https://github.com/aaixy/rmmv-plugins
  * 
  * Example:
  * To open Coupon dialog,
@@ -56,10 +57,14 @@ AXY.AjaxNetStuff.VERSION = 1.47;
  * AXY.AjaxNetStuff.Variables.loggedin;
  *
  * changelog
+ * 1.48 2019.11.25
+ * modify: button default path from img/pictures to img/system;
+ * modify: button pageup/pagedown behavior;
  * 1.47 2019.11.18
  * modify: coupon paste input placeholder;
  * Deprecated: AXY.AjaxNetStuff.Param.HandleShowTextLanguageObj, Use new one: AXY.AjaxNetStuff.Variables.HandleShowTextLanguageObj;
  * Deprecated: AXY.AjaxNetStuff.Param.HandleShowTextDefaultLanguageId, Use new one: AXY.AjaxNetStuff.Variables.HandleShowTextDefaultLanguageId;
+ * fix: cloud language in statusText;
  * 1.46 2019.11.16
  * add: reserve CommonEvent with coupon/shopingame; see issues #2: https://github.com/aaixy/rmmv-plugins/issues/2
  * add: param: displayGoldChangeInformation in ShopInGame struct;
@@ -780,7 +785,7 @@ AXY.AjaxNetStuff.VERSION = 1.47;
  * @param image
  * @text Image
  * @type file
- * @dir img/pictures
+ * @dir img/system
  * @desc File path for the button image
  * @require 1
  * 
@@ -1187,7 +1192,7 @@ if (AXY.AjaxNetStuff.Param.Button.enable) {
 		if (obj.enable) {
 			//display html first
 			var tpl =
-				'<div class="AXYAjaxButtonImg_' + obj.name + '"><img src="img/pictures/' + obj.image + '.png" class="AXYAjaxButton_' + obj.name + '"></div>';
+				'<div class="AXYAjaxButtonImg_' + obj.name + '"><img src="img/system/' + obj.image + '.png" class="AXYAjaxButton_' + obj.name + '"></div>';
 			var css =
 				'.AXYAjaxButtonImg_' + obj.name + '{position:fixed;z-index:10000;margin:auto;left:' +
 				obj.x + 'rem;right:0;top:' +
@@ -1200,7 +1205,7 @@ if (AXY.AjaxNetStuff.Param.Button.enable) {
 			$('body').append('<style type="text/css">' + css + '</style>');
 
 			//last bind the click
-			$('.AXYAjaxButton_' + obj.name).unbind('click touchstart').bind('click touchstart', function () {
+			$('.AXYAjaxButton_' + obj.name).unbind('mousedown touchstart').bind('mousedown touchstart', function () {
 				if (!$gameMap) {
 					$.toaster({
 						message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 请先进入游戏",
@@ -1217,13 +1222,46 @@ if (AXY.AjaxNetStuff.Param.Button.enable) {
 				}
 				switch (obj.inputTrigger) {
 					case 'pageup':
-						TouchInput._events.wheelY = -AXY.AjaxNetStuff.Param.Button.wheelThreshold;
+						//TouchInput._events.wheelY = -AXY.AjaxNetStuff.Param.Button.wheelThreshold;
+						Input._currentState[obj.inputTrigger] = true;
+						//Input.isTriggered(obj.inputTrigger);
 						break;
 					case 'pagedown':
-						TouchInput._events.wheelY = AXY.AjaxNetStuff.Param.Button.wheelThreshold;
+						//TouchInput._events.wheelY = AXY.AjaxNetStuff.Param.Button.wheelThreshold;
+						Input._currentState[obj.inputTrigger] = true;
+						//Input.isTriggered(obj.inputTrigger);
 						break;
 				}
 				AudioManager.playSe(obj.soundEffect);
+			});
+			$('.AXYAjaxButton_' + obj.name).unbind('mouseup touchend').bind('mouseup touchend', function () {
+				if (!$gameMap) {
+					$.toaster({
+						message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 请先进入游戏",
+						color: 'white'
+					});
+					return false;
+				}
+				if (!$gameMap._mapId) {
+					$.toaster({
+						message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 请先进入游戏",
+						color: 'white'
+					});
+					return false;
+				}
+				switch (obj.inputTrigger) {
+					case 'pageup':
+						//TouchInput._events.wheelY = -AXY.AjaxNetStuff.Param.Button.wheelThreshold;
+						Input._currentState[obj.inputTrigger] = false;
+						//Input.isTriggered(obj.inputTrigger);
+						break;
+					case 'pagedown':
+						//TouchInput._events.wheelY = AXY.AjaxNetStuff.Param.Button.wheelThreshold;
+						Input._currentState[obj.inputTrigger] = false;
+						//Input.isTriggered(obj.inputTrigger);
+						break;
+				}
+				//AudioManager.playSe(obj.soundEffect);
 			});
 		}
 	})
@@ -1744,15 +1782,17 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 		Game_System.prototype.initialize = function () {
 			AXY.AjaxNetStuff.Alias.Game_System_initialize_HandleShowText.call(this);
 			AXY_AjaxHandleShowText.fetchsupportlanguage();
-			this._languageObj = AXY.AjaxNetStuff.Variables.HandleShowTextLanguageObj;
+			/*this._languageObj = AXY.AjaxNetStuff.Variables.HandleShowTextLanguageObj;
+			console.log(this._languageId);
+			if (this._languageId === undefined) {
+				this._languageId = AXY.AjaxNetStuff.Variables.HandleShowTextDefaultLanguageId;
+			}
+			console.log(this._languageIndex);
 			if (this._languageIndex === undefined) {
 				this._languageIndex = AXY_AjaxHandleShowText.getlanguageindex(AXY.AjaxNetStuff.Variables.HandleShowTextDefaultLanguageId);
 			} else {
 				this._languageIndex = AXY_AjaxHandleShowText.getlanguageindex(this._languageId);
-			}
-			if (this._languageId === undefined) {
-				this._languageId = AXY.AjaxNetStuff.Variables.HandleShowTextDefaultLanguageId;
-			}
+			}*/
 		};
 
 		AXY.AjaxNetStuff.Alias.Window_Options_makeCommandList_HandleShowText = Window_Options.prototype.makeCommandList;
@@ -1763,11 +1803,29 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 
 		AXY.AjaxNetStuff.Alias.Window_Options_statusText_HandleShowText = Window_Options.prototype.statusText;
 		Window_Options.prototype.statusText = function (index) {
+			//AXY_AjaxHandleShowText.fetchsupportlanguage();
+			console.log(AXY.AjaxNetStuff.Variables.HandleShowTextLanguageObj);
+			this._languageObj = AXY.AjaxNetStuff.Variables.HandleShowTextLanguageObj;
+			console.log(this._languageId);
+			if (this._languageId === undefined) {
+				this._languageId = AXY.AjaxNetStuff.Variables.HandleShowTextDefaultLanguageId;
+			}
+			console.log(this._languageIndex);
+			if (this._languageIndex === undefined) {
+				this._languageIndex = AXY_AjaxHandleShowText.getlanguageindex(AXY.AjaxNetStuff.Variables.HandleShowTextDefaultLanguageId);
+			} else {
+				this._languageIndex = AXY_AjaxHandleShowText.getlanguageindex(this._languageId);
+			}
 			AXY.AjaxNetStuff.Alias.Window_Options_statusText_HandleShowText.call(this, index);
 			var symbol = this.commandSymbol(index);
 			var value = this.getConfigValue(symbol);
 			if (symbol === 'handleShowText') {
-				value = value ? value : $gameSystem._languageIndex;
+				console.log(value);
+				console.log($gameSystem._languageIndex);
+				console.log($gameSystem._languageObj);
+				console.log($gameSystem._languageId);
+				value = value ? value : this._languageIndex;
+				console.log(value);
 				$gameSystem._languageObj = AXY.AjaxNetStuff.Variables.HandleShowTextLanguageObj ? AXY.AjaxNetStuff.Variables.HandleShowTextLanguageObj : [{
 					l: '0',
 					n: 'err'
@@ -1784,13 +1842,13 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 			var symbol = this.commandSymbol(index);
 			var value = this.getConfigValue(symbol);
 			if (symbol === 'handleShowText') {
-				value = value ? value : $gameSystem._languageIndex;
+				value = value ? value : this._languageIndex;
 				value++;
-				if (value > $gameSystem._languageObj.length - 1) {
+				if (value > this._languageObj.length - 1) {
 					value = 0;
 				}
 				$gameSystem._languageIndex = value;
-				$gameSystem._languageId = $gameSystem._languageObj[value].l;
+				$gameSystem._languageId = this._languageObj[value].l;
 				this.changeValue(symbol, value);
 				//SoundManager.playCursor();
 			} else {
@@ -1803,7 +1861,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 			var symbol = this.commandSymbol(index);
 			var value = this.getConfigValue(symbol);
 			if (symbol === 'handleShowText') {
-				value = value ? value : $gameSystem._languageIndex;
+				value = value ? value : this._languageIndex;
 				value++;
 				if (value > $gameSystem._languageObj.length - 1) {
 					value = 0;
@@ -1822,7 +1880,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 			var symbol = this.commandSymbol(index);
 			var value = this.getConfigValue(symbol);
 			if (symbol === 'handleShowText') {
-				value = value ? value : $gameSystem._languageIndex;
+				value = value ? value : this._languageIndex;
 				value--;
 				if (value < 0) {
 					value = $gameSystem._languageObj.length - 1;
@@ -1894,11 +1952,17 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 		var AXY_AjaxHandleShowTextURL = AXY.AjaxNetStuff.Param.URL.replace('zhongchou', 'rmmvgame').replace('product', 'rmmvgameHandleShowText');
 		var AXY_AjaxHandleShowText = {
 			fetchsupportlanguage: function () {
+				if (AXY.AjaxNetStuff.Variables.timestamp_fetchsupportlanguage && new Date().getTime() - AXY.AjaxNetStuff.Variables.timestamp_fetchsupportlanguage < 3000) {
+					return false;
+				} else {
+					AXY.AjaxNetStuff.Variables.timestamp_fetchsupportlanguage = new Date().getTime();
+				}
+
 				$.ajax({
 					url: AXY_AjaxHandleShowTextURL,
 					type: 'POST',
 					dataType: 'json',
-					async: false,
+					async: true,
 					timeout: 10000,
 					data: {
 						sid: AXY.AjaxNetStuff.Param.sid,
@@ -1912,9 +1976,6 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 									AXY.AjaxNetStuff.Variables.HandleShowTextDefaultLanguageId = obj[index].l;
 								}
 							});
-							if (this._languageIndex !== undefined) {
-								$gameSystem._languageIndex = AXY_AjaxHandleShowText.getlanguageindex($gameSystem._languageId);
-							}
 						} else {
 							console.log(data);
 							$.toaster({

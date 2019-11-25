@@ -1,16 +1,17 @@
 //=============================================================================
 // A XueYu Plugins - Enemy
 // AXY_Enemy.js
-// Version: 1.03
+// Version: 1.04
 // License: MIT
 //=============================================================================
 /*:
- * @plugindesc v1.03 Allows add Enemy in battle and enemy's staff.
+ * @plugindesc v1.04 Allows add Enemy in battle and enemy's staff.
  * @author A XueYu Plugins
  *
  * @help
  * Introduction
  * This plugin allows add Enemy in battle and enemy's staff.
+ * Github: https://github.com/aaixy/rmmv-plugins
  *
  * Example: 
  * add one enemy on x=100,y=200 and enemy id is 1 in battle:
@@ -21,6 +22,8 @@
  * AXY.Enemy.bulkAdd(10,[1,10],[100,200],[300,400]);
  *
  * changelog
+ * 1.04 2019.11.25
+ * add: Game_Enemy.prototype.performDamage;
  * 1.03 2019.11.20
  * add: param: letterTable;
  * 1.02 2019.11.10
@@ -127,6 +130,13 @@ Object.keys(AXY.Enemy.Parameters).forEach(function (key) {
 });
 
 // Main
+AXY.Enemy.Alias.Game_Enemy_prototype_performDamage = Game_Enemy.prototype.performDamage;
+Game_Enemy.prototype.performDamage = function () {
+	AXY.Enemy.Alias.Game_Enemy_prototype_performDamage.call(this);
+	//console.log(this);
+	//AAAAA = this;
+};
+
 if (AXY.Enemy.Param.letterTable.enable) {
 	Game_Troop.LETTER_TABLE_HALF = AXY.Enemy.Param.letterTable.letterTableHalf;
 	Game_Troop.LETTER_TABLE_FULL = AXY.Enemy.Param.letterTable.letterTableFull;
@@ -221,14 +231,18 @@ Game_Troop.prototype.setup = function (troopId) {
 			this._enemies.push(enemy);
 		}
 	}, this);*/
+	//BBBBB = [];
 	AXY.Enemy.Alias.Game_Troop_setup.call(this, troopId);
 	AXY.Enemy.Variables.enemys.forEach(function (member) {
 		//$dataTroops[troopId].members.push(member);
+		//console.log(member);
 		if ($dataEnemies[member.enemyId]) {
 			var enemyId = member.enemyId;
 			var x = member.x;
 			var y = member.y;
 			var enemy = new Game_Enemy(enemyId, x, y);
+			//console.log(enemy);
+			//BBBBB.push(enemy);
 			if (member.hidden) {
 				enemy.hide();
 			}
