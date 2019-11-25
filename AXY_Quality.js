@@ -1,22 +1,26 @@
 //=============================================================================
 // A XueYu Plugins - Quality
 // AXY_Quality.js
-// Version: 1.01
+// Version: 1.02
 // License: MIT
 //=============================================================================
 /*:
- * @plugindesc v1.01 Display colorful name of actor, class, enemy, item, armor, weapon, skill, etc.
+ * @plugindesc v1.02 Display colorful name of actor, class, enemy, item, armor, weapon, skill, etc.
  * @author A XueYu Plugins
  *
  * @help
  * Introduction
  * This plugin allows you to set colorful name of actor, class, enemy, item, armor, weapon, skill, etc.
+ * Github: https://github.com/aaixy/rmmv-plugins
  *
  * Usage:
  * Write <quality:3> to meta note box,
  * such as actor, class, item, weapon, armor, enemy, state;
  * This plugin must be place before YEP_ItemCore.js and BOB_SocketsEx.js;
  * I have to hacked YEP_ItemCore.js about drawEquippedActor to draw current name color;
+ * If you use YEP_VictoryAftermath.js, the order is no matter.
+ * But if you use MOG_BattleResult.js or MOG_TreasurePopup.js, 
+ * This plugin must be place after MOG_BattleResult.js and MOG_TreasurePopup.js;
  * actor color> class color;
  * default class or actor color is index by param default set;
  * default others color is index by param default set;
@@ -31,6 +35,9 @@
  * AXY.Quality.set('actor', 1, 2);
  *
  * changelog
+ * 1.02 2019.11.25
+ * add: compatible with MOG_BattleResult.js v1.1
+ * add: compatible with MOG_TreasurePopup.js v1.1
  * 1.01 2019.11.24
  * add: param: default;
  * 1.00 2019.11.19
@@ -200,7 +207,7 @@ Object.keys(AXY.Quality.Parameters).forEach(function (key) {
 
 	Window_Base.prototype.drawActorName = function (actor, x, y, width) {
 		width = width || 168;
-		var _color = AXY.Quality.Param.quality[2].color;
+		var _color = AXY.Quality.Param.quality[AXY.Quality.Param.default].color;
 		if (this.hpColor(actor) == this.normalColor()) {
 			if (actor.actor().meta.quality) {
 				_color =
@@ -277,4 +284,71 @@ Object.keys(AXY.Quality.Parameters).forEach(function (key) {
 			RJO.HE.ItemDescLineColor;
 		//return AXY.Quality.Param.quality[this.item.meta.quality || 0].color;
 	};
+
+	if (Imported.MOG_TreasurePopup) {
+		//==============================
+		// * refresh Name
+		//==============================
+		TreasureIcons.prototype.refreshName = function () {
+			this._name.bitmap.clear();
+			var name = this._item ? this._item.name + " x " + this._amount : this._amount;
+			//console.log(this._item);
+			if (this._item) {
+				this._name.bitmap.textColor =
+					AXY.Quality.Param.quality[
+						this._item.meta.quality || AXY.Quality.Param.default
+					].color;
+			}
+			this._name.bitmap.drawText(name, 0, 0, 145, 32);
+		};
+	}
+
+	if (Imported.MOG_BattleResult) {
+		//==============================
+		// * Add ICon
+		//==============================
+		BattleResult.prototype.addIcon = function (sprite, data) {
+			var icon = new Sprite(this._icon_img);
+			var w = Window_Base._iconWidth;
+			var h = Window_Base._iconHeight;
+			var sx = data.iconIndex % 16 * w;
+			var sy = Math.floor(data.iconIndex / 16) * h;
+			icon.setFrame(sx, sy, w, h);
+			sprite.addChild(icon);
+			var name = new Sprite(new Bitmap(160, 32));
+			//console.log(data);
+			name.bitmap.textColor =
+				AXY.Quality.Param.quality[
+					data.meta.quality || AXY.Quality.Param.default
+				].color;
+			name.bitmap.drawText(data.name, 0, 0, 160, 32);
+			name.x = w + 4;
+			sprite.addChild(name);
+		};
+		//==============================
+		// * Create Actor Name
+		//==============================
+		BattleResult.prototype.createActorName = function () {
+			this._name = new Sprite(new Bitmap(140, 32));
+			this._name.opacity = 0;
+			//console.log(this._actor);
+			var _color = AXY.Quality.Param.quality[AXY.Quality.Param.default].color;
+			if (this._actor.actor().meta.quality) {
+				_color =
+					AXY.Quality.Param.quality[this._actor.actor().meta.quality].color;
+			} else if (this._actor.currentClass().meta.quality) {
+				_color =
+					AXY.Quality.Param.quality[this._actor.currentClass().meta.quality]
+					.color;
+			} else {
+				_color =
+					AXY.Quality.Param.quality[AXY.Quality.Param.default].color;
+			}
+			this._name.bitmap.textColor = _color;
+			this._name.bitmap.drawText(this._actor._name, 0, 0, 140, 32);
+			this._name.x = Moghunter.bresult_name_x;
+			this._name.y = Moghunter.bresult_name_y;
+			this.addChild(this._name);
+		};
+	}
 })();
