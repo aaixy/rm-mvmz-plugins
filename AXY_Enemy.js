@@ -1,11 +1,11 @@
 //=============================================================================
 // A XueYu Plugins - Enemy
 // AXY_Enemy.js
-// Version: 1.04
+// Version: 1.05
 // License: MIT
 //=============================================================================
 /*:
- * @plugindesc v1.04 Allows add Enemy in battle and enemy's staff.
+ * @plugindesc v1.05 Allows add Enemy in battle and enemy's staff.
  * @author A XueYu Plugins
  *
  * @help
@@ -13,6 +13,11 @@
  * This plugin allows add Enemy in battle and enemy's staff.
  * Github: https://github.com/aaixy/rmmv-plugins
  *
+ * Usage:
+ * Write
+ * <axy_enemy_hp:10000000>
+ * to enemy meta note box;
+ * 
  * Example: 
  * add one enemy on x=100,y=200 and enemy id is 1 in battle:
  * AXY.Enemy.add(1,100,200);
@@ -22,6 +27,8 @@
  * AXY.Enemy.bulkAdd(10,[1,10],[100,200],[300,400]);
  *
  * changelog
+ * 1.05 2019.11.28
+ * add: meta: <axy_enemy_hp:10000000> for break out hp=999999;
  * 1.04 2019.11.25
  * add: Game_Enemy.prototype.performDamage;
  * 1.03 2019.11.20
@@ -130,6 +137,34 @@ Object.keys(AXY.Enemy.Parameters).forEach(function (key) {
 });
 
 // Main
+/*Game_BattlerBase.prototype.paramMax = function (paramId) {
+	if (paramId === 0) {
+		return 999999999; // MHP
+	} else if (paramId === 1) {
+		return 9999; // MMP
+	} else {
+		return 999;
+	}
+};*/
+
+Game_BattlerBase.prototype.param = function (paramId) {
+	if (paramId === 0) {
+		var value = this.enemy().meta.axy_enemy_hp || this.paramBase(paramId) + this.paramPlus(paramId);
+		var maxValue = parseInt(this.enemy().meta.axy_enemy_hp) || this.paramMax(paramId);
+	} else {
+		var value = this.paramBase(paramId) + this.paramPlus(paramId);
+		var maxValue = this.paramMax(paramId);
+	}
+	value *= this.paramRate(paramId) * this.paramBuffRate(paramId);
+	//console.log(value);
+	//AAAAAA = this;
+	//AAAAAAV = value;
+	//AAAAAAM = maxValue;
+
+	var minValue = this.paramMin(paramId);
+	return Math.round(value.clamp(minValue, maxValue));
+};
+
 AXY.Enemy.Alias.Game_Enemy_prototype_performDamage = Game_Enemy.prototype.performDamage;
 Game_Enemy.prototype.performDamage = function () {
 	AXY.Enemy.Alias.Game_Enemy_prototype_performDamage.call(this);
