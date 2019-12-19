@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>小霸王游戏机3千游戏合集</title>
+	<link rel="stylesheet" type="text/css" href="minigame/fc/index.css" />
+
+</head>
+
+<body class="">
+	<div id="emulator"></div>
+
+	<div id="mobile-controlls" style="opacity: 0.4;">
+		<div id="controls-direction">
+			<div class="joydirection leftup"></div>
+			<div class="up joydirection"></div>
+			<div class="joydirection rightup"></div>
+			<div class="left joydirection"></div>
+			<div class="center joydirection"></div>
+			<div class="right joydirection"></div>
+			<div class="leftdown joydirection"></div>
+			<div class="down joydirection"></div>
+			<div class="rightdown joydirection"></div>
+		</div>
+		<div class="controls-center-select joybtn" id="joystick_btn_select">Select</div>
+		<div class="controls-center-start joybtn" id="joystick_btn_start">Start</div>
+		<div id="controls-turbofire">
+			<div class="a joybtn"></div>
+			<div class="b joybtn"></div>
+			<div class="c"></div>
+		</div>
+		<div id="controls-fire">
+			<div class="a joybtn"></div>
+			<div class="b joybtn"></div>
+			<div class="c"></div>
+		</div>
+	</div>
+
+	<div id="pc-controlls">
+		<table id="controls">
+			<tr>
+				<th>Button</th>
+				<th>Player 1</th>
+				<th>Player 2</th>
+			</tr>
+			<tr>
+				<td>Left</td>
+				<td>Left</td>
+				<td>Num-4</td>
+			<tr>
+				<td>Right</td>
+				<td>Right</td>
+				<td>Num-6</td>
+			</tr>
+			<tr>
+				<td>Up</td>
+				<td>Up</td>
+				<td>Num-8</td>
+			</tr>
+			<tr>
+				<td>Down</td>
+				<td>Down</td>
+				<td>Num-2</td>
+			</tr>
+			<tr>
+				<td>A</td>
+				<td>X</td>
+				<td>Num-7</td>
+			</tr>
+			<tr>
+				<td>B</td>
+				<td>Z/Y</td>
+				<td>Num-9</td>
+			</tr>
+			<tr>
+				<td>AA</td>
+				<td>A</td>
+				<td>Num-/</td>
+			</tr>
+			<tr>
+				<td>BB</td>
+				<td>S</td>
+				<td>Num-*</td>
+			</tr>
+			<tr>
+				<td>Start</td>
+				<td>Enter</td>
+				<td>Num-1</td>
+			</tr>
+			<tr>
+				<td>Select</td>
+				<td>Ctrl</td>
+				<td>Num-3</td>
+			</tr>
+		</table>
+	</div>
+
+
+
+	<script src="minigame/fc/lib/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="minigame/fc/lib/dynamicaudio-min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="minigame/fc/source/nes.js" type="text/javascript" charset="utf-8"></script>
+	<script src="minigame/fc/source/utils.js" type="text/javascript" charset="utf-8"></script>
+	<script src="minigame/fc/source/cpu.js" type="text/javascript" charset="utf-8"></script>
+	<script src="minigame/fc/source/keyboard.js" type="text/javascript" charset="utf-8"></script>
+	<script src="minigame/fc/source/mappers.js" type="text/javascript" charset="utf-8"></script>
+	<script src="minigame/fc/source/papu.js" type="text/javascript" charset="utf-8"></script>
+	<script src="minigame/fc/source/ppu.js" type="text/javascript" charset="utf-8"></script>
+	<script src="minigame/fc/source/rom.js" type="text/javascript" charset="utf-8"></script>
+	<script src="minigame/fc/source/ui.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" charset="utf-8">
+		var nes;
+		$(function () {
+			nes = new JSNES({
+				'emulateSound': true,
+				'ui': $('#emulator').JSNESUI({
+					"Homebrew": [
+						['Concentration Room', "minigame/fc/roms/croom/croom.nes"],
+						['LJ65', "minigame/fc/roms/lj65/lj65.nes"],
+					],
+					"Working": [
+						['BM', "minigame/fc/roms/BM.nes"],
+						['Bubble Bobble', "minigame/fc/roms/Bubble Bobble (U).nes"],
+						['Captain American', "minigame/fc/roms/Captain American [p1][!].nes"],
+						['Contra', "minigame/fc/roms/Contra (U) [!].nes"],
+						['Donkey Kong', "minigame/fc/roms/Donkey Kong (JU).nes"],
+						['Double Dragon', "minigame/fc/roms/Double Dragon (U) [!].nes"],
+						['Dr. Mario', "minigame/fc/roms/Dr. Mario (JU).nes"],
+						['F1', "minigame/fc/roms/F-1 Race (J).nes"],
+						['The Surprise at Dinosaur Peak',
+							"minigame/fc/roms/Flintstones, The - The Surprise at Dinosaur Peak! (U) [p1][!].nes"
+						],
+						['Golf', "minigame/fc/roms/Golf (JU).nes"],
+						['The Legend of Zelda',
+							"minigame/fc/roms/Legend of Zelda, The (U) (PRG1).nes"
+						],
+						['Lemmings', "minigame/fc/roms/Lemmings (U).nes"],
+						['Lifeforce', "minigame/fc/roms/Lifeforce (U).nes"],
+
+						['Mario Bros.', "minigame/fc/roms/Mario Bros. (JU) [!].nes"],
+						['Mega Man', "minigame/fc/roms/Mega Man (U).nes"],
+						['Mega Man 2', "minigame/fc/roms/Megaman II (U) [!].nes"],
+						['Pac-Man', "minigame/fc/roms/Pac-Man (U) [!].nes"],
+						['Super Mario Bros.',
+							"minigame/fc/roms/Super Mario Bros. (JU) (PRG0) [!].nes"
+						],
+						['Super Mario Bros. 3',
+							"minigame/fc/roms/Super Mario Bros. 3 (U) (PRG1) [!].nes"
+						],
+						['Tennis', "minigame/fc/roms/Tennis (JU) [!].nes"],
+						['Tetris', "minigame/fc/roms/Tetris (U) [!].nes"],
+						['Tetris 2', "minigame/fc/roms/Tetris 2 (U) [!].nes"],
+						['Zelda II - The Adventure of Link',
+							"minigame/fc/roms/Zelda II - The Adventure of Link (U).nes"
+						]
+					],
+					"中文ROM": [
+
+						["1942 [MS汉化]", "minigame/fc/roms/rom_cn/1942 [MS汉化].nes"],
+						["1944 [MS汉化]", "minigame/fc/roms/rom_cn/1944 [MS汉化].nes"],
+						["1991赌马 [Idea-Tek]", "minigame/fc/roms/rom_cn/1991赌马 [Idea-Tek].nes"],
+						["4人麻将 [星空汉化]", "minigame/fc/roms/rom_cn/4人麻将 [星空汉化].nes"],
+						["75宾果 [Sachen]", "minigame/fc/roms/rom_cn/75宾果 [Sachen].nes"],
+						["AV美少女战士 [未知]", "minigame/fc/roms/rom_cn/AV美少女战士 [未知].nes"],
+						["AV麻雀俱乐部 [Sachen]", "minigame/fc/roms/rom_cn/AV麻雀俱乐部 [Sachen].nes"],
+						["AV麻雀俱乐部 [星空汉化]", "minigame/fc/roms/rom_cn/AV麻雀俱乐部 [星空汉化].nes"],
+						["F-1赛车 [Madcell汉化]", "minigame/fc/roms/rom_cn/F-1赛车 [Madcell汉化].nes"],
+						["F-1赛车 [MS汉化]", "minigame/fc/roms/rom_cn/F-1赛车 [MS汉化].nes"],
+						["FC原人 [MS汉化]", "minigame/fc/roms/rom_cn/FC原人 [MS汉化].nes"],
+						["Fengli跳舞机 [maxzhou88]",
+							"minigame/fc/roms/rom_cn/Fengli跳舞机 [maxzhou88].nes"
+						],
+						["JuJu传说 [MS汉化]", "minigame/fc/roms/rom_cn/JuJu传说 [MS汉化].nes"],
+						["MXMDHTWO学习卡 [TXC]", "minigame/fc/roms/rom_cn/MXMDHTWO学习卡 [TXC].nes"],
+						["Q版沙罗曼蛇 [俞亮汉化]", "minigame/fc/roms/rom_cn/Q版沙罗曼蛇 [俞亮汉化].nes"],
+						["SD英雄总决战 - 打倒恶之军团 [Zero Boy汉化]",
+							"minigame/fc/roms/rom_cn/SD英雄总决战 - 打倒恶之军团 [Zero Boy汉化].nes"
+						],
+						["SD英雄总决战 - 打倒邪恶军团 [MS汉化]",
+							"minigame/fc/roms/rom_cn/SD英雄总决战 - 打倒邪恶军团 [MS汉化].nes"
+						],
+						["Windows 2000 [未知]", "minigame/fc/roms/rom_cn/Windows 2000 [未知].nes"],
+						["七国大战 [南晶科技]", "minigame/fc/roms/rom_cn/七国大战 [南晶科技].nes"],
+						["七宝奇谋 [王龙汉化小组汉化 MS修正]",
+							"minigame/fc/roms/rom_cn/七宝奇谋 [王龙汉化小组汉化 MS修正].nes"
+						],
+						["七龙珠Z - 超武斗传5 (可选语言版) [Rex]",
+							"minigame/fc/roms/rom_cn/七龙珠Z - 超武斗传5 (可选语言版) [Rex].nes"
+						],
+						["三十六计 [外星科技]", "minigame/fc/roms/rom_cn/三十六计 [外星科技].nes"],
+						["三只小猪 [MS汉化]", "minigame/fc/roms/rom_cn/三只小猪 [MS汉化].nes"],
+						["三国大乱斗 - 战国 [南晶科技]", "minigame/fc/roms/rom_cn/三国大乱斗 - 战国 [南晶科技].nes"],
+						["三国志 - 曹操传 [南晶科技]", "minigame/fc/roms/rom_cn/三国志 - 曹操传 [南晶科技].nes"],
+						["三国志 - 群雄争霸 [Asder]", "minigame/fc/roms/rom_cn/三国志 - 群雄争霸 [Asder].nes"],
+						["三国志 - 赤壁之战 [Asder]", "minigame/fc/roms/rom_cn/三国志 - 赤壁之战 [Asder].nes"],
+						["三国志 [外星科技汉化]", "minigame/fc/roms/rom_cn/三国志 [外星科技汉化].nes"],
+						["三国志2 - 霸王的大陆 (中文加强版) [外星科技汉化]",
+							"minigame/fc/roms/rom_cn/三国志2 - 霸王的大陆 (中文加强版) [外星科技汉化].nes"
+						],
+						["三国志2 - 霸王的大陆 (简体中文版) [宣云 张晓波 蓝一冬 汉化]",
+							"minigame/fc/roms/rom_cn/三国志2 - 霸王的大陆 (简体中文版) [宣云 张晓波 蓝一冬 汉化].exe"
+						],
+						["三国志2 - 霸王的大陆 (繁体中文版) [宣云 张晓波 蓝一冬 汉化]",
+							"minigame/fc/roms/rom_cn/三国志2 - 霸王的大陆 (繁体中文版) [宣云 张晓波 蓝一冬 汉化].exe"
+						],
+						["三国志2 - 霸王的大陆 [外星科技汉化]",
+							"minigame/fc/roms/rom_cn/三国志2 - 霸王的大陆 [外星科技汉化].nes"
+						],
+						["三国志4 - 赤壁风云 [Future]",
+							"minigame/fc/roms/rom_cn/三国志4 - 赤壁风云 [Future].nes"
+						],
+						["三国志英杰传 (吞食天地1) (简体中文版) [外星科技汉化]",
+							"minigame/fc/roms/rom_cn/三国志英杰传 (吞食天地1) (简体中文版) [外星科技汉化].nes"
+						],
+						["三国志英杰传 (吞食天地1) (繁体中文版) [外星科技汉化]",
+							"minigame/fc/roms/rom_cn/三国志英杰传 (吞食天地1) (繁体中文版) [外星科技汉化].nes"
+						],
+						["三国忠烈传 [外星科技]", "minigame/fc/roms/rom_cn/三国忠烈传 [外星科技].nes"],
+						["三国无双 - 猛将传 [南晶科技]", "minigame/fc/roms/rom_cn/三国无双 - 猛将传 [南晶科技].nes"],
+						["三国春秋 - 四川省 [卡圣]", "minigame/fc/roms/rom_cn/三国春秋 - 四川省 [卡圣].nes"],
+						["三目童子 [Flow Wolf汉化]", "minigame/fc/roms/rom_cn/三目童子 [Flow Wolf汉化].nes"],
+						["三目童子 [Jeff", "minigame/fc/roms/rom_cn/三目童子 [Jeff.Ma汉化].nes"],
+						["三目童子 [MS汉化]", "minigame/fc/roms/rom_cn/三目童子 [MS汉化].nes"],
+						["上古神剑 [恒格电子]", "minigame/fc/roms/rom_cn/上古神剑 [恒格电子].nes"],
+						["上海大亨 [外星科技]", "minigame/fc/roms/rom_cn/上海大亨 [外星科技].nes"],
+						["东方传说 - 封印岛 [南晶科技]", "minigame/fc/roms/rom_cn/东方传说 - 封印岛 [南晶科技].nes"],
+						["东方的传说 [外星科技汉化 (qqgba转简体版)]",
+							"minigame/fc/roms/rom_cn/东方的传说 [外星科技汉化 (qqgba转简体版)].nes"
+						],
+						["东方的传说 [外星科技汉化]", "minigame/fc/roms/rom_cn/东方的传说 [外星科技汉化].nes"],
+						["东风 [天使汉化组]", "minigame/fc/roms/rom_cn/东风 [天使汉化组].nes"],
+						["丝路传奇 [恒格电子]", "minigame/fc/roms/rom_cn/丝路传奇 [恒格电子].nes"],
+						["中东战争 [星空汉化]", "minigame/fc/roms/rom_cn/中东战争 [星空汉化].nes"],
+						["中国兔宝宝 [未知]", "minigame/fc/roms/rom_cn/中国兔宝宝 [未知].nes"],
+						["中国大亨 [Sachen]", "minigame/fc/roms/rom_cn/中国大亨 [Sachen].nes"],
+						["中国象棋 [TXC]", "minigame/fc/roms/rom_cn/中国象棋 [TXC].nes"],
+						["九七港京拉力赛车 [天苑软件]", "minigame/fc/roms/rom_cn/九七港京拉力赛车 [天苑软件].nes"],
+						["人间兵器 [TPU汉化]", "minigame/fc/roms/rom_cn/人间兵器 [TPU汉化].nes"],
+						["人间兵器 [星空汉化]", "minigame/fc/roms/rom_cn/人间兵器 [星空汉化].nes"],
+						["仙剑奇侠 [南晶科技]", "minigame/fc/roms/rom_cn/仙剑奇侠 [南晶科技].nes"],
+						["仙界精灵 [南晶科技]", "minigame/fc/roms/rom_cn/仙界精灵 [南晶科技].nes"],
+						["企鹅先生 - 冒险之旅 [MS汉化]", "minigame/fc/roms/rom_cn/企鹅先生 - 冒险之旅 [MS汉化].nes"],
+						["使用说明(readme)", "minigame/fc/roms/rom_cn/使用说明(readme).txt"],
+						["侍魂 (可选语言版) [Sachen]",
+						"minigame/fc/roms/rom_cn/侍魂 (可选语言版) [Sachen].unf"],
+						["侠客情 - 荆轲刺秦王 [外星科技]", "minigame/fc/roms/rom_cn/侠客情 - 荆轲刺秦王 [外星科技].nes"],
+						["俄罗斯方块 [佛易汉化组 8GUA汉化 MS修正]",
+							"minigame/fc/roms/rom_cn/俄罗斯方块 [佛易汉化组 8GUA汉化 MS修正].nes"
+						],
+						["假面忍者 - 花丸 [Peacock Wang汉化]",
+							"minigame/fc/roms/rom_cn/假面忍者 - 花丸 [Peacock Wang汉化].nes"
+						],
+						["假面的忍者 - 赤影 [MS汉化]", "minigame/fc/roms/rom_cn/假面的忍者 - 赤影 [MS汉化].nes"],
+						["偷看扑克 [星空汉化]", "minigame/fc/roms/rom_cn/偷看扑克 [星空汉化].nes"],
+						["光之神话 - 天使岛传说 [MS汉化]",
+						"minigame/fc/roms/rom_cn/光之神话 - 天使岛传说 [MS汉化].nes"],
+						["兔宝宝历险记2 [烈火暴龙汉化]", "minigame/fc/roms/rom_cn/兔宝宝历险记2 [烈火暴龙汉化].nes"],
+						["兔宝宝大冒险 [MM之神汉化]", "minigame/fc/roms/rom_cn/兔宝宝大冒险 [MM之神汉化].nes"],
+						["公路赛车 [阿渊汉化]", "minigame/fc/roms/rom_cn/公路赛车 [阿渊汉化].nes"],
+						["六角方块 [TXC]", "minigame/fc/roms/rom_cn/六角方块 [TXC].nes"],
+						["兴奋自动二轮 [未知]", "minigame/fc/roms/rom_cn/兴奋自动二轮 [未知].nes"],
+						["兵蜂 [MS汉化]", "minigame/fc/roms/rom_cn/兵蜂 [MS汉化].nes"],
+						["兵蜂3 [MS汉化]", "minigame/fc/roms/rom_cn/兵蜂3 [MS汉化].nes"],
+						["冒险岛 [Justin汉化]", "minigame/fc/roms/rom_cn/冒险岛 [Justin汉化].nes"],
+						["冒险岛 [Nokoh汉化]", "minigame/fc/roms/rom_cn/冒险岛 [Nokoh汉化].nes"],
+						["冒险岛 [未知]", "minigame/fc/roms/rom_cn/冒险岛 [未知].nes"],
+						["冒险岛2 [Nokoh汉化]", "minigame/fc/roms/rom_cn/冒险岛2 [Nokoh汉化].nes"],
+						["冒险岛2 [高艳龙汉化 MS修正]", "minigame/fc/roms/rom_cn/冒险岛2 [高艳龙汉化 MS修正].nes"],
+						["冒险岛3 [Nokoh汉化]", "minigame/fc/roms/rom_cn/冒险岛3 [Nokoh汉化].nes"],
+						["冒险岛3 [烈火暴龙汉化]", "minigame/fc/roms/rom_cn/冒险岛3 [烈火暴龙汉化].nes"],
+						["冒险岛3 [高艳龙汉化]", "minigame/fc/roms/rom_cn/冒险岛3 [高艳龙汉化].nes"],
+						["冰山登山者 [未知]", "minigame/fc/roms/rom_cn/冰山登山者 [未知].nes"],
+						["创世纪英雄 [外星科技汉化]", "minigame/fc/roms/rom_cn/创世纪英雄 [外星科技汉化].nes"],
+						["前线大作战 [MS汉化]", "minigame/fc/roms/rom_cn/前线大作战 [MS汉化].nes"],
+						["剑王 [金明汉化]", "minigame/fc/roms/rom_cn/剑王 [金明汉化].nes"],
+						["加纳战机 [孔雀天汉化]", "minigame/fc/roms/rom_cn/加纳战机 [孔雀天汉化].nes"],
+						["动动脑2 - 国中英文 [Sachen]",
+							"minigame/fc/roms/rom_cn/动动脑2 - 国中英文 [Sachen].nes"
+						],
+						["勇者斗恶龙4 [外星科技汉化]", "minigame/fc/roms/rom_cn/勇者斗恶龙4 [外星科技汉化].nes"],
+						["勇者斗恶龙5 [外星科技汉化]", "minigame/fc/roms/rom_cn/勇者斗恶龙5 [外星科技汉化].nes"],
+						["勇者斗恶龙6 [外星科技汉化]", "minigame/fc/roms/rom_cn/勇者斗恶龙6 [外星科技汉化].nes"],
+						["勇者斗恶龙7 [外星科技汉化]", "minigame/fc/roms/rom_cn/勇者斗恶龙7 [外星科技汉化].nes"],
+						["勇者斗恶龙8 [外星科技]", "minigame/fc/roms/rom_cn/勇者斗恶龙8 [外星科技].nes"],
+						["包青天 [卡圣]", "minigame/fc/roms/rom_cn/包青天 [卡圣].nes"],
+						["匹诺槽的复苏 [外星科技]", "minigame/fc/roms/rom_cn/匹诺槽的复苏 [外星科技].nes"],
+						["南极大冒险 [Nokoh汉化]", "minigame/fc/roms/rom_cn/南极大冒险 [Nokoh汉化].nes"],
+						["卡拉OK演示 [maxzhou88]", "minigame/fc/roms/rom_cn/卡拉OK演示 [maxzhou88].nes"],
+						["双响炮 [Majoy]", "minigame/fc/roms/rom_cn/双响炮 [Majoy].nes"],
+						["双截龙 [佛易汉化小组 吸血男爵汉化]",
+						"minigame/fc/roms/rom_cn/双截龙 [佛易汉化小组 吸血男爵汉化].nes"],
+						["双截龙 [靳大治汉化]", "minigame/fc/roms/rom_cn/双截龙 [靳大治汉化].nes"],
+						["双截龙2 [Madcell汉化]", "minigame/fc/roms/rom_cn/双截龙2 [Madcell汉化].nes"],
+						["双截龙2 [星空汉化]", "minigame/fc/roms/rom_cn/双截龙2 [星空汉化].nes"],
+						["双截龙2 [阿渊汉化]", "minigame/fc/roms/rom_cn/双截龙2 [阿渊汉化].nes"],
+						["双截龙3 [Madcell汉化]", "minigame/fc/roms/rom_cn/双截龙3 [Madcell汉化].nes"],
+						["双截龙3 [幻想汉化]", "minigame/fc/roms/rom_cn/双截龙3 [幻想汉化].nes"],
+						["双截龙3 [星空汉化]", "minigame/fc/roms/rom_cn/双截龙3 [星空汉化].nes"],
+						["双翼人 [金明汉化]", "minigame/fc/roms/rom_cn/双翼人 [金明汉化].nes"],
+						["双鹰 - 乔兄弟的复仇 [烈火暴龙汉化]",
+							"minigame/fc/roms/rom_cn/双鹰 - 乔兄弟的复仇 [烈火暴龙汉化].nes"
+						],
+						["双鹰 [Joy Van]", "minigame/fc/roms/rom_cn/双鹰 [Joy Van].nes"],
+						["反恐精英 [恒格电子]", "minigame/fc/roms/rom_cn/反恐精英 [恒格电子].nes"],
+						["口袋妖怪 - 钻石 [外星科技]", "minigame/fc/roms/rom_cn/口袋妖怪 - 钻石 [外星科技].nes"],
+						["口袋妖怪四合一 [火星电子]", "minigame/fc/roms/rom_cn/口袋妖怪四合一 [火星电子].NES"],
+						["口袋宝石 - 银 [南晶科技]", "minigame/fc/roms/rom_cn/口袋宝石 - 银 [南晶科技].nes"],
+						["口袋精灵 - 水晶 [火星电子]", "minigame/fc/roms/rom_cn/口袋精灵 - 水晶 [火星电子].nes"],
+						["口袋精灵 - 金 [火星电子 (147201688转简体版)]",
+							"minigame/fc/roms/rom_cn/口袋精灵 - 金 [火星电子 (147201688转简体版)].nes"
+						],
+						["口袋精灵 - 金 [火星电子]", "minigame/fc/roms/rom_cn/口袋精灵 - 金 [火星电子].nes"],
+						["口袋里的魔鬼 [MM之神汉化]", "minigame/fc/roms/rom_cn/口袋里的魔鬼 [MM之神汉化].nes"],
+						["古墓丽影 [南晶科技]", "minigame/fc/roms/rom_cn/古墓丽影 [南晶科技].nes"],
+						["古巴战士 [惊风汉化]", "minigame/fc/roms/rom_cn/古巴战士 [惊风汉化].nes"],
+						["台湾花牌麻雀 [Sachen]", "minigame/fc/roms/rom_cn/台湾花牌麻雀 [Sachen].nes"],
+						["台湾麻雀 [Sachen]", "minigame/fc/roms/rom_cn/台湾麻雀 [Sachen].nes"],
+						["吃豆小精灵 [MS汉化]", "minigame/fc/roms/rom_cn/吃豆小精灵 [MS汉化].nes"],
+						["吃豆小精灵 [叶枫汉化]", "minigame/fc/roms/rom_cn/吃豆小精灵 [叶枫汉化].nes"],
+						["吞食天地2 (不花屏版) [先锋卡通汉化]",
+							"minigame/fc/roms/rom_cn/吞食天地2 (不花屏版) [先锋卡通汉化].nes"
+						],
+						["吞食天地2 [先锋卡通汉化 (laopix简体中文名字版)]",
+							"minigame/fc/roms/rom_cn/吞食天地2 [先锋卡通汉化 (laopix简体中文名字版)].nes"
+						],
+						["吞食天地2 [先锋卡通汉化 (简体中文屎王修正版)]",
+							"minigame/fc/roms/rom_cn/吞食天地2 [先锋卡通汉化 (简体中文屎王修正版)].nes"
+						],
+						["吞食天地2 [先锋卡通汉化 (繁体中文BonnyXie修正版)]",
+							"minigame/fc/roms/rom_cn/吞食天地2 [先锋卡通汉化 (繁体中文BonnyXie修正版)].nes"
+						],
+						["哆啦A梦 [Nokoh汉化]", "minigame/fc/roms/rom_cn/哆啦A梦 [Nokoh汉化].nes"],
+						["哈利传奇 [天空联盟汉化]", "minigame/fc/roms/rom_cn/哈利传奇 [天空联盟汉化].nes"],
+						["哥伦布传 [外星科技汉化 惊风修正]", "minigame/fc/roms/rom_cn/哥伦布传 [外星科技汉化 惊风修正].nes"],
+						["哪吒传奇 [南晶科技]", "minigame/fc/roms/rom_cn/哪吒传奇 [南晶科技].nes"],
+						["唐伯虎点秋香 [南晶科技]", "minigame/fc/roms/rom_cn/唐伯虎点秋香 [南晶科技].nes"],
+						["四川麻将 - 制服篇 [Sachen]",
+						"minigame/fc/roms/rom_cn/四川麻将 - 制服篇 [Sachen].nes"],
+						["四川麻将 [Joy Van]", "minigame/fc/roms/rom_cn/四川麻将 [Joy Van].nes"],
+						["围棋大战 [DC汉化]", "minigame/fc/roms/rom_cn/围棋大战 [DC汉化].nes"],
+						["图形推理 & 智力拼图 [先锋卡通]", "minigame/fc/roms/rom_cn/图形推理 & 智力拼图 [先锋卡通].nes"],
+						["圣斗士星矢 - 天马之幻想 [南晶科技]",
+							"minigame/fc/roms/rom_cn/圣斗士星矢 - 天马之幻想 [南晶科技].nes"
+						],
+						["圣斗士星矢 - 黄金传说完结篇 [勇者汉化小组汉化]",
+							"minigame/fc/roms/rom_cn/圣斗士星矢 - 黄金传说完结篇 [勇者汉化小组汉化].nes"
+						],
+						["圣火列传 [C&E Inc]", "minigame/fc/roms/rom_cn/圣火列传 [C&E Inc].nes"],
+						["圣火徽章 [外星科技汉化]", "minigame/fc/roms/rom_cn/圣火徽章 [外星科技汉化].nes"],
+						["圣火徽章外传 (简体中文版) [宣云 张晓波 汉化]",
+							"minigame/fc/roms/rom_cn/圣火徽章外传 (简体中文版) [宣云 张晓波 汉化].exe"
+						],
+						["圣火徽章外传 (繁体中文版) [宣云 张晓波 汉化]",
+							"minigame/fc/roms/rom_cn/圣火徽章外传 (繁体中文版) [宣云 张晓波 汉化].exe"
+						],
+						["圣铃传说 [MS汉化]", "minigame/fc/roms/rom_cn/圣铃传说 [MS汉化].nes"],
+						["地道战 [外星科技]", "minigame/fc/roms/rom_cn/地道战 [外星科技].nes"],
+						["坦克仔 [张晓波汉化]", "minigame/fc/roms/rom_cn/坦克仔 [张晓波汉化].nes"],
+						["坦克大作战 [模拟中文网 流心小雨汉化]",
+							"minigame/fc/roms/rom_cn/坦克大作战 [模拟中文网 流心小雨汉化].nes"
+						],
+						["坦克大战 [ENTA汉化]", "minigame/fc/roms/rom_cn/坦克大战 [ENTA汉化].nes"],
+						["坦克大战 [郭元汉化]", "minigame/fc/roms/rom_cn/坦克大战 [郭元汉化].nes"],
+						["坦克大战2008 [叶枫汉化]", "minigame/fc/roms/rom_cn/坦克大战2008 [叶枫汉化].nes"],
+						["坦克游戏大战 [模拟中文网 流心小雨汉化]",
+							"minigame/fc/roms/rom_cn/坦克游戏大战 [模拟中文网 流心小雨汉化].nes"
+						],
+						["坦克风云 [金明汉化]", "minigame/fc/roms/rom_cn/坦克风云 [金明汉化].nes"],
+						["埃及 [MS汉化]", "minigame/fc/roms/rom_cn/埃及 [MS汉化].nes"],
+						["城堡探险 [MM之神汉化]", "minigame/fc/roms/rom_cn/城堡探险 [MM之神汉化].nes"],
+						["基督山恩仇记 [外星科技]", "minigame/fc/roms/rom_cn/基督山恩仇记 [外星科技].nes"],
+						["塞尔达传说 - 神奇的帽子 [南晶科技]",
+							"minigame/fc/roms/rom_cn/塞尔达传说 - 神奇的帽子 [南晶科技].nes"
+						],
+						["外星战士 [外星科技 (147201688转简体版)]",
+							"minigame/fc/roms/rom_cn/外星战士 [外星科技 (147201688转简体版)].nes"
+						],
+						["外星战士 [外星科技]", "minigame/fc/roms/rom_cn/外星战士 [外星科技].nes"],
+						["外星战士2 [外星科技 (147201688转简体版)]",
+							"minigame/fc/roms/rom_cn/外星战士2 [外星科技 (147201688转简体版)].nes"
+						],
+						["外星战士2 [外星科技]", "minigame/fc/roms/rom_cn/外星战士2 [外星科技].nes"],
+						["大力水手 [MS汉化]", "minigame/fc/roms/rom_cn/大力水手 [MS汉化].nes"],
+						["大战略 [未知]", "minigame/fc/roms/rom_cn/大战略 [未知].nes"],
+						["大航海7 [外星科技]", "minigame/fc/roms/rom_cn/大航海7 [外星科技].nes"],
+						["大蜜蜂 [MS汉化]", "minigame/fc/roms/rom_cn/大蜜蜂 [MS汉化].nes"],
+						["大话西游 [火星电子]", "minigame/fc/roms/rom_cn/大话西游 [火星电子].nes"],
+						["大金刚 - 香蕉船 [两亦]", "minigame/fc/roms/rom_cn/大金刚 - 香蕉船 [两亦].nes"],
+						["大金刚 [Madcell汉化]", "minigame/fc/roms/rom_cn/大金刚 [Madcell汉化].nes"],
+						["大金刚 [MS汉化]", "minigame/fc/roms/rom_cn/大金刚 [MS汉化].nes"],
+						["大金刚3 [MS汉化]", "minigame/fc/roms/rom_cn/大金刚3 [MS汉化].nes"],
+						["大金刚Jr [MS汉化]", "minigame/fc/roms/rom_cn/大金刚Jr [MS汉化].nes"],
+						["天使之翼2 [MS汉化]", "minigame/fc/roms/rom_cn/天使之翼2 [MS汉化].nes"],
+						["天使之翼2 [外星科技汉化 (lirdrepus繁体版 KANOU转简体第二版)]",
+							"minigame/fc/roms/rom_cn/天使之翼2 [外星科技汉化 (lirdrepus繁体版 KANOU转简体第二版)].nes"
+						],
+						["天使之翼2 [外星科技汉化 (lirdrepus转繁体版)]",
+							"minigame/fc/roms/rom_cn/天使之翼2 [外星科技汉化 (lirdrepus转繁体版)].nes"
+						],
+						["天才厨师 [Zero Boy汉化]", "minigame/fc/roms/rom_cn/天才厨师 [Zero Boy汉化].nes"],
+						["天神之剑 [外星科技汉化 Temryu修正]",
+							"minigame/fc/roms/rom_cn/天神之剑 [外星科技汉化 Temryu修正].nes"
+						],
+						["天龙八部 [南晶科技]", "minigame/fc/roms/rom_cn/天龙八部 [南晶科技].nes"],
+						["太空射击战 [Nokoh汉化]", "minigame/fc/roms/rom_cn/太空射击战 [Nokoh汉化].nes"],
+						["太空幻想 [南晶科技]", "minigame/fc/roms/rom_cn/太空幻想 [南晶科技].nes"],
+						["太空战士5 [火星电子]", "minigame/fc/roms/rom_cn/太空战士5 [火星电子].nes"],
+						["夺宝小英豪 - 光明与黑暗传说 [外星科技]",
+							"minigame/fc/roms/rom_cn/夺宝小英豪 - 光明与黑暗传说 [外星科技].nes"
+						],
+						["威洛传奇 [金巴比伦汉化]", "minigame/fc/roms/rom_cn/威洛传奇 [金巴比伦汉化].nes"],
+						["宇宙巡航机 [罗云汉化]", "minigame/fc/roms/rom_cn/宇宙巡航机 [罗云汉化].nes"],
+						["宇宙巡航机2 [MS汉化]", "minigame/fc/roms/rom_cn/宇宙巡航机2 [MS汉化].nes"],
+						["宇宙战将 (最终幻想2) [外星科技汉化]",
+							"minigame/fc/roms/rom_cn/宇宙战将 (最终幻想2) [外星科技汉化].nes"
+						],
+						["守护者坦克 [烈火暴龙汉化]", "minigame/fc/roms/rom_cn/守护者坦克 [烈火暴龙汉化].nes"],
+						["宠物 - 红 [外星科技]", "minigame/fc/roms/rom_cn/宠物 - 红 [外星科技].nes"],
+						["宠物 - 翡翠 [外星科技]", "minigame/fc/roms/rom_cn/宠物 - 翡翠 [外星科技].nes"],
+						["寻秦记 [南晶科技]", "minigame/fc/roms/rom_cn/寻秦记 [南晶科技].nes"],
+						["导弹坦克 [烟山科技修改]", "minigame/fc/roms/rom_cn/导弹坦克 [烟山科技修改].nes"],
+						["封神榜 - 伏魔三太子 [C&E Inc (147201688 转简体版)]",
+							"minigame/fc/roms/rom_cn/封神榜 - 伏魔三太子 [C&E Inc (147201688 转简体版)].nes"
+						],
+						["封神榜 - 伏魔三太子 [C&E Inc]",
+							"minigame/fc/roms/rom_cn/封神榜 - 伏魔三太子 [C&E Inc].nes"
+						],
+						["封神榜 [外星科技]", "minigame/fc/roms/rom_cn/封神榜 [外星科技].nes"],
+						["小博士 [鸿达]", "minigame/fc/roms/rom_cn/小博士 [鸿达].nes"],
+						["小玛琍 [Idea-Tek]", "minigame/fc/roms/rom_cn/小玛琍 [Idea-Tek].nes"],
+						["小百科学习机 [maxzhou88]", "minigame/fc/roms/rom_cn/小百科学习机 [maxzhou88].nes"],
+						["小红帽 [Joy Van]", "minigame/fc/roms/rom_cn/小红帽 [Joy Van].nes"],
+						["小美人鱼 [中伟汉化]", "minigame/fc/roms/rom_cn/小美人鱼 [中伟汉化].nes"],
+						["小蜜蜂 [MS汉化]", "minigame/fc/roms/rom_cn/小蜜蜂 [MS汉化].nes"],
+						["小霸王学习机V3 [小霸王]", "minigame/fc/roms/rom_cn/小霸王学习机V3 [小霸王].nes"],
+						["小霸王学习机V4 [小霸王]", "minigame/fc/roms/rom_cn/小霸王学习机V4 [小霸王].nes"],
+						["小霸王英语词霸卡 [小霸王]", "minigame/fc/roms/rom_cn/小霸王英语词霸卡 [小霸王].nes"],
+						["少年游侠 [外星科技]", "minigame/fc/roms/rom_cn/少年游侠 [外星科技].nes"],
+						["少林武者 [Sachen]", "minigame/fc/roms/rom_cn/少林武者 [Sachen].nes"],
+						["屠龙记4 [孔雀天汉化]", "minigame/fc/roms/rom_cn/屠龙记4 [孔雀天汉化].nes"],
+						["岳飞传 [火星电子]", "minigame/fc/roms/rom_cn/岳飞传 [火星电子].nes"],
+						["希特勒复活 [TPU汉化]", "minigame/fc/roms/rom_cn/希特勒复活 [TPU汉化].nes"],
+						["帝国战机 [幻想汉化]", "minigame/fc/roms/rom_cn/帝国战机 [幻想汉化].nes"],
+						["帝国战机 [金明汉化]", "minigame/fc/roms/rom_cn/帝国战机 [金明汉化].nes"],
+						["帝国直升机 [小鬼混汉化]", "minigame/fc/roms/rom_cn/帝国直升机 [小鬼混汉化].nes"],
+						["帝国风暴 [外星科技]", "minigame/fc/roms/rom_cn/帝国风暴 [外星科技].nes"],
+						["平成BT帝国战 [小鬼混汉化]", "minigame/fc/roms/rom_cn/平成BT帝国战 [小鬼混汉化].nes"],
+						["幻世录 [南晶科技]", "minigame/fc/roms/rom_cn/幻世录 [南晶科技].nes"],
+						["幻想传说 [南晶科技]", "minigame/fc/roms/rom_cn/幻想传说 [南晶科技].nes"],
+						["幽游白书 - 魔界最强列传 Final [卡圣]",
+							"minigame/fc/roms/rom_cn/幽游白书 - 魔界最强列传 Final [卡圣].nes"
+						],
+						["幽游白书97 V [卡圣]", "minigame/fc/roms/rom_cn/幽游白书97 V [卡圣].nes"],
+						["幽灵行动 [恒格电子]", "minigame/fc/roms/rom_cn/幽灵行动 [恒格电子].nes"],
+						["异域诛魂 [孔雀天汉化]", "minigame/fc/roms/rom_cn/异域诛魂 [孔雀天汉化].nes"],
+						["异形之太空探险者 [南晶科技]", "minigame/fc/roms/rom_cn/异形之太空探险者 [南晶科技].nes"],
+						["弹射球 [佛易汉化组 8GUA汉化 MS修正]",
+							"minigame/fc/roms/rom_cn/弹射球 [佛易汉化组 8GUA汉化 MS修正].nes"
+						],
+						["弹珠台 [MS汉化]", "minigame/fc/roms/rom_cn/弹珠台 [MS汉化].nes"],
+						["影子传说 [中伟汉化 MS修正]", "minigame/fc/roms/rom_cn/影子传说 [中伟汉化 MS修正].nes"],
+						["忍 [天空联盟汉化]", "minigame/fc/roms/rom_cn/忍 [天空联盟汉化].nes"],
+						["忍者 - 阿修罗之章 [金明汉化]", "minigame/fc/roms/rom_cn/忍者 - 阿修罗之章 [金明汉化].nes"],
+						["忍者特训 [金明汉化]", "minigame/fc/roms/rom_cn/忍者特训 [金明汉化].nes"],
+						["忍者神龟2 [勒大治汉化 MS修正]", "minigame/fc/roms/rom_cn/忍者神龟2 [勒大治汉化 MS修正].nes"],
+						["忍者神龟2 [星空汉化]", "minigame/fc/roms/rom_cn/忍者神龟2 [星空汉化].nes"],
+						["忍者神龟2 [樱组汉化]", "minigame/fc/roms/rom_cn/忍者神龟2 [樱组汉化].nes"],
+						["忍者神龟3 [勒大治汉化 MS修正]", "minigame/fc/roms/rom_cn/忍者神龟3 [勒大治汉化 MS修正].nes"],
+						["忍者茶茶丸 [MS汉化]", "minigame/fc/roms/rom_cn/忍者茶茶丸 [MS汉化].nes"],
+						["忍者龙剑传 [TPU汉化]", "minigame/fc/roms/rom_cn/忍者龙剑传 [TPU汉化].nes"],
+						["忍者龙剑传2 - 暗黑邪神剑 [TPU汉化]",
+							"minigame/fc/roms/rom_cn/忍者龙剑传2 - 暗黑邪神剑 [TPU汉化].nes"
+						],
+						["忍者龙剑传3 - 黄泉方舟 [Peacock Wang汉化]",
+							"minigame/fc/roms/rom_cn/忍者龙剑传3 - 黄泉方舟 [Peacock Wang汉化].nes"
+						],
+						["忍者龙剑传3 - 黄泉方舟 [TPU汉化]",
+							"minigame/fc/roms/rom_cn/忍者龙剑传3 - 黄泉方舟 [TPU汉化].nes"
+						],
+						["快乐猫 [MM之神汉化]", "minigame/fc/roms/rom_cn/快乐猫 [MM之神汉化].nes"],
+						["快打传说 [Gouder]", "minigame/fc/roms/rom_cn/快打传说 [Gouder].nes"],
+						["快打旋风 [Antigloss汉化]", "minigame/fc/roms/rom_cn/快打旋风 [Antigloss汉化].nes"],
+						["快打旋风 [Madcell汉化]", "minigame/fc/roms/rom_cn/快打旋风 [Madcell汉化].nes"],
+						["快打旋风 [俞亮汉化]", "minigame/fc/roms/rom_cn/快打旋风 [俞亮汉化].nes"],
+						["快打旋风 [模拟中文网汉化 MS修正]",
+						"minigame/fc/roms/rom_cn/快打旋风 [模拟中文网汉化 MS修正].nes"],
+						["快打旋风 [老代汉化]", "minigame/fc/roms/rom_cn/快打旋风 [老代汉化].nes"],
+						["快打旋风3 [dfqshy汉化]", "minigame/fc/roms/rom_cn/快打旋风3 [dfqshy汉化].nes"],
+						["快打魂斗罗 [Sakano]", "minigame/fc/roms/rom_cn/快打魂斗罗 [Sakano].unf"],
+						["快杰洋枪丸2 - 机关之地大冒险 [烈火暴龙汉化]",
+							"minigame/fc/roms/rom_cn/快杰洋枪丸2 - 机关之地大冒险 [烈火暴龙汉化].nes"
+						],
+						["快杰洋枪丸3 - 对决!相凌轩 [烈火暴龙汉化]",
+							"minigame/fc/roms/rom_cn/快杰洋枪丸3 - 对决!相凌轩 [烈火暴龙汉化].nes"
+						],
+						["怪物制造者1 [外星科技汉化]", "minigame/fc/roms/rom_cn/怪物制造者1 [外星科技汉化].nes"],
+						["怪物制造者2 [外星科技汉化]", "minigame/fc/roms/rom_cn/怪物制造者2 [外星科技汉化].nes"],
+						["恶魔之剑 [Antigloss汉化 MS修正]",
+							"minigame/fc/roms/rom_cn/恶魔之剑 [Antigloss汉化 MS修正].nes"
+						],
+						["恶魔城 [佛易汉化组 吸血男爵汉化]", "minigame/fc/roms/rom_cn/恶魔城 [佛易汉化组 吸血男爵汉化].nes"],
+						["成龙之龙 [俞亮汉化]", "minigame/fc/roms/rom_cn/成龙之龙 [俞亮汉化].nes"],
+						["成龙之龙 [王龙汉化小组汉化]", "minigame/fc/roms/rom_cn/成龙之龙 [王龙汉化小组汉化].nes"],
+						["成龙踢馆 [MM之神汉化]", "minigame/fc/roms/rom_cn/成龙踢馆 [MM之神汉化].nes"],
+						["战国四川省 [C&E Inc]", "minigame/fc/roms/rom_cn/战国四川省 [C&E Inc].nes"],
+						["战国无双 [奔升]", "minigame/fc/roms/rom_cn/战国无双 [奔升].nes"],
+						["战国群雄传 [外星科技]", "minigame/fc/roms/rom_cn/战国群雄传 [外星科技].nes"],
+						["扑克 [惊风汉化]", "minigame/fc/roms/rom_cn/扑克 [惊风汉化].nes"],
+						["扑克精灵 [Idea-Tek]", "minigame/fc/roms/rom_cn/扑克精灵 [Idea-Tek].nes"],
+						["扑克集锦 [Sachen]", "minigame/fc/roms/rom_cn/扑克集锦 [Sachen].nes"],
+						["扑克麻雀 [Sachen]", "minigame/fc/roms/rom_cn/扑克麻雀 [Sachen].nes"],
+						["打砖块 [Nokoh汉化]", "minigame/fc/roms/rom_cn/打砖块 [Nokoh汉化].nes"],
+						["打空气 [MM之神汉化]", "minigame/fc/roms/rom_cn/打空气 [MM之神汉化].nes"],
+						["挖地雷 [未知]", "minigame/fc/roms/rom_cn/挖地雷 [未知].nes"],
+						["挖掘 [MM之神汉化]", "minigame/fc/roms/rom_cn/挖掘 [MM之神汉化].nes"],
+						["挖金 [Dogout汉化]", "minigame/fc/roms/rom_cn/挖金 [Dogout汉化].nes"],
+						["推倒胡麻将 [凯程电子汉化]", "minigame/fc/roms/rom_cn/推倒胡麻将 [凯程电子汉化].nes"],
+						["撞球传说 - 花撞2 [Sun Team]",
+							"minigame/fc/roms/rom_cn/撞球传说 - 花撞2 [Sun Team].nes"
+						],
+						["救火英雄 [cslrxyz汉化]", "minigame/fc/roms/rom_cn/救火英雄 [cslrxyz汉化].nes"],
+						["数学小状元 [数奇玉]", "minigame/fc/roms/rom_cn/数学小状元 [数奇玉].nes"],
+						["数码战队2 [南晶科技]", "minigame/fc/roms/rom_cn/数码战队2 [南晶科技].nes"],
+						["数码暴龙4 - 水晶版 [外星科技]", "minigame/fc/roms/rom_cn/数码暴龙4 - 水晶版 [外星科技].nes"],
+						["敲冰块 [MS汉化]", "minigame/fc/roms/rom_cn/敲冰块 [MS汉化].nes"],
+						["斗智拼盘 [Sun Team]", "minigame/fc/roms/rom_cn/斗智拼盘 [Sun Team].nes"],
+						["斗者的挽歌 [孔雀天汉化]", "minigame/fc/roms/rom_cn/斗者的挽歌 [孔雀天汉化].nes"],
+						["新人类 [Yurica汉化]", "minigame/fc/roms/rom_cn/新人类 [Yurica汉化].nes"],
+						["无尽的任务 (里见八犬传) [外星科技汉化]",
+							"minigame/fc/roms/rom_cn/无尽的任务 (里见八犬传) [外星科技汉化].nes"
+						],
+						["时空之轮 [南晶科技]", "minigame/fc/roms/rom_cn/时空之轮 [南晶科技].nes"],
+						["时空小子 [孔雀天汉化]", "minigame/fc/roms/rom_cn/时空小子 [孔雀天汉化].nes"],
+						["星之卡比 - 星之泉物语 [烈火暴龙汉化]",
+							"minigame/fc/roms/rom_cn/星之卡比 - 星之泉物语 [烈火暴龙汉化].nes"
+						],
+						["星战情缘 [恒格电子]", "minigame/fc/roms/rom_cn/星战情缘 [恒格电子].nes"],
+						["星河战士 [恒格电子]", "minigame/fc/roms/rom_cn/星河战士 [恒格电子].nes"],
+						["星空飞箭 [强典]", "minigame/fc/roms/rom_cn/星空飞箭 [强典].nes"],
+						["星际争霸 [恒格电子]", "minigame/fc/roms/rom_cn/星际争霸 [恒格电子].nes"],
+						["星际战机 [MS汉化]", "minigame/fc/roms/rom_cn/星际战机 [MS汉化].nes"],
+						["星际武士 [未知]", "minigame/fc/roms/rom_cn/星际武士 [未知].nes"],
+						["星际魂斗罗 (版本1) [星空汉化]", "minigame/fc/roms/rom_cn/星际魂斗罗 (版本1) [星空汉化].nes"],
+						["星际魂斗罗 (版本2) [星空汉化]", "minigame/fc/roms/rom_cn/星际魂斗罗 (版本2) [星空汉化].nes"],
+						["星际魂斗罗 [樱组汉化 MS修正]", "minigame/fc/roms/rom_cn/星际魂斗罗 [樱组汉化 MS修正].nes"],
+						["智力小状元 [数奇玉]", "minigame/fc/roms/rom_cn/智力小状元 [数奇玉].nes"],
+						["智慧方块 [烈火暴龙汉化]", "minigame/fc/roms/rom_cn/智慧方块 [烈火暴龙汉化].nes"],
+						["暗棋 [Joy Van]", "minigame/fc/roms/rom_cn/暗棋 [Joy Van].nes"],
+						["暗黑破坏神 [南晶科技]", "minigame/fc/roms/rom_cn/暗黑破坏神 [南晶科技].nes"],
+						["最游记之唐三藏 [南晶科技]", "minigame/fc/roms/rom_cn/最游记之唐三藏 [南晶科技].nes"],
+						["最终幻想3 (简体中文版) [狼组 张晓波 汉化]",
+							"minigame/fc/roms/rom_cn/最终幻想3 (简体中文版) [狼组 张晓波 汉化].exe"
+						],
+						["最终幻想3 (繁体中文版) [狼组 张晓波 汉化]",
+							"minigame/fc/roms/rom_cn/最终幻想3 (繁体中文版) [狼组 张晓波 汉化].exe"
+						],
+						["最终幻想3 [外星科技汉化 SSforME记忆修正]",
+							"minigame/fc/roms/rom_cn/最终幻想3 [外星科技汉化 SSforME记忆修正].nes"
+						],
+						["最终幻想4 - 光与暗 水晶纷争 [南晶科技]",
+							"minigame/fc/roms/rom_cn/最终幻想4 - 光与暗 水晶纷争 [南晶科技].nes"
+						],
+						["最终幻想7 [南晶科技]", "minigame/fc/roms/rom_cn/最终幻想7 [南晶科技].nes"],
+						["月之水晶 [MM之神汉化]", "minigame/fc/roms/rom_cn/月之水晶 [MM之神汉化].nes"],
+						["月宫桌球 [闪 纯静水汉化 MS修正版]",
+							"minigame/fc/roms/rom_cn/月宫桌球 [闪 纯静水汉化 MS修正版].nes"
+						],
+						["有趣的方块游戏 [龙组汉化]", "minigame/fc/roms/rom_cn/有趣的方块游戏 [龙组汉化].nes"],
+						["未来小子 [Joy Van]", "minigame/fc/roms/rom_cn/未来小子 [Joy Van].nes"],
+						["机器猫小叮当 [外星科技]", "minigame/fc/roms/rom_cn/机器猫小叮当 [外星科技].nes"],
+						["机甲战士 [外星科技汉化]", "minigame/fc/roms/rom_cn/机甲战士 [外星科技汉化].nes"],
+						["杀戮战场 [Nokoh汉化]", "minigame/fc/roms/rom_cn/杀戮战场 [Nokoh汉化].nes"],
+						["杀虫大战 [天翔工作组汉化 MS修正]",
+						"minigame/fc/roms/rom_cn/杀虫大战 [天翔工作组汉化 MS修正].nes"],
+						["杨家将 [外星科技]", "minigame/fc/roms/rom_cn/杨家将 [外星科技].nes"],
+						["松鼠大作战 [星空汉化]", "minigame/fc/roms/rom_cn/松鼠大作战 [星空汉化].nes"],
+						["松鼠大作战2 [星空汉化]", "minigame/fc/roms/rom_cn/松鼠大作战2 [星空汉化].nes"],
+						["林则徐禁烟 [外星科技 nfzxyd修正]",
+							"minigame/fc/roms/rom_cn/林则徐禁烟 [外星科技 nfzxyd修正].nes"
+						],
+						["核心危机 [南晶科技]", "minigame/fc/roms/rom_cn/核心危机 [南晶科技].nes"],
+						["梁山英雄 [南晶科技]", "minigame/fc/roms/rom_cn/梁山英雄 [南晶科技].nes"],
+						["梦之勇士 [中伟汉化]", "minigame/fc/roms/rom_cn/梦之勇士 [中伟汉化].nes"],
+						["梦幻 - 香帅传奇之血海飘零 [恒格电子]",
+							"minigame/fc/roms/rom_cn/梦幻 - 香帅传奇之血海飘零 [恒格电子].nes"
+						],
+						["梦幻沙漏 [南晶科技]", "minigame/fc/roms/rom_cn/梦幻沙漏 [南晶科技].nes"],
+						["棋王 [TXC]", "minigame/fc/roms/rom_cn/棋王 [TXC].nes"],
+						["棋王 [未知]", "minigame/fc/roms/rom_cn/棋王 [未知].nes"],
+						["楚汉争霸 [外星科技]", "minigame/fc/roms/rom_cn/楚汉争霸 [外星科技].nes"],
+						["楚留香 - 香帅传奇之血海飘零 [外星科技]",
+							"minigame/fc/roms/rom_cn/楚留香 - 香帅传奇之血海飘零 [外星科技].nes"
+						],
+						["欧陆之战 [外星科技]", "minigame/fc/roms/rom_cn/欧陆之战 [外星科技].nes"],
+						["武士魂 [Rex]", "minigame/fc/roms/rom_cn/武士魂 [Rex].nes"],
+						["武士魂 [天空联盟汉化]", "minigame/fc/roms/rom_cn/武士魂 [天空联盟汉化].nes"],
+						["武林外传 [南晶科技]", "minigame/fc/roms/rom_cn/武林外传 [南晶科技].nes"],
+						["气球大战 [MS汉化]", "minigame/fc/roms/rom_cn/气球大战 [MS汉化].nes"],
+						["水浒传 [外星科技]", "minigame/fc/roms/rom_cn/水浒传 [外星科技].nes"],
+						["水浒神兽 [南晶科技]", "minigame/fc/roms/rom_cn/水浒神兽 [南晶科技].nes"],
+						["水管工马里奥 [MS汉化]", "minigame/fc/roms/rom_cn/水管工马里奥 [MS汉化].nes"],
+						["汉刘邦 [南晶科技]", "minigame/fc/roms/rom_cn/汉刘邦 [南晶科技].nes"],
+						["汉堡包 [金明汉化]", "minigame/fc/roms/rom_cn/汉堡包 [金明汉化].nes"],
+						["汤姆历险记 [外星科技汉化]", "minigame/fc/roms/rom_cn/汤姆历险记 [外星科技汉化].nes"],
+						["汤姆和杰瑞和塔菲 [MS汉化]", "minigame/fc/roms/rom_cn/汤姆和杰瑞和塔菲 [MS汉化].nes"],
+						["沙罗曼蛇2 [未知]", "minigame/fc/roms/rom_cn/沙罗曼蛇2 [未知].nes"],
+						["沙罗曼蛇2 [烈火暴龙汉化]", "minigame/fc/roms/rom_cn/沙罗曼蛇2 [烈火暴龙汉化].nes"],
+						["泡泡龙2 [MM之神汉化]", "minigame/fc/roms/rom_cn/泡泡龙2 [MM之神汉化].nes"],
+						["泰坦尼克号 [南晶科技]", "minigame/fc/roms/rom_cn/泰坦尼克号 [南晶科技].nes"],
+						["泰坦尼克号 [火星电子]", "minigame/fc/roms/rom_cn/泰坦尼克号 [火星电子].nes"],
+						["洛克人 [MS汉化]", "minigame/fc/roms/rom_cn/洛克人 [MS汉化].nes"],
+						["洛克人 [俞亮汉化]", "minigame/fc/roms/rom_cn/洛克人 [俞亮汉化].nes"],
+						["洛克人2 - Dr", "minigame/fc/roms/rom_cn/洛克人2 - Dr.Wily之谜 [MS汉化].nes"],
+						["洛克人2 [NeoX汉化]", "minigame/fc/roms/rom_cn/洛克人2 [NeoX汉化].nes"],
+						["洛克人3 - Dr", "minigame/fc/roms/rom_cn/洛克人3 - Dr.Wily的末日 [MS汉化].nes"],
+						["洛克人4 - 新的野心 [MS汉化]", "minigame/fc/roms/rom_cn/洛克人4 - 新的野心 [MS汉化].nes"],
+						["洛克人4 - 新的野心 [中伟汉化]", "minigame/fc/roms/rom_cn/洛克人4 - 新的野心 [中伟汉化].nes"],
+						["洛克人5 - 布鲁斯的圈套 [MS汉化]",
+							"minigame/fc/roms/rom_cn/洛克人5 - 布鲁斯的圈套 [MS汉化].nes"
+						],
+						["洛克人5 - 布鲁斯的圈套 [Shinwa汉化]",
+							"minigame/fc/roms/rom_cn/洛克人5 - 布鲁斯的圈套 [Shinwa汉化].nes"
+						],
+						["洛克人5 - 布鲁斯的圈套 [中伟汉化]",
+							"minigame/fc/roms/rom_cn/洛克人5 - 布鲁斯的圈套 [中伟汉化].nes"
+						],
+						["洛克人6 - 史上最大的战争 [Madcell汉化]",
+							"minigame/fc/roms/rom_cn/洛克人6 - 史上最大的战争 [Madcell汉化].nes"
+						],
+						["洛克人6 - 史上最长的战斗 [MS汉化]",
+							"minigame/fc/roms/rom_cn/洛克人6 - 史上最长的战斗 [MS汉化].nes"
+						],
+						["洛克人6 - 史上最长的战斗 [不知所云汉化]",
+							"minigame/fc/roms/rom_cn/洛克人6 - 史上最长的战斗 [不知所云汉化].nes"
+						],
+						["洛克人Exile [中伟汉化]", "minigame/fc/roms/rom_cn/洛克人Exile [中伟汉化].nes"],
+						["洛克人X [MS汉化]", "minigame/fc/roms/rom_cn/洛克人X [MS汉化].nes"],
+						["洛克人X [外星科技]", "minigame/fc/roms/rom_cn/洛克人X [外星科技].nes"],
+						["淘气厨师 - 食物的世界 [MS汉化]",
+						"minigame/fc/roms/rom_cn/淘气厨师 - 食物的世界 [MS汉化].nes"],
+						["淘金者 [叶枫汉化]", "minigame/fc/roms/rom_cn/淘金者 [叶枫汉化].nes"],
+						["混沌世界 [外星科技汉化]", "minigame/fc/roms/rom_cn/混沌世界 [外星科技汉化].nes"],
+						["游戏王 [南晶科技]", "minigame/fc/roms/rom_cn/游戏王 [南晶科技].nes"],
+						["激龟格斗 [星空汉化]", "minigame/fc/roms/rom_cn/激龟格斗 [星空汉化].nes"],
+						["火焰之纹章外传 - 索非亚复苏 [外星科技汉化]",
+							"minigame/fc/roms/rom_cn/火焰之纹章外传 - 索非亚复苏 [外星科技汉化].nes"
+						],
+						["炸弹人 [MS汉化]", "minigame/fc/roms/rom_cn/炸弹人 [MS汉化].nes"],
+						["炸弹人 [惊风汉化]", "minigame/fc/roms/rom_cn/炸弹人 [惊风汉化].nes"],
+						["烈火92 [幻想汉化 MS修正]", "minigame/fc/roms/rom_cn/烈火92 [幻想汉化 MS修正].nes"],
+						["热血新记录 [AIR汉化]", "minigame/fc/roms/rom_cn/热血新记录 [AIR汉化].nes"],
+						["热血新记录 [小滩汉化]", "minigame/fc/roms/rom_cn/热血新记录 [小滩汉化].nes"],
+						["热血格斗传说 [Old Liu汉化]", "minigame/fc/roms/rom_cn/热血格斗传说 [Old Liu汉化].nes"],
+						["热血物语 [AIR汉化]", "minigame/fc/roms/rom_cn/热血物语 [AIR汉化].nes"],
+						["热血物语 [madcell汉化]", "minigame/fc/roms/rom_cn/热血物语 [madcell汉化].nes"],
+						["热血物语 [PKome汉化]", "minigame/fc/roms/rom_cn/热血物语 [PKome汉化].nes"],
+						["热血篮球 [油气车汉化]", "minigame/fc/roms/rom_cn/热血篮球 [油气车汉化].nes"],
+						["热血足球 [王龙汉化小组汉化]", "minigame/fc/roms/rom_cn/热血足球 [王龙汉化小组汉化].nes"],
+						["热血足球联盟 [惊风 AirTeam 联合汉化]",
+							"minigame/fc/roms/rom_cn/热血足球联盟 [惊风 AirTeam 联合汉化].nes"
+						],
+						["热血进行曲 [Nokoh汉化]", "minigame/fc/roms/rom_cn/热血进行曲 [Nokoh汉化].nes"],
+						["热血进行曲 [PKome汉化]", "minigame/fc/roms/rom_cn/热血进行曲 [PKome汉化].nes"],
+						["热血高校躲避球 [Old Liu汉化]",
+						"minigame/fc/roms/rom_cn/热血高校躲避球 [Old Liu汉化].nes"],
+						["熊猫太子 [dragon2snow]", "minigame/fc/roms/rom_cn/熊猫太子 [dragon2snow].nes"],
+						["爆笑三国 [外星科技 (147201688转简体版)]",
+							"minigame/fc/roms/rom_cn/爆笑三国 [外星科技 (147201688转简体版)].nes"
+						],
+						["爆笑三国 [外星科技]", "minigame/fc/roms/rom_cn/爆笑三国 [外星科技].nes"],
+						["爱的小屋 [MS汉化]", "minigame/fc/roms/rom_cn/爱的小屋 [MS汉化].nes"],
+						["牧场物语 [南晶科技]", "minigame/fc/roms/rom_cn/牧场物语 [南晶科技].nes"],
+						["特库摩世界杯足球赛 [王龙汉化小组汉化 MS修正]",
+							"minigame/fc/roms/rom_cn/特库摩世界杯足球赛 [王龙汉化小组汉化 MS修正].nes"
+						],
+						["特救指令 [Puszta汉化]", "minigame/fc/roms/rom_cn/特救指令 [Puszta汉化].nes"],
+						["猫捉老鼠 [奇玉汉化]", "minigame/fc/roms/rom_cn/猫捉老鼠 [奇玉汉化].nes"],
+						["猫捉老鼠 [来福汉化]", "minigame/fc/roms/rom_cn/猫捉老鼠 [来福汉化].nes"],
+						["王中霸学习卡 [荣丰]", "minigame/fc/roms/rom_cn/王中霸学习卡 [荣丰].nes"],
+						["王子复仇记 [恒格电子]", "minigame/fc/roms/rom_cn/王子复仇记 [恒格电子].nes"],
+						["玛莉医生 [Puszta汉化]", "minigame/fc/roms/rom_cn/玛莉医生 [Puszta汉化].nes"],
+						["生化危机 [外星科技]", "minigame/fc/roms/rom_cn/生化危机 [外星科技].nes"],
+						["生命的奇迹 - 超级宝宝 [MS汉化]",
+						"minigame/fc/roms/rom_cn/生命的奇迹 - 超级宝宝 [MS汉化].nes"],
+						["甲A [外星科技]", "minigame/fc/roms/rom_cn/甲A [外星科技].nes"],
+						["电视玛琍 [未知]", "minigame/fc/roms/rom_cn/电视玛琍 [未知].nes"],
+						["疯狂鸡蛋仔 [外星科技]", "minigame/fc/roms/rom_cn/疯狂鸡蛋仔 [外星科技].nes"],
+						["皮卡丘Y2K [天空联盟汉化]", "minigame/fc/roms/rom_cn/皮卡丘Y2K [天空联盟汉化].nes"],
+						["盗帅 [Joy Van]", "minigame/fc/roms/rom_cn/盗帅 [Joy Van].nes"],
+						["盟军赶死队 [外星科技]", "minigame/fc/roms/rom_cn/盟军赶死队 [外星科技].nes"],
+						["真侍魂 - 武士道列传 [南晶科技]", "minigame/fc/roms/rom_cn/真侍魂 - 武士道列传 [南晶科技].nes"],
+						["真侍魂 - 魂之利刃 [南晶科技]", "minigame/fc/roms/rom_cn/真侍魂 - 魂之利刃 [南晶科技].nes"],
+						["真本西游记 [Asder]", "minigame/fc/roms/rom_cn/真本西游记 [Asder].nes"],
+						["碰碰车 [MS汉化]", "minigame/fc/roms/rom_cn/碰碰车 [MS汉化].nes"],
+						["神勇小白兔 [中伟汉化]", "minigame/fc/roms/rom_cn/神勇小白兔 [中伟汉化].nes"],
+						["神探柯南 (赤川次郎之幽灵列车) [星星科技]",
+							"minigame/fc/roms/rom_cn/神探柯南 (赤川次郎之幽灵列车) [星星科技].nes"
+						],
+						["神话剑云3 [恒格电子]", "minigame/fc/roms/rom_cn/神话剑云3 [恒格电子].nes"],
+						["空中魂斗罗 - 纽约行动 [maoweimam汉化]",
+							"minigame/fc/roms/rom_cn/空中魂斗罗 - 纽约行动 [maoweimam汉化].nes"
+						],
+						["空中魂斗罗 [星空汉化]", "minigame/fc/roms/rom_cn/空中魂斗罗 [星空汉化].nes"],
+						["空中魂斗罗 [金明汉化]", "minigame/fc/roms/rom_cn/空中魂斗罗 [金明汉化].nes"],
+						["突然君 [烈火暴龙汉化]", "minigame/fc/roms/rom_cn/突然君 [烈火暴龙汉化].nes"],
+						["笑傲江湖 [外星科技]", "minigame/fc/roms/rom_cn/笑傲江湖 [外星科技].nes"],
+						["第2次超级机器人大战 (记忆修正版) [先锋卡通汉化]",
+							"minigame/fc/roms/rom_cn/第2次超级机器人大战 (记忆修正版) [先锋卡通汉化].nes"
+						],
+						["第四次机器人大战 [外星科技汉化]", "minigame/fc/roms/rom_cn/第四次机器人大战 [外星科技汉化].nes"],
+						["筋肉人 - 摔角大赛 [MS汉化]", "minigame/fc/roms/rom_cn/筋肉人 - 摔角大赛 [MS汉化].nes"],
+						["筋肉人 [Madcell汉化]", "minigame/fc/roms/rom_cn/筋肉人 [Madcell汉化].nes"],
+						["米老鼠 [星空汉化]", "minigame/fc/roms/rom_cn/米老鼠 [星空汉化].nes"],
+						["红巾特攻队 [佛易汉化组 8GUA汉化]",
+							"minigame/fc/roms/rom_cn/红巾特攻队 [佛易汉化组 8GUA汉化].nes"
+						],
+						["纽约大拳猫 [MS汉化]", "minigame/fc/roms/rom_cn/纽约大拳猫 [MS汉化].nes"],
+						["绝代双娇 [南晶科技]", "minigame/fc/roms/rom_cn/绝代双娇 [南晶科技].nes"],
+						["绝代英雄 [外星科技汉化]", "minigame/fc/roms/rom_cn/绝代英雄 [外星科技汉化].nes"],
+						["绿色兵团 [SW汉化]", "minigame/fc/roms/rom_cn/绿色兵团 [SW汉化].nes"],
+						["绿色兵团 [星空汉化]", "minigame/fc/roms/rom_cn/绿色兵团 [星空汉化].nes"],
+						["绿野仙踪 [外星科技]", "minigame/fc/roms/rom_cn/绿野仙踪 [外星科技].nes"],
+						["网球 [佛易汉化组 8GUA汉化]", "minigame/fc/roms/rom_cn/网球 [佛易汉化组 8GUA汉化].nes"],
+						["网球 [顽石汉化]", "minigame/fc/roms/rom_cn/网球 [顽石汉化].nes"],
+						["美国富豪 [恒格电子]", "minigame/fc/roms/rom_cn/美国富豪 [恒格电子].nes"],
+						["美女拳 [Sachen]", "minigame/fc/roms/rom_cn/美女拳 [Sachen].nes"],
+						["耀奇之神奇蛋仔 [Puszta汉化]", "minigame/fc/roms/rom_cn/耀奇之神奇蛋仔 [Puszta汉化].nes"],
+						["脱狱 [Peacock Wang汉化 MS修正]",
+							"minigame/fc/roms/rom_cn/脱狱 [Peacock Wang汉化 MS修正].nes"
+						],
+						["脱狱 [星空汉化]", "minigame/fc/roms/rom_cn/脱狱 [星空汉化].nes"],
+						["脱狱 [死神DIY汉化]", "minigame/fc/roms/rom_cn/脱狱 [死神DIY汉化].nes"],
+						["花式九球 (版本1) [星空汉化]", "minigame/fc/roms/rom_cn/花式九球 (版本1) [星空汉化].nes"],
+						["花式九球 (版本2) [星空汉化]", "minigame/fc/roms/rom_cn/花式九球 (版本2) [星空汉化].nes"],
+						["花式九球 [MM之神汉化]", "minigame/fc/roms/rom_cn/花式九球 [MM之神汉化].nes"],
+						["英汉词典1 [未知]", "minigame/fc/roms/rom_cn/英汉词典1 [未知].nes"],
+						["英汉词典2 [未知]", "minigame/fc/roms/rom_cn/英汉词典2 [未知].nes"],
+						["英烈群侠传 [外星科技]", "minigame/fc/roms/rom_cn/英烈群侠传 [外星科技].nes"],
+						["英语声霸卡 [东生]", "minigame/fc/roms/rom_cn/英语声霸卡 [东生].nes"],
+						["英雄传 [未知]", "minigame/fc/roms/rom_cn/英雄传 [未知].nes"],
+						["英雄传奇 [恒格电子]", "minigame/fc/roms/rom_cn/英雄传奇 [恒格电子].nes"],
+						["英雄源义经传奇 [恒格电子]", "minigame/fc/roms/rom_cn/英雄源义经传奇 [恒格电子].nes"],
+						["荆轲新传 [Super Tone]", "minigame/fc/roms/rom_cn/荆轲新传 [Super Tone].nes"],
+						["荒野大镖客 [高艳龙汉化 MS修正]", "minigame/fc/roms/rom_cn/荒野大镖客 [高艳龙汉化 MS修正].nes"],
+						["荣丰学习卡 [荣丰]", "minigame/fc/roms/rom_cn/荣丰学习卡 [荣丰].nes"],
+						["菩故须苛战争 [Rinkaku汉化]", "minigame/fc/roms/rom_cn/菩故须苛战争 [Rinkaku汉化].nes"],
+						["葫芦金刚 [南晶科技]", "minigame/fc/roms/rom_cn/葫芦金刚 [南晶科技].nes"],
+						["虎穴行动 [孔雀天汉化]", "minigame/fc/roms/rom_cn/虎穴行动 [孔雀天汉化].nes"],
+						["蜡笔小新 [Future]", "minigame/fc/roms/rom_cn/蜡笔小新 [Future].nes"],
+						["蝙蝠侠 [幻想汉化]", "minigame/fc/roms/rom_cn/蝙蝠侠 [幻想汉化].nes"],
+						["街头格斗小子 [天空联盟汉化]", "minigame/fc/roms/rom_cn/街头格斗小子 [天空联盟汉化].nes"],
+						["街霸3 [天空联盟汉化]", "minigame/fc/roms/rom_cn/街霸3 [天空联盟汉化].nes"],
+						["西天取经 [TXC]", "minigame/fc/roms/rom_cn/西天取经 [TXC].nes"],
+						["西天取经2 [外星科技]", "minigame/fc/roms/rom_cn/西天取经2 [外星科技].nes"],
+						["西游记 [Nokoh汉化]", "minigame/fc/roms/rom_cn/西游记 [Nokoh汉化].nes"],
+						["西游记后传 [外星科技]", "minigame/fc/roms/rom_cn/西游记后传 [外星科技].nes"],
+						["象棋学园 [Sachen]", "minigame/fc/roms/rom_cn/象棋学园 [Sachen].nes"],
+						["赌神 [先锋卡通汉化]", "minigame/fc/roms/rom_cn/赌神 [先锋卡通汉化].nes"],
+						["赤影战士 (小字版) [来福汉化]", "minigame/fc/roms/rom_cn/赤影战士 (小字版) [来福汉化].nes"],
+						["赤影战士 [GXB汉化]", "minigame/fc/roms/rom_cn/赤影战士 [GXB汉化].nes"],
+						["赤影战士 [星空汉化]", "minigame/fc/roms/rom_cn/赤影战士 [星空汉化].nes"],
+						["赤影战士 [来福汉化]", "minigame/fc/roms/rom_cn/赤影战士 [来福汉化].nes"],
+						["超一流烟山杯围棋 [外星科技汉化]", "minigame/fc/roms/rom_cn/超一流烟山杯围棋 [外星科技汉化].nes"],
+						["超一流烟山杯围棋 [烟山软件汉化]", "minigame/fc/roms/rom_cn/超一流烟山杯围棋 [烟山软件汉化].nes"],
+						["超惑星战记 [樱组汉化 MS修正]", "minigame/fc/roms/rom_cn/超惑星战记 [樱组汉化 MS修正].nes"],
+						["超时空要塞 [姜维第二汉化]", "minigame/fc/roms/rom_cn/超时空要塞 [姜维第二汉化].nes"],
+						["超级战魂 [外星科技]", "minigame/fc/roms/rom_cn/超级战魂 [外星科技].nes"],
+						["超级机器人大战A [南晶科技]", "minigame/fc/roms/rom_cn/超级机器人大战A [南晶科技].nes"],
+						["超级玛莉 [PKome汉化]", "minigame/fc/roms/rom_cn/超级玛莉 [PKome汉化].nes"],
+						["超级贪吃蛇 [菜菜学堂]", "minigame/fc/roms/rom_cn/超级贪吃蛇 [菜菜学堂].nes"],
+						["超级铁板阵 - 加索布之谜 [MS汉化]",
+							"minigame/fc/roms/rom_cn/超级铁板阵 - 加索布之谜 [MS汉化].nes"
+						],
+						["超级马利兄弟 [未知 (MS修正)]", "minigame/fc/roms/rom_cn/超级马利兄弟 [未知 (MS修正)].nes"],
+						["超级马莉欧兄弟 [Nokoh汉化]", "minigame/fc/roms/rom_cn/超级马莉欧兄弟 [Nokoh汉化].nes"],
+						["超级马莉欧兄弟3 [Nokoh汉化]", "minigame/fc/roms/rom_cn/超级马莉欧兄弟3 [Nokoh汉化].nes"],
+						["超级马里奥兄弟3 [MM之神汉化]", "minigame/fc/roms/rom_cn/超级马里奥兄弟3 [MM之神汉化].nes"],
+						["超级魂2 [烟山软件修改]", "minigame/fc/roms/rom_cn/超级魂2 [烟山软件修改].nes"],
+						["超级魂斗罗 (版本1) [星空汉化]", "minigame/fc/roms/rom_cn/超级魂斗罗 (版本1) [星空汉化].nes"],
+						["超级魂斗罗 (版本2) [星空汉化]", "minigame/fc/roms/rom_cn/超级魂斗罗 (版本2) [星空汉化].nes"],
+						["超级魂斗罗 [樱组汉化]", "minigame/fc/roms/rom_cn/超级魂斗罗 [樱组汉化].nes"],
+						["超级魂斗罗 [王大可汉化]", "minigame/fc/roms/rom_cn/超级魂斗罗 [王大可汉化].nes"],
+						["超级魂斗罗X [孔雀天汉化]", "minigame/fc/roms/rom_cn/超级魂斗罗X [孔雀天汉化].nes"],
+						["超越地平线 [Nineswords汉化]",
+							"minigame/fc/roms/rom_cn/超越地平线 [Nineswords汉化].nes"
+						],
+						["足球小将 [外星科技汉化 修改版]", "minigame/fc/roms/rom_cn/足球小将 [外星科技汉化 修改版].nes"],
+						["轰天至尊 [TXC]", "minigame/fc/roms/rom_cn/轰天至尊 [TXC].nes"],
+						["轰炸超人 [Nokoh汉化]", "minigame/fc/roms/rom_cn/轰炸超人 [Nokoh汉化].nes"],
+						["迷宫封印 [Sachen]", "minigame/fc/roms/rom_cn/迷宫封印 [Sachen].nes"],
+						["迷糊车 [未知]", "minigame/fc/roms/rom_cn/迷糊车 [未知].unf"],
+						["迷魂车 [Puszta汉化]", "minigame/fc/roms/rom_cn/迷魂车 [Puszta汉化].nes"],
+						["重装机兵 [先锋卡通汉化 (MS修正)]",
+							"minigame/fc/roms/rom_cn/重装机兵 [先锋卡通汉化 (MS修正)].nes"
+						],
+						["重装机兵 [先锋卡通汉化 (ZYM转简体菜单版)]",
+							"minigame/fc/roms/rom_cn/重装机兵 [先锋卡通汉化 (ZYM转简体菜单版)].nes"
+						],
+						["重装机兵 [先锋卡通汉化]", "minigame/fc/roms/rom_cn/重装机兵 [先锋卡通汉化].nes"],
+						["金庸群侠传 - 书剑江山 [南晶科技]",
+						"minigame/fc/roms/rom_cn/金庸群侠传 - 书剑江山 [南晶科技].nes"],
+						["金曲KTV [未知]", "minigame/fc/roms/rom_cn/金曲KTV [未知].nes"],
+						["铁血战士 [MS汉化]", "minigame/fc/roms/rom_cn/铁血战士 [MS汉化].nes"],
+						["银河时代 (最终幻想1) [外星科技汉化]",
+							"minigame/fc/roms/rom_cn/银河时代 (最终幻想1) [外星科技汉化].nes"
+						],
+						["锄大D [台北裕威]", "minigame/fc/roms/rom_cn/锄大D [台北裕威].nes"],
+						["阿尔戈斯战士 [孔雀天汉化 MS修正]",
+						"minigame/fc/roms/rom_cn/阿尔戈斯战士 [孔雀天汉化 MS修正].nes"],
+						["阿拉丁 [叶枫汉化]", "minigame/fc/roms/rom_cn/阿拉丁 [叶枫汉化].nes"],
+						["隋唐演义 [外星科技]", "minigame/fc/roms/rom_cn/隋唐演义 [外星科技].nes"],
+						["隋唐英雄 [南晶科技]", "minigame/fc/roms/rom_cn/隋唐英雄 [南晶科技].nes"],
+						["雪人兄弟 [MS汉化]", "minigame/fc/roms/rom_cn/雪人兄弟 [MS汉化].nes"],
+						["雷电2 [三协资讯]", "minigame/fc/roms/rom_cn/雷电2 [三协资讯].nes"],
+						["雷电皇 - 比卡丘传说 [南晶科技]", "minigame/fc/roms/rom_cn/雷电皇 - 比卡丘传说 [南晶科技].nes"],
+						["雷霆任务 [金明汉化]", "minigame/fc/roms/rom_cn/雷霆任务 [金明汉化].nes"],
+						["霹雳神兵 [金明汉化]", "minigame/fc/roms/rom_cn/霹雳神兵 [金明汉化].nes"],
+						["飞人战士 [金明汉化]", "minigame/fc/roms/rom_cn/飞人战士 [金明汉化].nes"],
+						["香帅传奇 [南晶科技]", "minigame/fc/roms/rom_cn/香帅传奇 [南晶科技].nes"],
+						["马戏团 [Nokoh汉化]", "minigame/fc/roms/rom_cn/马戏团 [Nokoh汉化].nes"],
+						["马戏团 [汉化情报站汉化 MS修正]", "minigame/fc/roms/rom_cn/马戏团 [汉化情报站汉化 MS修正].nes"],
+						["马步迷阵 - 趣味成语屋 [小霸王]", "minigame/fc/roms/rom_cn/马步迷阵 - 趣味成语屋 [小霸王].nes"],
+						["马里奥兄弟 [Madcell汉化]", "minigame/fc/roms/rom_cn/马里奥兄弟 [Madcell汉化].nes"],
+						["魂斗罗 [星空汉化]", "minigame/fc/roms/rom_cn/魂斗罗 [星空汉化].nes"],
+						["魂斗罗 [酷酷小熊汉化 MS修正]", "minigame/fc/roms/rom_cn/魂斗罗 [酷酷小熊汉化 MS修正].nes"],
+						["魂斗罗力量 [MS汉化]", "minigame/fc/roms/rom_cn/魂斗罗力量 [MS汉化].nes"],
+						["魂斗罗力量 [星空汉化]", "minigame/fc/roms/rom_cn/魂斗罗力量 [星空汉化].nes"],
+						["魔域英雄传 [外星科技]", "minigame/fc/roms/rom_cn/魔域英雄传 [外星科技].nes"],
+						["魔幻世界 [南晶科技]", "minigame/fc/roms/rom_cn/魔幻世界 [南晶科技].nes"],
+						["魔法总动员 [混沌星辰汉化 MS修正]",
+						"minigame/fc/roms/rom_cn/魔法总动员 [混沌星辰汉化 MS修正].nes"],
+						["魔法门之英雄无敌 [外星科技]", "minigame/fc/roms/rom_cn/魔法门之英雄无敌 [外星科技].nes"],
+						["魔界塔士 [南晶科技]", "minigame/fc/roms/rom_cn/魔界塔士 [南晶科技].nes"],
+						["魔界霸主 [南晶科技]", "minigame/fc/roms/rom_cn/魔界霸主 [南晶科技].nes"],
+						["魔神法师 [外星科技]", "minigame/fc/roms/rom_cn/魔神法师 [外星科技].nes"],
+						["魔神英雄传外传 [Ken XYGong Macro汉化]",
+							"minigame/fc/roms/rom_cn/魔神英雄传外传 [Ken XYGong Macro汉化].nes"
+						],
+						["魔道士阴谋 [外星汉化 MS第二次修正]",
+							"minigame/fc/roms/rom_cn/魔道士阴谋 [外星汉化 MS第二次修正].nes"
+						],
+						["魔道士阴谋 [外星科技汉化 姜维第二修正]",
+							"minigame/fc/roms/rom_cn/魔道士阴谋 [外星科技汉化 姜维第二修正].nes"
+						],
+						["鸟人战队 [烈火暴龙汉化]", "minigame/fc/roms/rom_cn/鸟人战队 [烈火暴龙汉化].nes"],
+						["麻将方块 [Idea-Tek]", "minigame/fc/roms/rom_cn/麻将方块 [Idea-Tek].nes"],
+						["麻雀 [星空汉化]", "minigame/fc/roms/rom_cn/麻雀 [星空汉化].nes"],
+						["麻雀世界 - 歌舞伎町篇 [Sachen]",
+							"minigame/fc/roms/rom_cn/麻雀世界 - 歌舞伎町篇 [Sachen].nes"
+						],
+						["麻雀世界 [Sachen]", "minigame/fc/roms/rom_cn/麻雀世界 [Sachen].nes"],
+						["黄帝 - 涿鹿之战 [Asder]", "minigame/fc/roms/rom_cn/黄帝 - 涿鹿之战 [Asder].nes"],
+						["黄金太阳 [南晶科技]", "minigame/fc/roms/rom_cn/黄金太阳 [南晶科技].nes"],
+						["黑客 [南晶科技]", "minigame/fc/roms/rom_cn/黑客 [南晶科技].nes"],
+						["黑暗之蛊 [火星电子]", "minigame/fc/roms/rom_cn/黑暗之蛊 [火星电子].nes"],
+						["龙之忍者 [MS汉化]", "minigame/fc/roms/rom_cn/龙之忍者 [MS汉化].nes"],
+						["龙珠Z - 强袭！赛亚人 [外星科技汉化]",
+							"minigame/fc/roms/rom_cn/龙珠Z - 强袭！赛亚人 [外星科技汉化].nes"
+						],
+						["龙珠Z - 超武斗传2 [天空联盟汉化]",
+							"minigame/fc/roms/rom_cn/龙珠Z - 超武斗传2 [天空联盟汉化].nes"
+						],
+						["龙珠Z2 - 激战弗利萨 [外星科技汉化 惊风修正]",
+							"minigame/fc/roms/rom_cn/龙珠Z2 - 激战弗利萨 [外星科技汉化 惊风修正].nes"
+						],
+						["龙珠Z外传 - 赛亚人灭绝计划 [外星科技汉化 惊风修正]",
+							"minigame/fc/roms/rom_cn/龙珠Z外传 - 赛亚人灭绝计划 [外星科技汉化 惊风修正].nes"
+						],
+						["龙珠Z外传 - 赛亚人灭绝计划 [酷哥电子汉化]",
+							"minigame/fc/roms/rom_cn/龙珠Z外传 - 赛亚人灭绝计划 [酷哥电子汉化].nes"
+						],
+						["龙珠英雄 (半熟英雄) [外星科技汉化]",
+							"minigame/fc/roms/rom_cn/龙珠英雄 (半熟英雄) [外星科技汉化].nes"
+						],
+						["龙魂 - 新的传说 [Nineswords汉化]",
+							"minigame/fc/roms/rom_cn/龙魂 - 新的传说 [Nineswords汉化].nes"
+						],
+						["龙魂 - 新的血族 [Nineswords汉化]",
+							"minigame/fc/roms/rom_cn/龙魂 - 新的血族 [Nineswords汉化].nes"
+						]
+
+
+					]
+
+
+				})
+			});
+			//nes.ui.loadROM('minigame/fc/roms/Contra (U) [!].nes")
+		});
+
+		document.body.addEventListener('touchmove', function (e) {
+			e.preventDefault();
+		}, false)
+		document.addEventListener('gesturestart', function (e) {
+			e.preventDefault();
+		});
+	</script>
+	<!--[if IE]>
+        <script type="text/vbscript" src="minigame/fc/source/jsnes-ie-hacks.vbscript"></script>
+    <![endif]-->
+</body>
+
+</html>

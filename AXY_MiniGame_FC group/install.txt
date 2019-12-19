@@ -1,0 +1,14 @@
+2019.12.18
+使用说明：
+1.备份好你的rmmv工程；
+2.将本插件组合包内的所有文件和文件夹整个复制到你的rmmv工程根目录并覆盖；
+包括minigame、js、index.html等；
+3.打开mv工程，打开插件管理器，添加本插件包js/plugins下的所有插件；
+4.新建测试事件，输入如下脚本：AXY_MiniGame_FC.show();
+5.玩的开心；
+
+高级用法：
+输入如下脚本：
+AXY_MiniGame_FC.show('zzjb'); // 加载minigame/fc/roms/zzjb.nes文件
+AXY_MiniGame_FC.show('rom_cn/tstd'); // 加载minigame/fc/roms/rom_cn/tstd.nes文件
+

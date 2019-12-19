@@ -1,0 +1,296 @@
+body {
+	background-color: #000;
+
+}
+
+.big {
+	transform: rotate(-90deg);
+	transform-origin: left top;
+	width: 100vh;
+	overflow-x: hidden;
+	position: absolute;
+	top: 100%;
+	left: 0;
+}
+
+select {
+	font-size: 20px;
+}
+
+.big .nes-screen {
+	width: auto;
+	height: 50vh;
+}
+
+.big .nes-roms {
+	position: absolute;
+	left: 84px;
+	top: 0px;
+
+}
+
+.big .nes-roms select {
+	width: 60px;
+}
+
+.big .nes-controls {
+	position: absolute;
+	right: 60px;
+	top: 0;
+	width: 80px;
+	text-align: left;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+}
+
+#emulator {
+	margin: 0 auto;
+	text-align: center;
+}
+
+
+.big #controls-direction {
+	left: -5px;
+}
+
+#controls-direction {
+	position: fixed;
+	bottom: 48px;
+	left: 10px;
+	width: 150px;
+	height: 150px;
+	overflow: hidden;
+}
+
+.joydirection {
+	width: 50px;
+	height: 50px;
+	display: block;
+	float: left;
+	z-index: 10;
+	position: relative;
+}
+
+#controls-direction .center {
+	z-index: 1;
+}
+
+#controls-direction .left:after {
+	position: absolute;
+	left: 32px;
+	top: 8px;
+	content: ' ';
+
+	transform: rotate(45deg);
+}
+
+#controls-direction :after {
+	background-color: #aaa;
+	width: 35px;
+	height: 35px;
+}
+
+#controls-direction .up:after {
+	position: absolute;
+	bottom: -17px;
+	left: 8px;
+	content: ' ';
+
+
+	transform: rotate(45deg);
+}
+
+#controls-direction .right:after {
+	position: absolute;
+	top: 8px;
+	left: -16px;
+	content: ' ';
+
+	transform: rotate(45deg);
+}
+
+#controls-direction .down:after {
+	position: absolute;
+	top: -16px;
+	left: 8px;
+	content: ' ';
+
+	transform: rotate(45deg);
+}
+
+#controls-direction .up {
+	background-color: #aaa;
+}
+
+#controls-direction .left {
+	background-color: #aaa;
+}
+
+#controls-direction .right {
+	background-color: #aaa;
+}
+
+#controls-direction .down {
+	background-color: #aaa;
+}
+
+.controls-center-select {
+	position: fixed;
+	left: 40px;
+	bottom: 5px;
+	width: 80px;
+	height: 40px;
+	color: #fff;
+	line-height: 40px;
+	border-radius: 30px;
+	text-align: center;
+	-webkit-transform: scale(0.8);
+}
+
+.controls-center-start {
+	position: fixed;
+	right: 40px;
+	width: 80px;
+	bottom: 5px;
+	height: 40px;
+	color: #fff;
+	line-height: 40px;
+	border-radius: 30px;
+	text-align: center;
+	-webkit-transform: scale(0.8);
+}
+
+.big #controls-fire {
+	right: 0;
+}
+
+.big #controls-turbofire {
+	right: 0;
+}
+
+#controls-fire {
+	position: fixed;
+	bottom: 60px;
+	right: 10px;
+	width: 140px;
+	height: 60px;
+
+}
+
+#controls-turbofire {
+	position: fixed;
+	bottom: 131px;
+	right: 10px;
+	width: 140px;
+	height: 60px;
+
+}
+
+.a {
+	position: absolute;
+	left: 0;
+	height: 60px;
+	width: 60px;
+	border-radius: 60px;
+}
+
+.b {
+	position: absolute;
+	right: 0;
+	height: 60px;
+	width: 60px;
+	border-radius: 60px;
+}
+
+.c {
+	position: absolute;
+	top: 0px;
+	right: 61px;
+	height: 60px;
+	width: 18px;
+	/*
+	border-radius: 60px;
+	background-color: #aaa;
+	*/
+}
+
+.joybtn {
+	background-color: #aaa;
+	user-select: none;
+}
+
+.joybtn:active,
+.joybtn.active,
+.active {
+	opacity: 0.3;
+}
+
+.nes-status {
+	display: none;
+}
+
+.shang {
+	position: fixed;
+	top: 385px;
+	display: inline-block;
+}
+
+.shang.anim_m {
+	animation: slidein 20s linear infinite;
+}
+
+.shang.pc {
+	top: auto;
+	bottom: 0;
+	left: 0;
+}
+
+.big .shang {
+	top: 10px;
+	left: 10px;
+	animation: none;
+}
+
+.shang img {
+	animation: rote 2s linear infinite;
+}
+
+@keyframes slidein {
+	from {
+		transform: translateX(0px);
+	}
+
+	100% {
+		transform: translateX(500px);
+	}
+}
+
+@keyframes rote {
+	0% {
+		transform: rotate(0);
+	}
+
+	25% {
+		transform: rotate(15deg);
+	}
+
+	75% {
+		transform: rotate(-15deg);
+	}
+
+	100% {
+		transform: rotate(0);
+	}
+}
+
+#pc-controlls {
+	color: #fff;
+	margin-top: 20px;
+}
+
+#pc-controlls table {
+	margin: 0 auto;
+}
