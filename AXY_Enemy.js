@@ -1,11 +1,11 @@
 //=============================================================================
 // A XueYu Plugins - Enemy
 // AXY_Enemy.js
-// Version: 1.05
+// Version: 1.06
 // License: MIT
 //=============================================================================
 /*:
- * @plugindesc v1.05 Allows add Enemy in battle and enemy's staff.
+ * @plugindesc v1.06 Allows add Enemy in battle and enemy's staff.
  * @author A XueYu Plugins
  *
  * @help
@@ -16,6 +16,7 @@
  * Usage:
  * Write
  * <axy_enemy_hp:10000000>
+ * <axy_enemy_mhp:20000000>
  * to enemy meta note box;
  * 
  * Example: 
@@ -27,6 +28,9 @@
  * AXY.Enemy.bulkAdd(10,[1,10],[100,200],[300,400]);
  *
  * changelog
+ * 1.06 2019.12.22
+ * add: global variables for hp and mhp;
+ * add: <axy_enemy_mhp:20000000> for max hp;
  * 1.05 2019.11.28
  * add: meta: <axy_enemy_hp:10000000> for break out hp=999999;
  * 1.04 2019.11.25
@@ -47,6 +51,12 @@
  * @text Letter Table Settings
  * @type struct<letterTableStruct>
  * @default
+ * 
+ * @param GlobalHpMhpTimesVariableID
+ * @text Global HP/MHP Times Variable ID
+ * @desc Global HP/MHP times Variable ID. default: 1
+ * @type variable
+ * @default 1
  * 
  * 
  */
@@ -150,16 +160,15 @@ Object.keys(AXY.Enemy.Parameters).forEach(function (key) {
 Game_BattlerBase.prototype.param = function (paramId) {
 	if (paramId === 0) {
 		var value = this.enemy().meta.axy_enemy_hp || this.paramBase(paramId) + this.paramPlus(paramId);
-		var maxValue = parseInt(this.enemy().meta.axy_enemy_hp) || this.paramMax(paramId);
+		var maxValue = parseInt(this.enemy().meta.axy_enemy_mhp) || parseInt(this.enemy().meta.axy_enemy_hp) || this.paramMax(paramId);
+
+		value *= $gameVariables.value(AXY.Enemy.Param.GlobalHpMhpTimesVariableID) || 1;
+		maxValue *= $gameVariables.value(AXY.Enemy.Param.GlobalHpMhpTimesVariableID) || 1;
 	} else {
 		var value = this.paramBase(paramId) + this.paramPlus(paramId);
 		var maxValue = this.paramMax(paramId);
 	}
 	value *= this.paramRate(paramId) * this.paramBuffRate(paramId);
-	//console.log(value);
-	//AAAAAA = this;
-	//AAAAAAV = value;
-	//AAAAAAM = maxValue;
 
 	var minValue = this.paramMin(paramId);
 	return Math.round(value.clamp(minValue, maxValue));

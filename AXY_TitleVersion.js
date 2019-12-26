@@ -1,11 +1,11 @@
 //=============================================================================
 // A XueYu Plugins - Title Version
 // AXY_TitleVersion.js
-// Version: 1.01
+// Version: 1.02
 // License: MIT
 //=============================================================================
 /*:
- * @plugindesc v1.01 Display Version or Multiple lines of text in Title Screen.
+ * @plugindesc v1.02 Display Version or Multiple lines of text in Title Screen.
  * @author A XueYu Plugins
  *
  * @param DisplayVersion1
@@ -174,6 +174,8 @@
  * to your home page at the title screen.
  * 
  * changelog
+ * 1.02 2019.12.15
+ * fix: eval incompatiable with |;
  * 1.01 2019.9.26
  * add eval on text, so formulas are allowed.
  * change xy to axy;
@@ -302,9 +304,9 @@ Scene_Title.prototype.createForeground = function () {
 
 		var y = AXY.TitleVersion.Param.Y4;
 
-		var versionText = AXY.TitleVersion.Param.TextContent4.split("|");
+		var versionText = eval(AXY.TitleVersion.Param.TextContent4).split("|");
 		versionText.forEach(function (vt) {
-			this._titleVersionSprite.bitmap.drawText(eval(vt), AXY.TitleVersion.Param.X4, y, Graphics.width, AXY.TitleVersion.Param.FontSize4, AXY.TitleVersion.Param.Align4);
+			this._titleVersionSprite.bitmap.drawText(vt, AXY.TitleVersion.Param.X4, y, Graphics.width, AXY.TitleVersion.Param.FontSize4, AXY.TitleVersion.Param.Align4);
 			// from top to bottom different from bottom to top, must display before change y. 
 			y += AXY.TitleVersion.Param.FontSize4 + AXY.TitleVersion.Param.LineSpacing4;
 		}, this);

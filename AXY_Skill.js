@@ -1,11 +1,11 @@
 //=============================================================================
 // A XueYu Plugins - Skill
 // AXY_Skill.js
-// Version: 1.00
+// Version: 1.01
 // License: MIT
 //=============================================================================
 /*:
- * @plugindesc v1.00 Set param about skill.
+ * @plugindesc v1.01 Set param about skill.
  * @author A XueYu Plugins
  *
  * @help
@@ -16,9 +16,15 @@
  * Usage:
  * Write
  * <axy_skill_repeat:10>
+ * <axy_skill_mode:a> //one by one, totals = repeats*targets
+ * <axy_skill_mode:b> //one by one, totals = repeats
+ * <axy_skill_mode:c> //round by round, totals = repeats*targets
+ * <axy_skill_mode:d> //round by round, totals = repeats
  * to skill meta note box;
  *
  * changelog
+ * 1.01 2019.12.25
+ * add: abcd four repeat mode;
  * 1.00 2019.11.28
  * first release.
  *
@@ -93,5 +99,88 @@ Object.keys(AXY.Skill.Parameters).forEach(function (key) {
 			repeats += this.subject().attackTimesAdd();
 		}
 		return Math.floor(repeats);
+	};
+
+	Game_Action.prototype.repeatTargets = function (targets) {
+		var repeatedTargets = [];
+		var repeats = this.numRepeats();
+
+		//console.log(this.item().meta.axy_skill_mode);
+		var _tmp = this.item().meta.axy_skill_mode;
+		switch (_tmp == undefined ? '' : _tmp.toLowerCase()) {
+			case 'a': //one by one, totals = repeats*targets
+				for (var j = 0; j < repeats; j++) {
+					for (var i = 0; i < targets.length; i++) {
+						var target = targets[i];
+						if (target) {
+							repeatedTargets.push(target);
+							//console.log('a');
+						}
+					}
+				}
+				break;
+			case 'b': //one by one, totals = repeats
+				for (var j = 0; j < repeats;) {
+					for (var i = 0; i < targets.length; i++) {
+						var target = targets[i];
+						if (target) {
+							repeatedTargets.push(target);
+							j++;
+							//console.log('b');
+						}
+					}
+				}
+				break;
+			case 'c': //round by round, totals = repeats*targets
+				for (var j = 0; j < repeats; j++) {
+					targets = [];
+					if (!this._forcing && this.subject().isConfused()) {
+						targets = [this.confusionTarget()];
+					} else if (this.isForOpponent()) {
+						targets = this.targetsForOpponents();
+					} else if (this.isForFriend()) {
+						targets = this.targetsForFriends();
+					}
+					for (var i = 0; i < targets.length; i++) {
+						var target = targets[i];
+						if (target) {
+							repeatedTargets.push(target);
+							//console.log('c');
+						}
+					}
+				}
+				break;
+			case 'd': //round by round, totals = repeats
+				for (var j = 0; j < repeats;) {
+					targets = [];
+					if (!this._forcing && this.subject().isConfused()) {
+						targets = [this.confusionTarget()];
+					} else if (this.isForOpponent()) {
+						targets = this.targetsForOpponents();
+					} else if (this.isForFriend()) {
+						targets = this.targetsForFriends();
+					}
+					for (var i = 0; i < targets.length; i++) {
+						var target = targets[i];
+						if (target) {
+							repeatedTargets.push(target);
+							j++;
+							//console.log('d');
+						}
+					}
+				}
+				break;
+			default:
+				for (var i = 0; i < targets.length; i++) {
+					var target = targets[i];
+					if (target) {
+						for (var j = 0; j < repeats; j++) {
+							repeatedTargets.push(target);
+						}
+					}
+				}
+				break;
+		}
+		return repeatedTargets;
 	};
 })();
