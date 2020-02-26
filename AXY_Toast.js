@@ -1,11 +1,11 @@
 //=============================================================================
 // XueYu Plugins - Toast
 // AXY_Toast.js
-// Version: 1.09
-// License: BSD
+// Version: 1.11
+// License: MIT
 //=============================================================================
- /*:
- * @plugindesc v1.09 This plugin support android toast with many args.
+/*:
+ * @plugindesc v1.11 This plugin support android toast with many args.
  * @author XueYu Plugins
  *
  * @param X
@@ -123,6 +123,11 @@
  * and others DisplayGainGold, DisplayChangeExp, DisplayLevelUp etc.;
  *
  * changelog
+ * 1.11 2020.2.9
+ * fix: exp toast after battle;
+ * 1.10 2020.2.8
+ * fix: exp toast;
+ * change: License from BSD to MIT;
  * 1.09 2017.9.1
  * add switch to enable or disable map info display;
  * 1.08 2017.8.27
@@ -187,25 +192,17 @@ AXY.Toast.Param.CustomMapInfoTemplate = String(AXY.Toast.Parameters['CustomMapIn
 
 
 /***********************************************************************************
-* Add Array.indexOf                                                                *
-***********************************************************************************/
-(function ()
-{
-	if (typeof Array.prototype.indexOf !== 'function')
-	{
-		Array.prototype.indexOf = function(searchElement, fromIndex)
-		{
-			for (var i = (fromIndex || 0), j = this.length; i < j; i += 1)
-			{
-				if ((searchElement === undefined) || (searchElement === null))
-				{
-					if (this[i] === searchElement)
-					{
+ * Add Array.indexOf                                                                *
+ ***********************************************************************************/
+(function () {
+	if (typeof Array.prototype.indexOf !== 'function') {
+		Array.prototype.indexOf = function (searchElement, fromIndex) {
+			for (var i = (fromIndex || 0), j = this.length; i < j; i += 1) {
+				if ((searchElement === undefined) || (searchElement === null)) {
+					if (this[i] === searchElement) {
 						return i;
 					}
-				}
-				else if (this[i] === searchElement)
-				{
+				} else if (this[i] === searchElement) {
 					return i;
 				}
 			}
@@ -215,29 +212,23 @@ AXY.Toast.Param.CustomMapInfoTemplate = String(AXY.Toast.Parameters['CustomMapIn
 })();
 /**********************************************************************************/
 
-(function ($,undefined)
-{
-	var toasting =
-	{
-		gettoaster : function ()
-		{
+(function ($, undefined) {
+	var toasting = {
+		gettoaster: function () {
 			var toaster = $('#' + settings.toaster.id);
-			if(toaster.length < 1)
-			{
+			if (toaster.length < 1) {
 				toaster = $(settings.toaster.template).attr('id', settings.toaster.id).css(settings.toaster.css).addClass(settings.toaster['class']);
-				if ((settings.stylesheet) && (!$("link[href=" + settings.stylesheet + "]").length))
-				{
+				if ((settings.stylesheet) && (!$("link[href=" + settings.stylesheet + "]").length)) {
 					$('head').appendTo('<link rel="stylesheet" href="' + settings.stylesheet + '">');
 				}
 				$(settings.toaster.container).append(toaster);
 			}
 			return toaster;
 		},
-		
-		notify : function (title, message, priority, color, fontfamily, fontsize, textshadowcolor, textshadowwidth)
-		{
+
+		notify: function (title, message, priority, color, fontfamily, fontsize, textshadowcolor, textshadowwidth) {
 			var $toaster = this.gettoaster();
-			var $toast  = $(settings.toast.template.replace('%priority%', priority)).hide().css(settings.toast.css).addClass(settings.toast['class']);
+			var $toast = $(settings.toast.template.replace('%priority%', priority)).hide().css(settings.toast.css).addClass(settings.toast['class']);
 			//console.log('notify='+Window_Base.prototype.standardFontFace);
 			//console.log(Bitmap.fontFace);
 			$toast.css('font-family', fontfamily ? fontfamily : ($gameSystem ? Window_Base.prototype.standardFontFace : 'GameFont'));
@@ -256,52 +247,48 @@ AXY.Toast.Param.CustomMapInfoTemplate = String(AXY.Toast.Parameters['CustomMapIn
 			console.log($('body'));
 			console.log($('#UpperCanvas'));
 			console.log($('#UpperCanvas')[0].scrollHeight);*/
-			
-			if(document.body.scrollWidth > $('#UpperCanvas')[0].scrollWidth){
+
+			if (document.body.scrollWidth > $('#UpperCanvas')[0].scrollWidth) {
 				var w = AXY.Toast.Param.X + (document.body.scrollWidth - $('#UpperCanvas')[0].scrollWidth) / 2;
-				console.log(w);
-				$toaster.css('left', w+'px');
+				//console.log(w);
+				$toaster.css('left', w + 'px');
 			}
-			if(document.body.scrollHeight > $('#UpperCanvas')[0].scrollHeight){
+			if (document.body.scrollHeight > $('#UpperCanvas')[0].scrollHeight) {
 				var h = AXY.Toast.Param.Y + (document.body.scrollHeight - $('#UpperCanvas')[0].scrollHeight) / 2;
 				console.log(h);
-				$toaster.css('top', h+'px');
+				$toaster.css('top', h + 'px');
 			}
 
-			if(color){
+			if (color) {
 				//$('.title', $toast).css('color', color);
 				//$('.message', $toast).css('color', color);
 				$toast.css('color', color);
 			}
-			if(fontsize){
-				$toast.css('font-size', fontsize+'px');
+			if (fontsize) {
+				$toast.css('font-size', fontsize + 'px');
 			}
-			if(!textshadowcolor){
+			if (!textshadowcolor) {
 				textshadowcolor = String(AXY.Toast.Parameters['TextShadowColor']);
 			}
-			if(!textshadowwidth){
+			if (!textshadowwidth) {
 				textshadowwidth = String(AXY.Toast.Parameters['TextShadowWidth']);
 			}
-			$toast.css('text-shadow', textshadowcolor+' '+textshadowwidth+'px 0 0,'+textshadowcolor+' 0 '+textshadowwidth+'px 0,'+textshadowcolor+' -'+textshadowwidth+'px 0 0,'+textshadowcolor+' 0 -'+textshadowwidth+'px 0');
-			$toast.css('-webkit-text-shadow', textshadowcolor+' '+textshadowwidth+'px 0 0,'+textshadowcolor+' 0 '+textshadowwidth+'px 0,'+textshadowcolor+' -'+textshadowwidth+'px 0 0,'+textshadowcolor+' 0 -'+textshadowwidth+'px 0');
-			$toast.css('-moz-text-shadow', textshadowcolor+' '+textshadowwidth+'px 0 0,'+textshadowcolor+' 0 '+textshadowwidth+'px 0,'+textshadowcolor+' -'+textshadowwidth+'px 0 0,'+textshadowcolor+' 0 -'+textshadowwidth+'px 0');
-			$toast.css('*filter', 'Glow(color='+textshadowcolor+', strength='+textshadowwidth+')');
+			$toast.css('text-shadow', textshadowcolor + ' ' + textshadowwidth + 'px 0 0,' + textshadowcolor + ' 0 ' + textshadowwidth + 'px 0,' + textshadowcolor + ' -' + textshadowwidth + 'px 0 0,' + textshadowcolor + ' 0 -' + textshadowwidth + 'px 0');
+			$toast.css('-webkit-text-shadow', textshadowcolor + ' ' + textshadowwidth + 'px 0 0,' + textshadowcolor + ' 0 ' + textshadowwidth + 'px 0,' + textshadowcolor + ' -' + textshadowwidth + 'px 0 0,' + textshadowcolor + ' 0 -' + textshadowwidth + 'px 0');
+			$toast.css('-moz-text-shadow', textshadowcolor + ' ' + textshadowwidth + 'px 0 0,' + textshadowcolor + ' 0 ' + textshadowwidth + 'px 0,' + textshadowcolor + ' -' + textshadowwidth + 'px 0 0,' + textshadowcolor + ' 0 -' + textshadowwidth + 'px 0');
+			$toast.css('*filter', 'Glow(color=' + textshadowcolor + ', strength=' + textshadowwidth + ')');
 
-			
-			if ((settings.debug) && (window.console))
-			{
+
+			if ((settings.debug) && (window.console)) {
 				console.log(toast);
 			}
 
 			$toaster.append(settings.toast.display($toast));
 
-			if (settings.donotdismiss.indexOf(priority) === -1)
-			{
+			if (settings.donotdismiss.indexOf(priority) === -1) {
 				var timeout = (typeof settings.timeout === 'number') ? settings.timeout : ((typeof settings.timeout === 'object') && (priority in settings.timeout)) ? settings.timeout[priority] : 1500;
-				setTimeout(function()
-				{
-					settings.toast.remove($toast, function()
-					{
+				setTimeout(function () {
+					settings.toast.remove($toast, function () {
 						$toast.remove();
 					});
 				}, timeout);
@@ -309,130 +296,116 @@ AXY.Toast.Param.CustomMapInfoTemplate = String(AXY.Toast.Parameters['CustomMapIn
 		}
 	};
 	//console.log('def='+Window_Base.prototype.standardFontFace);
-	var defaults =
-	{
-		'toaster'         :
-		{
-			'id'        : 'toaster',
-			'container' : 'body',
-			'template'  : '<div></div>',
-			'class'     : 'toaster',
-			'css'       :
-			{
-				'position' : 'fixed',
-				'left'    : AXY.Toast.Param.X+'px',
-				'top'      : AXY.Toast.Param.Y+'px',
-				'width'    : AXY.Toast.Param.Width+'px',
-				'zIndex'   : AXY.Toast.Param.zIndex,
-				'opacity'   : AXY.Toast.Param.opacity,
-				'font-family'	:	$gameSystem ? Window_Base.prototype.standardFontFace : 'GameFont',
-				'text-shadow'	:	String(AXY.Toast.Parameters['TextShadowColor'])+' '+String(AXY.Toast.Parameters['TextShadowWidth'])+'px 0 0,'+String(AXY.Toast.Parameters['TextShadowColor'])+' 0 '+String(AXY.Toast.Parameters['TextShadowWidth'])+'px 0,'+String(AXY.Toast.Parameters['TextShadowColor'])+' -'+String(AXY.Toast.Parameters['TextShadowWidth'])+'px 0 0,'+String(AXY.Toast.Parameters['TextShadowColor'])+' 0 -'+String(AXY.Toast.Parameters['TextShadowWidth'])+'px 0',
-				'-webkit-text-shadow'	:	String(AXY.Toast.Parameters['TextShadowColor'])+' '+String(AXY.Toast.Parameters['TextShadowWidth'])+'px 0 0,'+String(AXY.Toast.Parameters['TextShadowColor'])+' 0 '+String(AXY.Toast.Parameters['TextShadowWidth'])+'px 0,'+String(AXY.Toast.Parameters['TextShadowColor'])+' -'+String(AXY.Toast.Parameters['TextShadowWidth'])+'px 0 0,'+String(AXY.Toast.Parameters['TextShadowColor'])+' 0 -'+String(AXY.Toast.Parameters['TextShadowWidth'])+'px 0',
-				'-moz-text-shadow'	:	String(AXY.Toast.Parameters['TextShadowColor'])+' '+String(AXY.Toast.Parameters['TextShadowWidth'])+'px 0 0,'+String(AXY.Toast.Parameters['TextShadowColor'])+' 0 '+String(AXY.Toast.Parameters['TextShadowWidth'])+'px 0,'+String(AXY.Toast.Parameters['TextShadowColor'])+' -'+String(AXY.Toast.Parameters['TextShadowWidth'])+'px 0 0,'+String(AXY.Toast.Parameters['TextShadowColor'])+' 0 -'+String(AXY.Toast.Parameters['TextShadowWidth'])+'px 0',
-				'*filter'	:	'Glow(color='+String(AXY.Toast.Parameters['TextShadowColor'])+', strength='+String(AXY.Toast.Parameters['TextShadowWidth'])+')'
-				
+	var defaults = {
+		'toaster': {
+			'id': 'toaster',
+			'container': 'body',
+			'template': '<div></div>',
+			'class': 'toaster',
+			'css': {
+				'position': 'fixed',
+				'left': AXY.Toast.Param.X + 'px',
+				'top': AXY.Toast.Param.Y + 'px',
+				'width': AXY.Toast.Param.Width + 'px',
+				'zIndex': AXY.Toast.Param.zIndex,
+				'opacity': AXY.Toast.Param.opacity,
+				'font-family': $gameSystem ? Window_Base.prototype.standardFontFace : 'GameFont',
+				'text-shadow': String(AXY.Toast.Parameters['TextShadowColor']) + ' ' + String(AXY.Toast.Parameters['TextShadowWidth']) + 'px 0 0,' + String(AXY.Toast.Parameters['TextShadowColor']) + ' 0 ' + String(AXY.Toast.Parameters['TextShadowWidth']) + 'px 0,' + String(AXY.Toast.Parameters['TextShadowColor']) + ' -' + String(AXY.Toast.Parameters['TextShadowWidth']) + 'px 0 0,' + String(AXY.Toast.Parameters['TextShadowColor']) + ' 0 -' + String(AXY.Toast.Parameters['TextShadowWidth']) + 'px 0',
+				'-webkit-text-shadow': String(AXY.Toast.Parameters['TextShadowColor']) + ' ' + String(AXY.Toast.Parameters['TextShadowWidth']) + 'px 0 0,' + String(AXY.Toast.Parameters['TextShadowColor']) + ' 0 ' + String(AXY.Toast.Parameters['TextShadowWidth']) + 'px 0,' + String(AXY.Toast.Parameters['TextShadowColor']) + ' -' + String(AXY.Toast.Parameters['TextShadowWidth']) + 'px 0 0,' + String(AXY.Toast.Parameters['TextShadowColor']) + ' 0 -' + String(AXY.Toast.Parameters['TextShadowWidth']) + 'px 0',
+				'-moz-text-shadow': String(AXY.Toast.Parameters['TextShadowColor']) + ' ' + String(AXY.Toast.Parameters['TextShadowWidth']) + 'px 0 0,' + String(AXY.Toast.Parameters['TextShadowColor']) + ' 0 ' + String(AXY.Toast.Parameters['TextShadowWidth']) + 'px 0,' + String(AXY.Toast.Parameters['TextShadowColor']) + ' -' + String(AXY.Toast.Parameters['TextShadowWidth']) + 'px 0 0,' + String(AXY.Toast.Parameters['TextShadowColor']) + ' 0 -' + String(AXY.Toast.Parameters['TextShadowWidth']) + 'px 0',
+				'*filter': 'Glow(color=' + String(AXY.Toast.Parameters['TextShadowColor']) + ', strength=' + String(AXY.Toast.Parameters['TextShadowWidth']) + ')'
+
 			}
 		},
 
-		'toast'       :
-		{
-			'template' :
-			'<div id="toastMessage">' +
+		'toast': {
+			'template': '<div id="toastMessage">' +
 				'<span class="title"></span><span class="message"></span>' +
-			'</div>',
+				'</div>',
 
-			'css'      : 
-			{
-				'background-color'	:	AXY.Toast.Param.backgroundcolor,
-				color	:	AXY.Toast.Param.TextColor,
-				'font-size'	:	AXY.Toast.Param.fontsize+'px',
-				padding	:	AXY.Toast.Param.padding+'px',
-				margin	:	AXY.Toast.Param.margin+'px'
+			'css': {
+				'background-color': AXY.Toast.Param.backgroundcolor,
+				color: AXY.Toast.Param.TextColor,
+				'font-size': AXY.Toast.Param.fontsize + 'px',
+				padding: AXY.Toast.Param.padding + 'px',
+				margin: AXY.Toast.Param.margin + 'px'
 			},
-			'cssm'     : {},
-			'csst'     : { 'fontWeight' : 'bold' },
+			'cssm': {},
+			'csst': {
+				'fontWeight': 'bold'
+			},
 
-			'fade'     : AXY.Toast.Param.fade,
+			'fade': AXY.Toast.Param.fade,
 
-			'display'    : function ($toast)
-			{
+			'display': function ($toast) {
 				return $toast.fadeIn(settings.toast.fade);
 			},
 
-			'remove'     : function ($toast, callback)
-			{
-				return $toast.animate(
-					{
-						opacity : '0',
-						padding : '0px',
-						margin  : '0px',
-						height  : '0px'
-					},
-					{
-						duration : settings.toast.fade,
-						complete : callback
-					}
-				);
+			'remove': function ($toast, callback) {
+				return $toast.animate({
+					opacity: '0',
+					padding: '0px',
+					margin: '0px',
+					height: '0px'
+				}, {
+					duration: settings.toast.fade,
+					complete: callback
+				});
 			}
 		},
 
-		'debug'        : false,
-		'timeout'      : AXY.Toast.Param.timeout,
-		'stylesheet'   : null,
-		'donotdismiss' : []
+		'debug': false,
+		'timeout': AXY.Toast.Param.timeout,
+		'stylesheet': null,
+		'donotdismiss': []
 	};
 
 	var settings = {};
 	$.extend(settings, defaults);
 
-	$.toaster = function (options)
-	{
-		if (typeof options === 'object')
-		{
-			if ('settings' in options)
-			{
+	$.toaster = function (options) {
+		if (typeof options === 'object') {
+			if ('settings' in options) {
 				settings = $.extend(settings, options.settings);
 			}
 
-			var title    = ('title' in options) ? options.title : '';
-			var message  = ('message' in options) ? options.message : null;
-			var msg  = ('msg' in options) ? options.msg : null;
+			var title = ('title' in options) ? options.title : '';
+			var message = ('message' in options) ? options.message : null;
+			var msg = ('msg' in options) ? options.msg : null;
 			var priority = ('priority' in options) ? options.priority : '';
 			var color = ('color' in options) ? options.color : '';
 			var fontfamily = ('fontfamily' in options) ? options.fontfamily : '';
 			var fontsize = ('fontsize' in options) ? options.fontsize : '';
 			var textshadowcolor = ('textshadowcolor' in options) ? options.textshadowcolor : '';
 			var textshadowwidth = ('textshadowwidth' in options) ? options.textshadowwidth : '';
-			
+
 			message = msg ? eval(msg) : message;
 
-			if (message !== null)
-			{
+			if (message !== null) {
 				toasting.notify(title, message, priority, color, fontfamily, fontsize, textshadowcolor, textshadowwidth);
 			}
 		}
 	};
 
-	$.toaster.reset = function ()
-	{
+	$.toaster.reset = function () {
 		settings = {};
 		$.extend(settings, defaults);
 	};
 })(jQuery);
 
-if(AXY.Toast.Param.DisplayGainGold){
+if (AXY.Toast.Param.DisplayGainGold) {
 	//获得金钱推送
 	Game_Party.prototype.XY_Toast_old_gainGold = Game_Party.prototype.gainGold;
-	Game_Party.prototype.gainGold = function(amount) {
+	Game_Party.prototype.gainGold = function (amount) {
 		this.XY_Toast_old_gainGold(amount);
-		
-		if(amount == 0){
+
+		if (amount == 0) {
 			return;
 		}
-		
+
 		var msgStr = '';
-		if(AXY.Toast.Param.CustomTipsTemplate != '' && AXY.Toast.Param.CustomTipsTemplate != null){
-			switch(true){
+		if (AXY.Toast.Param.CustomTipsTemplate != '' && AXY.Toast.Param.CustomTipsTemplate != null) {
+			switch (true) {
 				default:
 					name = TextManager.currencyUnit;
 					break;
@@ -442,25 +415,26 @@ if(AXY.Toast.Param.DisplayGainGold){
 			msgStr = msgStr.replace(/\{\$prefixtext\}/g, (amount > 0 ? AXY.Toast.Param.PositivePrefixText : AXY.Toast.Param.NegativePrefixText));
 			msgStr = msgStr.replace(/\{\$amount\}/g, Math.abs(amount));
 			msgStr = msgStr.replace(/\{\$name\}/g, name);
-		}
-		else{
+		} else {
 			msgStr = (amount > 0 ? AXY.Toast.Param.PositivePrefixText : AXY.Toast.Param.NegativePrefixText) + Math.abs(amount) + name;
 		}
-		$.toaster({ message : msgStr});
+		$.toaster({
+			message: msgStr
+		});
 	};
 }
-if(AXY.Toast.Param.DisplayGainItem){
+if (AXY.Toast.Param.DisplayGainItem) {
 	//获得物品推送
 	AXY.Toast.gainItem = Game_Party.prototype.gainItem;
-	Game_Party.prototype.gainItem = function(item, amount, includeEquip) {
-		AXY.Toast.gainItem.call(this,item,amount,includeEquip);
-		if ( item == undefined || item.name == undefined || amount === 0){
+	Game_Party.prototype.gainItem = function (item, amount, includeEquip) {
+		AXY.Toast.gainItem.call(this, item, amount, includeEquip);
+		if (item == undefined || item.name == undefined || amount === 0) {
 			return;
 		}
-		
+
 		var msgStr = '';
-		if(AXY.Toast.Param.CustomTipsTemplate != '' && AXY.Toast.Param.CustomTipsTemplate != null){
-			switch(true){
+		if (AXY.Toast.Param.CustomTipsTemplate != '' && AXY.Toast.Param.CustomTipsTemplate != null) {
+			switch (true) {
 				default:
 					name = item.name;
 					break;
@@ -470,59 +444,74 @@ if(AXY.Toast.Param.DisplayGainItem){
 			msgStr = msgStr.replace(/\{\$prefixtext\}/g, (amount > 0 ? AXY.Toast.Param.PositivePrefixText : AXY.Toast.Param.NegativePrefixText));
 			msgStr = msgStr.replace(/\{\$amount\}/g, Math.abs(amount));
 			msgStr = msgStr.replace(/\{\$name\}/g, name);
-		}
-		else{
+		} else {
 			msgStr = (amount > 0 ? AXY.Toast.Param.PositivePrefixText : AXY.Toast.Param.NegativePrefixText) + Math.abs(amount) + '个' + name;
 		}
-		if(AXY.Toast.Param.DisplayGainItem){
-			$.toaster({ message : msgStr});
+		if (AXY.Toast.Param.DisplayGainItem) {
+			$.toaster({
+				message: msgStr
+			});
 		}
 	};
 }
-if(AXY.Toast.Param.DisplayChangeExp){
+if (AXY.Toast.Param.DisplayChangeExp) {
 	//获得经验推送
-	/*AXY.Toast.changeExp = Game_Actor.prototype.changeExp;
-	Game_Actor.prototype.changeExp = function(exp, show) {
-		AXY.Toast.changeExp.call(this);
+	AXY.Toast.changeExp = Game_Actor.prototype.changeExp;
+	Game_Actor.prototype.changeExp = function (exp, show) {
 		var tempexp = this._exp[this._classId];
+		AXY.Toast.changeExp.call(this, exp, show);
+		//var tempexp = 0;
 		//this.XY_Toast_old_changeExp(exp, show);
-		if(exp - tempexp == 0) return;
-		$.toaster({ message : (exp - tempexp > 0 ? AXY.Toast.Param.PositivePrefixText : AXY.Toast.Param.NegativePrefixText) + Math.abs(exp - tempexp) + TextManager.expA });;
-	};*/
-	AXY.Toast.command315 = Game_Interpreter.prototype.command315;
-	Game_Interpreter.prototype.command315 = function() {
+		var newexp = exp - tempexp;
+		if (newexp == 0) return;
+		$.toaster({
+			message: (newexp > 0 ? AXY.Toast.Param.PositivePrefixText : AXY.Toast.Param.NegativePrefixText) + Math.abs(newexp) + TextManager.expA
+		});;
+	};
+	/*AXY.Toast.command315 = Game_Interpreter.prototype.command315;
+	Game_Interpreter.prototype.command315 = function () {
 		AXY.Toast.command315.call(this);
 		var value = this.operateValue(this._params[2], this._params[3], this._params[4]);
-		if(value === 0) return;
+		if (value === 0) return;
 		var text = (value > 0 ? AXY.Toast.Param.PositivePrefixText : AXY.Toast.Param.NegativePrefixText) + Math.abs(value) + TextManager.expA;
-		if(this._params[0] === 0 && this._params[1] === 0) {
-			$.toaster({ msg : text});
+		if (this._params[0] === 0 && this._params[1] === 0) {
+			$.toaster({
+				message: text
+			});
 		} else {
-			this.iterateActorEx(this._params[0], this._params[1], function(actor) {
+			this.iterateActorEx(this._params[0], this._params[1], function (actor) {
 				var text_i = actor.name() + text;
-				$.toaster({ msg : text_i});
+				$.toaster({
+					message: text_i
+				});
 			}.bind(this));
 		}
 		return true;
-	};
+	};*/
 }
 
-if(AXY.Toast.Param.DisplayLevelUp){
-	Game_Actor.prototype.displayLevelUp = function(newSkills) {
+if (AXY.Toast.Param.DisplayLevelUp) {
+	Game_Actor.prototype.displayLevelUp = function (newSkills) {
 		var text = TextManager.levelUp.format(this._name, TextManager.level, this._level);
-		$.toaster({ message : text });
-		newSkills.forEach(function(skill) {
-			$.toaster({ message : TextManager.obtainSkill.format(skill.name) });
+		$.toaster({
+			message: text
+		});
+		newSkills.forEach(function (skill) {
+			$.toaster({
+				message: TextManager.obtainSkill.format(skill.name)
+			});
 		});
 	};
 }
 
-if(AXY.Toast.Param.DisplayLevelDown){
+if (AXY.Toast.Param.DisplayLevelDown) {
 	AXY.Toast.levelDown = Game_Actor.prototype.levelDown;
-	Game_Actor.prototype.levelDown = function() {
+	Game_Actor.prototype.levelDown = function () {
 		AXY.Toast.levelDown.call(this);
 		var text = TextManager.levelUp.format(this._name, TextManager.level, this._level);
-		$.toaster({ message : text });
+		$.toaster({
+			message: text
+		});
 	};
 }
 
@@ -531,72 +520,67 @@ if(AXY.Toast.Param.DisplayLevelDown){
 -------------------------------------------------------------------------*/
 //---- Change Equipment
 AXY.Toast.oldChangeEquip_method = Game_Actor.prototype.changeEquip;
-Game_Actor.prototype.changeEquip = function(slotId, item) {
-    if(AXY.Toast.Param.DisplayGainItem){
+Game_Actor.prototype.changeEquip = function (slotId, item) {
+	if (AXY.Toast.Param.DisplayGainItem) {
 		AXY.Toast.Param.DisplayGainItem = false;
-		AXY.Toast.oldChangeEquip_method.call(this,slotId,item);
+		AXY.Toast.oldChangeEquip_method.call(this, slotId, item);
 		AXY.Toast.Param.DisplayGainItem = true;
-	}
-	else{
-		AXY.Toast.oldChangeEquip_method.call(this,slotId,item);
+	} else {
+		AXY.Toast.oldChangeEquip_method.call(this, slotId, item);
 	}
 };
 
 //---- Force Change Equipment
 AXY.Toast.oldForceChangeEquip_method = Game_Actor.prototype.forceChangeEquip;
-Game_Actor.prototype.forceChangeEquip = function(slotId, item) {
-	if(AXY.Toast.Param.DisplayGainItem){
+Game_Actor.prototype.forceChangeEquip = function (slotId, item) {
+	if (AXY.Toast.Param.DisplayGainItem) {
 		AXY.Toast.Param.DisplayGainItem = false;
-		AXY.Toast.oldForceChangeEquip_method.call(this,slotId,item);
+		AXY.Toast.oldForceChangeEquip_method.call(this, slotId, item);
 		AXY.Toast.Param.DisplayGainItem = true;
-	}
-	else{
-		AXY.Toast.oldForceChangeEquip_method.call(this,slotId,item);
+	} else {
+		AXY.Toast.oldForceChangeEquip_method.call(this, slotId, item);
 	}
 };
 
 //---- Trade Item with Party
 AXY.Toast.oldTradewithParty_method = Game_Actor.prototype.tradeItemWithParty;
-Game_Actor.prototype.tradeItemWithParty = function(newItem, oldItem) {
-	if(AXY.Toast.Param.DisplayGainItem){
+Game_Actor.prototype.tradeItemWithParty = function (newItem, oldItem) {
+	if (AXY.Toast.Param.DisplayGainItem) {
 		AXY.Toast.Param.DisplayGainItem = false;
-		var bool = AXY.Toast.oldTradewithParty_method.call(this,newItem,oldItem);
+		var bool = AXY.Toast.oldTradewithParty_method.call(this, newItem, oldItem);
 		AXY.Toast.Param.DisplayGainItem = true;
+	} else {
+		var bool = AXY.Toast.oldTradewithParty_method.call(this, newItem, oldItem);
 	}
-	else{
-		var bool = AXY.Toast.oldTradewithParty_method.call(this,newItem,oldItem);
-	}
-    return bool;
+	return bool;
 };
 //---- Handle Yanfly's methods
 if (Imported.YEP_ItemCore === true) {
 	AXY.Toast.oldInitIndepenEquips_method = Game_Actor.prototype.initIndependentEquips;
-	Game_Actor.prototype.initIndependentEquips = function(equips) {
-		if(AXY.Toast.Param.DisplayGainItem){
+	Game_Actor.prototype.initIndependentEquips = function (equips) {
+		if (AXY.Toast.Param.DisplayGainItem) {
 			AXY.Toast.Param.DisplayGainItem = false;
-			AXY.Toast.oldInitIndepenEquips_method.call(this,equips);
+			AXY.Toast.oldInitIndepenEquips_method.call(this, equips);
 			AXY.Toast.Param.DisplayGainItem = true;
-		}
-		else{
-			AXY.Toast.oldInitIndepenEquips_method.call(this,equips);
+		} else {
+			AXY.Toast.oldInitIndepenEquips_method.call(this, equips);
 		}
 	};
 
 	AXY.Toast.oldChangeEquipById_method = Game_Actor.prototype.changeEquipById;
-	Game_Actor.prototype.changeEquipById = function(etypeId, itemId) {
-		if(AXY.Toast.Param.DisplayGainItem){
+	Game_Actor.prototype.changeEquipById = function (etypeId, itemId) {
+		if (AXY.Toast.Param.DisplayGainItem) {
 			AXY.Toast.Param.DisplayGainItem = false;
-			AXY.Toast.oldChangeEquipById_method.call(this,etypeId,itemId);
+			AXY.Toast.oldChangeEquipById_method.call(this, etypeId, itemId);
 			AXY.Toast.Param.DisplayGainItem = true;
-		}
-		else{
-			AXY.Toast.oldChangeEquipById_method.call(this,etypeId,itemId);
+		} else {
+			AXY.Toast.oldChangeEquipById_method.call(this, etypeId, itemId);
 		}
 	};
 } //-Yanfly check
 
 
-if(AXY.Toast.Param.DisplayMapInfo){
+if (AXY.Toast.Param.DisplayMapInfo) {
 	//=============================================================================
 	// ** Spriteset Map
 	//=============================================================================
@@ -605,13 +589,13 @@ if(AXY.Toast.Param.DisplayMapInfo){
 	// * Create Upper Layer
 	//==============================
 	var _alias_axy_toast_sprmap_createUpperLayer = Spriteset_Map.prototype.createUpperLayer;
-	Spriteset_Map.prototype.createUpperLayer = function() {
+	Spriteset_Map.prototype.createUpperLayer = function () {
 		_alias_axy_toast_sprmap_createUpperLayer.call(this);
-		
-		if(AXY.Toast.Param.DisableSystemDisplayMapName){
+
+		if (AXY.Toast.Param.DisableSystemDisplayMapName) {
 			$gameMap.disableNameDisplay();
 		}
-		if(AXY.Toast.Param.DisplayMapInfo){
+		if (AXY.Toast.Param.DisplayMapInfo) {
 			var msgStr = '';
 			msgStr = AXY.Toast.Param.CustomMapInfoTemplate;
 			//{$mapDisplayName},{$mapName},{$mapID},{$mapOrder},{$mapParentName},{$mapParentID},{$mapBGM},{$mapBGS}
@@ -625,7 +609,9 @@ if(AXY.Toast.Param.DisplayMapInfo){
 			msgStr = msgStr.replace(/\{\$mapBGS\}/g, $dataMap.bgs.name);
 			//$.toaster({ msg : "$gameMap.displayName()+'(MapName: '+$dataMapInfos[$gameMap._mapId].name+', MapID: '+$gameMap._mapId+', MapOrder: '+$dataMapInfos[$gameMap._mapId].order+', MapParentName: '+($dataMapInfos[$gameMap._mapId].parentId ? $dataMapInfos[$dataMapInfos[$gameMap._mapId].parentId].name : 0)+', MapParentID: '+$dataMapInfos[$gameMap._mapId].parentId+', MapBGM: '+$dataMap.bgm.name+', MapBGS: '+$dataMap.bgs.name+')'"});
 			//"{$mapDisplayName}+'(MapName: '+{$mapName}+', MapID: '+{$mapID}+', MapOrder: '+{$mapOrder}+', MapParentName: '+{$mapParentName}+', MapParentID: '+{$mapParentID}+', MapBGM: '+{$mapBGM}+', MapBGS: '+{$mapBGS}+')'"
-			$.toaster({ msg : msgStr});
+			$.toaster({
+				msg: msgStr
+			});
 		}
 	};
 }
