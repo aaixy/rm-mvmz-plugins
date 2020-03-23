@@ -1835,7 +1835,7 @@ if (AXY.AjaxNetStuff.Param.Exam.Enable) {
 					examid: examid
 				},
 				success: function (data) {
-					console.log(data);
+					//console.log(data);
 					if (data.status) {
 						if (radioamount != undefined) {
 							AXY.AjaxNetStuff.Variables.examRadioAmount = radioamount;
@@ -1879,7 +1879,7 @@ if (AXY.AjaxNetStuff.Param.Exam.Enable) {
 							console.log(e);
 						}
 					} else {
-						console.log(data);
+						//console.log(data);
 						$.toaster({
 							message: AXY.AjaxNetStuff.Param.Exam.FailText + ', ERROR: ' + data.info + ', ERRORCODE: ' + data.error,
 							color: 'red'
@@ -1949,7 +1949,7 @@ if (AXY.AjaxNetStuff.Param.Exam.Enable) {
 					answered: AXY.AjaxNetStuff.Variables.examAnsweredQuestion.toString()
 				},
 				success: function (data) {
-					console.log(data);
+					//console.log(data);
 					//return;
 					if (data.status == 1) {
 						AXY.AjaxNetStuff.Variables.examAnsweredQuestion.push(data.info.id);
@@ -2040,10 +2040,10 @@ if (AXY.AjaxNetStuff.Param.Exam.Enable) {
 							//return;
 
 							if (questionType == 'radio') {
-								console.log('You choose: ' + $("#AXYAjaxExam form input[name='question']:checked").val());
-								console.log('The answer is ' + linkarr[data.info.answer] + ' (' + data.info.answer + ')');
+								//console.log('You choose: ' + $("#AXYAjaxExam form input[name='question']:checked").val());
+								//console.log('The answer is ' + linkarr[data.info.answer] + ' (' + data.info.answer + ')');
 								if ($("#AXYAjaxExam form input[name='question']:checked").val() == data.info.answer) {
-									console.log('You are right');
+									//console.log('You are right');
 									AXY.AjaxNetStuff.Variables.examScore += parseInt(data.info.score);
 									AXY.AjaxNetStuff.Variables.examRightAnswer++;
 								}
@@ -2055,10 +2055,10 @@ if (AXY.AjaxNetStuff.Param.Exam.Enable) {
 									chooseditem[i] = linkarr[$(this).val()];
 								});
 								var answerarr = data.info.answer.split("\n");
-								console.log('You choose: ' + choosedarr.sort().toString());
-								console.log('The answer is ' + chooseditem.toString() + ' (' + answerarr.sort().toString() + ')');
+								//console.log('You choose: ' + choosedarr.sort().toString());
+								//console.log('The answer is ' + chooseditem.toString() + ' (' + answerarr.sort().toString() + ')');
 								if (choosedarr.sort().toString() == answerarr.sort().toString()) {
-									console.log('You are right');
+									//console.log('You are right');
 									AXY.AjaxNetStuff.Variables.examScore += parseInt(data.info.score);
 									AXY.AjaxNetStuff.Variables.examRightAnswer++;
 								}
@@ -2113,7 +2113,7 @@ if (AXY.AjaxNetStuff.Param.Exam.Enable) {
 							AXY_AjaxExam.hide();
 						});
 					} else {
-						console.log(data);
+						//console.log(data);
 						$.toaster({
 							message: AXY.AjaxNetStuff.Param.Exam.FailText + ', ERROR: ' + data.info + ', ERRORCODE: ' + data.error,
 							color: 'red'
