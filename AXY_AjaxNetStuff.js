@@ -1,14 +1,14 @@
 var AXY = AXY || {};
 AXY.AjaxNetStuff = AXY.AjaxNetStuff || {};
-AXY.AjaxNetStuff.VERSION = 1.69;
+AXY.AjaxNetStuff.VERSION = 1.74;
 //=============================================================================
 // A XueYu Plugin - Ajax Net Stuff
 // AXY_AjaxNetStuff.js
-// Version: 1.69
+// Version: 1.74
 // License: MIT
 //=============================================================================
 /*:
- * @plugindesc v1.69 This plugin support rmmv with ajax net stuff.
+ * @plugindesc v1.74 This plugin support rmmv with ajax net stuff.
  * @author A XueYu Plugin
  *
  * @help
@@ -70,6 +70,7 @@ AXY.AjaxNetStuff.VERSION = 1.69;
  * AXY_AjaxFetchServerTSV.variable(2);
  * AXY.AjaxNetStuff.Variables.variable["5"].v;
  * AXY.AjaxNetStuff.Variables.variable["5"].n;
+ * 
  * Toplist
  * var mygametoplist = AXY_AjaxTopList.fetch();
  * now, you got the array obj mygametoplist, and these global variables:
@@ -77,8 +78,42 @@ AXY.AjaxNetStuff.VERSION = 1.69;
  * AXY.AjaxNetStuff.Variables.gamename;
  * AXY.AjaxNetStuff.Variables.totalplayer;
  * AXY.AjaxNetStuff.Variables.loggedin;
+ * 
+ * CloudSave with script
+ * Write
+ * AXY_AjaxCloudSave.show();
+ * $('#AXYAjaxCloudSaveButtonWrite').click();
+ * Read
+ * AXY_AjaxCloudSave.show();
+ * $('#AXYAjaxCloudSaveButtonRead').click();
+ * 
+ * Exam
+ * Useage:
+ * AXY_AjaxExam.show(exam id);
+ * AXY_AjaxExam.show(exam id,radio amount,checkbox amount,boolean amount,is random order);
+ * Example:
+ * AXY_AjaxExam.show(1);
+ * AXY_AjaxExam.show(1,1,0,0,0);
+ * AXY_AjaxExam.show(1,2,2,2,1);
+ * Variable:
+ * AXY.AjaxNetStuff.Variables.examStartTime
+ * AXY.AjaxNetStuff.Variables.examTotalScore
+ * AXY.AjaxNetStuff.Variables.examScore
+ * AXY.AjaxNetStuff.Variables.examCurrentAnswerCounter
+ * AXY.AjaxNetStuff.Variables.examRightAnswer
  *
  * changelog
+ * 1.74 2020.3.23
+ * add: exam module;
+ * 1.73 2020.3.21
+ * modify: reopen saveinfo;
+ * 1.72 2020.3.20
+ * remove: read cloudsave jump to scene title;
+ * remove: saveinfo in write cloudsave;
+ * 1.71 2020.3.19
+ * add: quick login to match another function;
+ * 1.70 2020.3.10
+ * modify: change port 6443 to 666;
  * 1.69 2020.3.2
  * add: cloud data now could be set the file list to define which file will load from cloud;
  * modify: change cache and savestorage name;
@@ -391,6 +426,10 @@ AXY.AjaxNetStuff.VERSION = 1.69;
  * @param LoginButtonText
  * @desc Login Button Text
  * @default Login
+ * 
+ * @param QuickLoginButtonText
+ * @desc Quick Login Button Text
+ * @default Quick Login
  *
  * @param LoginButtonColor
  * @desc #000000-#FFFFFF or RGBA(R,G,B,A) or red blue green yellow etc.
@@ -713,6 +752,11 @@ AXY.AjaxNetStuff.VERSION = 1.69;
  * @text Reg Settings
  * @type struct<RegStruct>
  * @desc Reg settings.
+ * 
+ * @param Exam
+ * @text Exam Settings
+ * @type struct<ExamStruct>
+ * @desc Exam settings.
  * 
  */
 
@@ -1280,6 +1324,141 @@ AXY.AjaxNetStuff.VERSION = 1.69;
  * @value MapXXX.json
  */
 
+/*~struct~ExamStruct:
+ * @param Enable
+ * @text Enable
+ * @type boolean
+ * @desc Enable Exam? true/false default: true
+ * @default true
+ * 
+ * @param ButtonText
+ * @text Button Text
+ * @desc Button Text. default: Exam
+ * @type text
+ * @default Exam
+ * 
+ * @param ModalBgColor
+ * @text Modal BgColor
+ * @desc #000000-#FFFFFF or RGBA(R,G,B,A) or red blue green yellow etc. default: black
+ * @type text
+ * @default black
+ * 
+ * @param ModalTextColor
+ * @text Modal Text Color
+ * @desc #000000-#FFFFFF or RGBA(R,G,B,A) or red blue green yellow etc. default: white
+ * @type text
+ * @default white
+ *
+ * @param ModalOpacity
+ * @text Modal Opacity
+ * @desc The css opacity of login modal. 0-1 default: 0.8
+ * @type text
+ * @default 0.8
+ * 
+ * @param FailText
+ * @text Fail Text
+ * @desc Fail Text. default: Fail
+ * @type text
+ * @default Fail
+ * 
+ * @param IntroText
+ * @text Intro Text
+ * @desc Intro Text. default: Intro
+ * @type text
+ * @default Intro
+ * 
+ * @param RadioText
+ * @text Radio Text
+ * @desc Radio Text. default: Radio
+ * @type text
+ * @default Radio
+ * 
+ * @param CheckboxText
+ * @text Checkbox Text
+ * @desc Checkbox Text. default: Checkbox
+ * @type text
+ * @default Checkbox
+ * 
+ * @param BooleanText
+ * @text Boolean Text
+ * @desc Boolean Text. default: Boolean
+ * @type text
+ * @default Boolean
+ * 
+ * @param NextText
+ * @text Next Text
+ * @desc Next Text. default: Next
+ * @type text
+ * @default Next
+ * 
+ * @param CloseText
+ * @text Close Text
+ * @desc Close Text. default: Close
+ * @type text
+ * @default Close
+ * 
+ * @param isShowResult
+ * @text Show Result
+ * @desc Show Result? default: true
+ * @type boolean
+ * @default true
+ * 
+ * @param AllDoneText
+ * @text All Done Text
+ * @desc All Done Text. default: All Done
+ * @type text
+ * @default All Done
+ * 
+ * @param ResultText
+ * @text Result Text
+ * @desc Result Text. default: Result
+ * @type text
+ * @default Result
+ * 
+ * @param TotalScoreText
+ * @text Total Score Text
+ * @desc Total Score Text. default: Total Score
+ * @type text
+ * @default Total Score
+ * 
+ * @param ScoreText
+ * @text Score Text
+ * @desc Score Text. default: Score
+ * @type text
+ * @default Score
+ * 
+ * @param TotalAmountText
+ * @text Total Amount Text
+ * @desc Total Amount Text. default: Total Amount
+ * @type text
+ * @default Total Amount
+ * 
+ * @param RightAmountText
+ * @text Right Amount Text
+ * @desc Right Amount Text. default: Right Amount
+ * @type text
+ * @default Right Amount
+ * 
+ * @param WrongAmountText
+ * @text  Wrong Amount Text
+ * @desc  Wrong Amount Text. default:  Wrong Amount
+ * @type text
+ * @default  Wrong Amount
+ * 
+ * @param TimeCostText
+ * @text Time Cost Text
+ * @desc Time Cost Text. default: Time Cost
+ * @type text
+ * @default Time Cost
+ * 
+ * @param TimeCostTemplate
+ * @text Time Cost Template
+ * @desc Time Cost Template. hh,h=hour;mm,m=minute;ss,s=second default: hh:mm:ss
+ * @type text
+ * @default hh:mm:ss
+ * 
+ */
+
 
 
 
@@ -1413,7 +1592,56 @@ Utils.recursiveParse = function (param) {
 		return param;
 	}
 };
+Utils.getRndInt = function (min, max) {
+	return Math.floor(Math.random() * (max - min + 1) + min);
+};
+Utils.shuffleSort = function (arr) {
+	var n = arr.length;
 
+	while (n--) {
+		var index = Math.floor(Math.random() * n);
+		var temp = arr[index];
+		arr[index] = arr[n];
+		arr[n] = temp;
+		// ES6的解耦交换方式： [arr[index], arr[n]] = [arr[n], arr[index]];
+	}
+	return arr;
+};
+Utils.formatDuring = function (ms, fmt) {
+	if (!ms || !fmt) {
+		return '';
+	}
+	//var days = parseInt(ms / (1000 * 60 * 60 * 24));
+	var hours = parseInt((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+	var minutes = parseInt((ms % (1000 * 60 * 60)) / (1000 * 60));
+	var seconds = (ms % (1000 * 60)) / 1000;
+	var str = fmt;
+	if (str.indexOf('hh') >= 0) {
+		if (hours < 10) {
+			hours = '0' + hours;
+		}
+		str = str.replace('hh', hours);
+	} else if (str.indexOf('h') >= 0) {
+		str = str.replace('h', hours);
+	}
+	if (str.indexOf('mm') >= 0) {
+		if (minutes < 10) {
+			minutes = '0' + minutes;
+		}
+		str = str.replace('mm', minutes);
+	} else if (str.indexOf('m') >= 0) {
+		str = str.replace('m', minutes);
+	}
+	if (str.indexOf('ss') >= 0) {
+		if (seconds < 10) {
+			seconds = '0' + seconds;
+		}
+		str = str.replace('ss', seconds);
+	} else if (str.indexOf('s') >= 0) {
+		str = str.replace('s', seconds);
+	}
+	return str;
+}
 //=============================================================================
 // Parameters
 //=============================================================================
@@ -1443,7 +1671,7 @@ AXY.AjaxNetStuff.Variables.AltTopList.activeColumn = {};
 AXY.AjaxNetStuff.Variables.AltTopList.loading = {};
 //URL
 if (AXY.AjaxNetStuff.Param.AppID > 0) {
-	AXY.AjaxNetStuff.Variables.URL = 'https://shanghai.666rpg.com:6443/game/detail/id/' + AXY.AjaxNetStuff.Param.AppID;
+	AXY.AjaxNetStuff.Variables.URL = 'https://shanghai.666rpg.com:666/game/detail/id/' + AXY.AjaxNetStuff.Param.AppID;
 } else {
 	AXY.AjaxNetStuff.Variables.URL = AXY.AjaxNetStuff.Param.URL
 		//.replace('http://', 'https://')
@@ -1496,6 +1724,432 @@ var AXY_AjaxFetchServerState = {
 	}
 };
 //fixed, lock top this statement.
+
+//ajax Exam
+if (AXY.AjaxNetStuff.Param.Exam.Enable) {
+	var AXY_AjaxExam = {
+		show: function (examid, radioamount, checkboxamount, booleanamount, israndomorder) {
+			if (!examid) {
+				$.toaster({
+					message: "缺少id",
+					color: 'red'
+				});
+				return;
+			}
+
+			// $.toaster({
+			// 	message: '<div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">' + AXY.AjaxNetStuff.Param.LoadingText + '</span></div>',
+			// 	color: 'white'
+			// });
+
+			var AXYAjaxExamTemplate =
+				'<div class="modal fade" id="AXYAjaxExam" tabindex="-1" role="dialog" aria-labelledby="examModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">' +
+				'<div class="modal-dialog modal-dialog-centered" role="document">' +
+				'<div class="modal-content bg-black-transparent">' +
+				'<div class="modal-header">' +
+				'<h5 class="modal-title" id="examModalLabel"></h5>' +
+				'<button type="button" class="close" style="color:' + AXY.AjaxNetStuff.Param.Exam.ModalTextColor + ';" id="AXYAjaxExamButtonClose1" aria-label="Close">' +
+				'<span aria-hidden="true">&times;</span>' +
+				'</button>' +
+				'</div>' +
+				'<div class="modal-body">' +
+				'<form>' +
+				'<div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">' + AXY.AjaxNetStuff.Param.LoadingText + '</span></div>' +
+				'</form>' +
+				'</div>' +
+				'<div class="modal-footer">' +
+				'<button type="button" class="btn btn-secondary" id="AXYAjaxExamButtonUse">' + AXY.AjaxNetStuff.Param.Exam.ButtonText + '</button>' +
+				'</div>' +
+				'</div>' +
+				'</div>' +
+				'</div>' +
+				'<style>#AXYAjaxExam .bg-black-transparent{background-color:' + AXY.AjaxNetStuff.Param.Exam.ModalBgColor + ';color:' + AXY.AjaxNetStuff.Param.Exam.ModalTextColor + ';opacity:' + AXY.AjaxNetStuff.Param.Exam.ModalOpacity + ';font-family:GameFont}' +
+				'.AXYAjaxExamInput{imeMode:active}' +
+				'</style>';
+			AXYAjaxExamEntity = $('body').append(AXYAjaxExamTemplate);
+			$("#AXYAjaxExam").modal("show");
+			try {
+				$gameSystem.setTouchMoveEnabled(false);
+			} catch (e) {
+				console.log(e);
+			}
+			$('#AXYAjaxExamButtonUse').attr("disabled", true);
+			$('#AXYAjaxExamButtonUse').html('<div class="spinner-border" role="status"><span class="sr-only">' + AXY.AjaxNetStuff.Param.LoadingText + '</span></div>');
+			$('#AXYAjaxExamButtonUse').unbind('click touchstart').bind('click touchstart', function () {
+				if ($('#AXYAjaxExamButtonUse')[0].disabled) {
+					//console.log($('#AXYAjaxExamButtonUse')[0].disabled);
+					return;
+				}
+				//console.log($('#AXYAjaxExamButtonUse'));
+				//console.log($('#AXYAjaxExamButtonUse')[0].disabled);
+
+				$('#AXYAjaxExamButtonUse').attr("disabled", true);
+				$('#AXYAjaxExamButtonUse').html('<div class="spinner-border" role="status"><span class="sr-only">' + AXY.AjaxNetStuff.Param.LoadingText + '</span></div>');
+				//console.log($('#AXYAjaxExamButtonUse'));
+				//console.log(typeof($('#AXYAjaxExamButtonUse')[0].disabled));
+				//return;
+
+				// if (!inputName || !inputPwd || !inputPwd2) {
+				// 	$.toaster({
+				// 		message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: " + AXY.AjaxNetStuff.Param.Exam.UsernamePasswordCanNotBeEmptyText,
+				// 		color: 'red'
+				// 	});
+				// 	$('#AXYAjaxExamButtonUse').attr("disabled", false);
+				// 	$('#AXYAjaxExamButtonUse').html(AXY.AjaxNetStuff.Param.Exam.ButtonText);
+				// 	return false;
+				// }
+				// if (inputPwd != inputPwd2) {
+				// 	$.toaster({
+				// 		message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: " + AXY.AjaxNetStuff.Param.Exam.DifferentPasswordsTwiceText,
+				// 		color: 'red'
+				// 	});
+				// 	$('#AXYAjaxExamButtonUse').attr("disabled", false);
+				// 	$('#AXYAjaxExamButtonUse').html(AXY.AjaxNetStuff.Param.Exam.ButtonText);
+				// 	return false;
+				// }
+				// $.toaster({
+				// 	message: '<a href="' + AXY.AjaxNetStuff.Param.URL + '" target="_blank">' + AXY.AjaxNetStuff.Variables.gameName + '</a>: <div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">' + AXY.AjaxNetStuff.Param.LoadingText + '</span></div>' + AXY.AjaxNetStuff.Param.Exam.ExamingText,
+				// 	color: 'white'
+				// });
+				AXY.AjaxNetStuff.Variables.examCurrentAnswerCounter = 0;
+				AXY.AjaxNetStuff.Variables.examStartTime = new Date();
+				AXY.AjaxNetStuff.Variables.examScore = 0;
+				AXY.AjaxNetStuff.Variables.examRightAnswer = 0;
+				AXY.AjaxNetStuff.Variables.examTotalScore = 0;
+				AXY.AjaxNetStuff.Variables.examAnsweredQuestion = new Array();
+
+				AXY_AjaxExam.showQuestion(examid);
+			});
+
+			$('#AXYAjaxExamButtonClose,#AXYAjaxExamButtonClose1').unbind('click touchstart').bind('click touchstart', function () {
+				AXY_AjaxExam.hide();
+			});
+
+			var AXY_AjaxExamURL = AXY.AjaxNetStuff.Variables.URL.replace('tmpAction', 'rmmvgameexam');
+			$.ajax({
+				url: AXY_AjaxExamURL,
+				type: 'POST',
+				dataType: 'json',
+				data: {
+					sid: localStorage.getItem(AXY.AjaxNetStuff.Param.CloudData.LocalCacheUUID + AXY.AjaxNetStuff.Param.AppID + 'sid'),
+					examid: examid
+				},
+				success: function (data) {
+					console.log(data);
+					if (data.status) {
+						if (radioamount != undefined) {
+							AXY.AjaxNetStuff.Variables.examRadioAmount = radioamount;
+						} else {
+							AXY.AjaxNetStuff.Variables.examRadioAmount = data.info.radioamount;
+						}
+						if (checkboxamount != undefined) {
+							AXY.AjaxNetStuff.Variables.examCheckboxAmount = checkboxamount;
+						} else {
+							AXY.AjaxNetStuff.Variables.examCheckboxAmount = data.info.checkboxamount;
+						}
+						if (booleanamount != undefined) {
+							AXY.AjaxNetStuff.Variables.examBooleanAmount = booleanamount;
+						} else {
+							AXY.AjaxNetStuff.Variables.examBooleanAmount = data.info.booleanamount;
+						}
+						if (israndomorder != undefined) {
+							AXY.AjaxNetStuff.Variables.examIsRandomOrder = israndomorder;
+						} else {
+							AXY.AjaxNetStuff.Variables.examIsRandomOrder = data.info.israndomorder;
+						}
+						try {
+							$("#AXYAjaxExam h5").html(decodeURIComponent(window.atob(data.info.name)));
+							$("#AXYAjaxExam form").html('<div class="form-group row">' +
+								'<label class="col-form-label col-sm-5">' + AXY.AjaxNetStuff.Param.Exam.IntroText + '</label>' +
+								'<div class="col-sm-7">' + decodeURIComponent(window.atob(data.info.intro)) + '</div>' +
+								'</div>' +
+								'<div class="form-group row">' +
+								'<label class="col-form-label col-sm-5">' + AXY.AjaxNetStuff.Param.Exam.RadioText + '</label>' +
+								'<div class="col-sm-7">' + AXY.AjaxNetStuff.Variables.examRadioAmount + '</div>' +
+								'</div>' +
+								'<div class="form-group row">' +
+								'<label class="col-form-label col-sm-5">' + AXY.AjaxNetStuff.Param.Exam.CheckboxText + '</label>' +
+								'<div class="col-sm-7">' + AXY.AjaxNetStuff.Variables.examCheckboxAmount + '</div>' +
+								'</div>' +
+								'<div class="form-group row">' +
+								'<label class="col-form-label col-sm-5">' + AXY.AjaxNetStuff.Param.Exam.BooleanText + '</label>' +
+								'<div class="col-sm-7">' + AXY.AjaxNetStuff.Variables.examBooleanAmount + '</div>' +
+								'</div>');
+						} catch (e) {
+							console.log(e);
+						}
+					} else {
+						console.log(data);
+						$.toaster({
+							message: AXY.AjaxNetStuff.Param.Exam.FailText + ', ERROR: ' + data.info + ', ERRORCODE: ' + data.error,
+							color: 'red'
+						});
+					};
+					$('#AXYAjaxExamButtonUse').attr("disabled", false);
+					$('#AXYAjaxExamButtonUse').html(AXY.AjaxNetStuff.Param.Exam.ButtonText);
+				},
+				error: function (XMLHttpRequest, textStatus, errorThrown) {
+					console.log(XMLHttpRequest);
+					console.log(textStatus);
+					console.log(errorThrown);
+					$.toaster({
+						title: 'ERROR: ',
+						message: textStatus + ' ' + errorThrown,
+						color: 'red'
+					});
+					$('#AXYAjaxExamButtonUse').attr("disabled", false);
+					$('#AXYAjaxExamButtonUse').html(AXY.AjaxNetStuff.Param.Exam.ButtonText);
+				},
+				complete: function (XMLHttpRequest, textStatus) {
+					//console.log(XMLHttpRequest);
+					//console.log(textStatus);
+					//$.toaster({
+					//	title: 'COMPLETE: ',
+					//	message: textStatus,
+					//	color: 'gray'
+					//});
+					$('#AXYAjaxExamButtonUse').attr("disabled", false);
+					$('#AXYAjaxExamButtonUse').html(AXY.AjaxNetStuff.Param.Exam.ButtonText);
+				}
+			});
+		},
+		hide: function () {
+			$("#AXYAjaxExam").modal("hide")
+			try {
+				$gameSystem.setTouchMoveEnabled(true);
+			} catch (e) {
+				console.log(e);
+			}
+		},
+		showQuestion: function (examid) {
+			if (!examid) {
+				$.toaster({
+					message: "缺少id",
+					color: 'red'
+				});
+				return;
+			}
+			// $.toaster({
+			// 	message: '<div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">' + AXY.AjaxNetStuff.Param.LoadingText + '</span></div>',
+			// 	color: 'white'
+			// });
+			var AXY_AjaxExamURL = AXY.AjaxNetStuff.Variables.URL.replace('tmpAction', 'rmmvgameexamquestion');
+			$.ajax({
+				url: AXY_AjaxExamURL,
+				type: 'POST',
+				dataType: 'json',
+				data: {
+					sid: localStorage.getItem(AXY.AjaxNetStuff.Param.CloudData.LocalCacheUUID + AXY.AjaxNetStuff.Param.AppID + 'sid'),
+					examid: examid,
+					radioamount: AXY.AjaxNetStuff.Variables.examRadioAmount,
+					checkboxamount: AXY.AjaxNetStuff.Variables.examCheckboxAmount,
+					booleanamount: AXY.AjaxNetStuff.Variables.examBooleanAmount,
+					israndomorder: AXY.AjaxNetStuff.Variables.examIsRandomOrder,
+					currentcounter: AXY.AjaxNetStuff.Variables.examCurrentAnswerCounter,
+					answered: AXY.AjaxNetStuff.Variables.examAnsweredQuestion.toString()
+				},
+				success: function (data) {
+					console.log(data);
+					//return;
+					if (data.status == 1) {
+						AXY.AjaxNetStuff.Variables.examAnsweredQuestion.push(data.info.id);
+						// var qhtml = '';
+						var aTitle = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+						switch (parseInt(data.info.questiontype)) {
+							default:
+							case 1:
+								var questionType = 'radio';
+								var questionTypeText = AXY.AjaxNetStuff.Param.Exam.RadioText;
+								break;
+							case 2:
+								var questionType = 'checkbox';
+								var questionTypeText = AXY.AjaxNetStuff.Param.Exam.CheckboxText;
+								break;
+							case 3:
+								var questionType = 'radio';
+								var questionTypeText = AXY.AjaxNetStuff.Param.Exam.BooleanText;
+								break;
+						}
+						try {
+							$("#AXYAjaxExam form").html('<div class="form-group row">' +
+								'<label class="col-form-label col-sm-3">' + questionTypeText + '</label>' +
+								'<div class="col-sm-9">' + decodeURIComponent(window.atob(data.info.name)) + '</div>' +
+								'</div>');
+							var arr = decodeURIComponent(window.atob(data.info.intro)).split("\n");
+						} catch (e) {
+							console.log(e);
+						}
+						var linkarr = {};
+						if (parseInt(data.info.israndomorder) == 1) {
+							arr = Utils.shuffleSort(arr);
+							for (var i = 0; i < arr.length; i++) {
+								var qa = arr[i].split('=');
+								linkarr[qa[0]] = aTitle[i] + '.' + qa[1];
+								var qhtml = '<div class="form-group row">' +
+									'<div class="col-sm-3"></div>' +
+									'<div class="col-sm-9"><div class="form-check">' +
+									'<input type="' + questionType + '" class="form-check-input AXYAjaxLoginInput" name="question" id="AXYAjaxExamQuestion' + i + '" value="' + qa[0] + '" />' +
+									'<label for="AXYAjaxExamQuestion' + i + '" id="AXYAjaxExamQuestionLabel' + i + '" class="form-check-label">' + aTitle[i] + '.' + qa[1] + '</label>' +
+									'</div>' +
+									'</div>' +
+									'</div>';
+								$("#AXYAjaxExam form").append(qhtml);
+								$('#AXYAjaxExamQuestion' + i + ',#AXYAjaxExamQuestionLabel' + i).unbind('click touchstart').bind('click touchstart', function () {
+									if ($('#AXYAjaxExamQuestion' + i).prop("checked")) {
+										$('#AXYAjaxExamQuestion' + i).attr("checked", false);
+									} else {
+										$('#AXYAjaxExamQuestion' + i).attr("checked", true);
+									}
+								});
+							}
+						} else {
+							for (var i = 0; i < arr.length; i++) {
+								var qa = arr[i].split('=');
+								linkarr[qa[0]] = aTitle[i] + '.' + qa[1];
+								var qhtml = '<div class="form-group row">' +
+									'<div class="col-sm-3"></div>' +
+									'<div class="col-sm-9"><div class="form-check">' +
+									'<input type="' + questionType + '" class="form-check-input AXYAjaxLoginInput" name="question" id="AXYAjaxExamQuestion' + i + '" value="' + qa[0] + '" />' +
+									'<label for="AXYAjaxExamQuestion' + i + '" id="AXYAjaxExamQuestionLabel' + i + '" class="form-check-label">' + aTitle[i] + '.' + qa[1] + '</label>' +
+									'</div>' +
+									'</div>' +
+									'</div>';
+								$("#AXYAjaxExam form").append(qhtml);
+								$('#AXYAjaxExamQuestion' + i + ',#AXYAjaxExamQuestionLabel' + i).unbind('click touchstart').bind('click touchstart', function () {
+									if ($('#AXYAjaxExamQuestion' + i).prop("checked")) {
+										$('#AXYAjaxExamQuestion' + i).attr("checked", false);
+									} else {
+										$('#AXYAjaxExamQuestion' + i).attr("checked", true);
+									}
+								});
+							}
+						}
+						$('#AXYAjaxExamButtonUse').text(AXY.AjaxNetStuff.Param.Exam.NextText);
+						$('#AXYAjaxExamButtonUse').unbind('click touchstart').bind('click touchstart', function () {
+							if ($('#AXYAjaxExamButtonUse')[0].disabled) {
+								//console.log($('#AXYAjaxExamButtonUse')[0].disabled);
+								return;
+							}
+							//console.log($('#AXYAjaxExamButtonUse'));
+							//console.log($('#AXYAjaxExamButtonUse')[0].disabled);
+
+							$('#AXYAjaxExamButtonUse').attr("disabled", true);
+							$('#AXYAjaxExamButtonUse').html('<div class="spinner-border" role="status"><span class="sr-only">' + AXY.AjaxNetStuff.Param.LoadingText + '</span></div>');
+							//console.log($('#AXYAjaxExamButtonUse'));
+							//console.log(typeof($('#AXYAjaxExamButtonUse')[0].disabled));
+							//return;
+
+							if (questionType == 'radio') {
+								console.log('You choose: ' + $("#AXYAjaxExam form input[name='question']:checked").val());
+								console.log('The answer is ' + linkarr[data.info.answer] + ' (' + data.info.answer + ')');
+								if ($("#AXYAjaxExam form input[name='question']:checked").val() == data.info.answer) {
+									console.log('You are right');
+									AXY.AjaxNetStuff.Variables.examScore += parseInt(data.info.score);
+									AXY.AjaxNetStuff.Variables.examRightAnswer++;
+								}
+							} else if (questionType == 'checkbox') {
+								var choosedarr = new Array();
+								var chooseditem = new Array();
+								$("#AXYAjaxExam form input[name='question']:checked").each(function (i) {
+									choosedarr[i] = $(this).val();
+									chooseditem[i] = linkarr[$(this).val()];
+								});
+								var answerarr = data.info.answer.split("\n");
+								console.log('You choose: ' + choosedarr.sort().toString());
+								console.log('The answer is ' + chooseditem.toString() + ' (' + answerarr.sort().toString() + ')');
+								if (choosedarr.sort().toString() == answerarr.sort().toString()) {
+									console.log('You are right');
+									AXY.AjaxNetStuff.Variables.examScore += parseInt(data.info.score);
+									AXY.AjaxNetStuff.Variables.examRightAnswer++;
+								}
+							}
+
+							AXY.AjaxNetStuff.Variables.examCurrentAnswerCounter++;
+							AXY.AjaxNetStuff.Variables.examTotalScore += parseInt(data.info.score);
+							AXY_AjaxExam.showQuestion(examid);
+						});
+						$('#AXYAjaxExamButtonUse').attr("disabled", false);
+						$('#AXYAjaxExamButtonUse').html(AXY.AjaxNetStuff.Param.Exam.NextText);
+					} else if (data.status == 2) {
+						//console.log('all done');
+						if (AXY.AjaxNetStuff.Param.Exam.isShowResult) {
+							$("#AXYAjaxExam form").html('<div class="form-group row">' +
+								'<label class="col-form-label col-sm-3"></label>' +
+								'<div class="col-sm-9">' + AXY.AjaxNetStuff.Param.Exam.ResultText + '</div>' +
+								'</div>' +
+								'<div class="form-group row">' +
+								'<label class="col-form-label col-sm-5">' + AXY.AjaxNetStuff.Param.Exam.TimeCostText + '</label>' +
+								'<div class="col-sm-7">' + Utils.formatDuring(new Date() - AXY.AjaxNetStuff.Variables.examStartTime, AXY.AjaxNetStuff.Param.Exam.TimeCostTemplate) + '</div>' +
+								'</div>' +
+								'<div class="form-group row">' +
+								'<label class="col-form-label col-sm-5">' + AXY.AjaxNetStuff.Param.Exam.TotalScoreText + '</label>' +
+								'<div class="col-sm-7">' + AXY.AjaxNetStuff.Variables.examTotalScore + '</div>' +
+								'</div>' +
+								'<div class="form-group row">' +
+								'<label class="col-form-label col-sm-5">' + AXY.AjaxNetStuff.Param.Exam.ScoreText + '</label>' +
+								'<div class="col-sm-7">' + AXY.AjaxNetStuff.Variables.examScore + '</div>' +
+								'</div>' +
+								'<div class="form-group row">' +
+								'<label class="col-form-label col-sm-5">' + AXY.AjaxNetStuff.Param.Exam.TotalAmountText + '</label>' +
+								'<div class="col-sm-7">' + AXY.AjaxNetStuff.Variables.examCurrentAnswerCounter + '</div>' +
+								'</div>' +
+								'<div class="form-group row">' +
+								'<label class="col-form-label col-sm-5">' + AXY.AjaxNetStuff.Param.Exam.RightAmountText + '</label>' +
+								'<div class="col-sm-7">' + AXY.AjaxNetStuff.Variables.examRightAnswer + '</div>' +
+								'</div>' +
+								'<div class="form-group row">' +
+								'<label class="col-form-label col-sm-5">' + AXY.AjaxNetStuff.Param.Exam.WrongAmountText + '</label>' +
+								'<div class="col-sm-7">' + (AXY.AjaxNetStuff.Variables.examCurrentAnswerCounter - AXY.AjaxNetStuff.Variables.examRightAnswer) + '</div>' +
+								'</div>');
+						} else {
+							$("#AXYAjaxExam form").html('<div class="form-group row">' +
+								'<label class="col-form-label col-sm-3"></label>' +
+								'<div class="col-sm-9">' + AXY.AjaxNetStuff.Param.Exam.AllDoneText + '</div>' +
+								'</div>');
+						}
+						$('#AXYAjaxExamButtonUse').attr("disabled", false);
+						$('#AXYAjaxExamButtonUse').html(AXY.AjaxNetStuff.Param.Exam.CloseText);
+						$('#AXYAjaxExamButtonUse').unbind('click touchstart').bind('click touchstart', function () {
+							AXY_AjaxExam.hide();
+						});
+					} else {
+						console.log(data);
+						$.toaster({
+							message: AXY.AjaxNetStuff.Param.Exam.FailText + ', ERROR: ' + data.info + ', ERRORCODE: ' + data.error,
+							color: 'red'
+						});
+						$('#AXYAjaxExamButtonUse').attr("disabled", false);
+						$('#AXYAjaxExamButtonUse').html(AXY.AjaxNetStuff.Param.Exam.NextText);
+					};
+
+				},
+				error: function (XMLHttpRequest, textStatus, errorThrown) {
+					console.log(XMLHttpRequest);
+					console.log(textStatus);
+					console.log(errorThrown);
+					$.toaster({
+						title: 'ERROR: ',
+						message: textStatus + ' ' + errorThrown,
+						color: 'red'
+					});
+					$('#AXYAjaxExamButtonUse').attr("disabled", false);
+					$('#AXYAjaxExamButtonUse').html(AXY.AjaxNetStuff.Param.Exam.NextText);
+				},
+				complete: function (XMLHttpRequest, textStatus) {
+					//console.log(XMLHttpRequest);
+					//console.log(textStatus);
+					//$.toaster({
+					//	title: 'COMPLETE: ',
+					//	message: textStatus,
+					//	color: 'gray'
+					//});
+					// $('#AXYAjaxExamButtonUse').attr("disabled", false);
+					// $('#AXYAjaxExamButtonUse').html(AXY.AjaxNetStuff.Param.Exam.NextText);
+				}
+			});
+		}
+	};
+}
 
 AXY.AjaxNetStuff.Variables.saidHello = false;
 Utils.sayHello = function () {
@@ -5115,6 +5769,10 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 			//save button
 			$('#AXYAjaxCloudSaveButtonWrite').unbind('click touchstart').bind('click touchstart', function () {
 				AXY_AjaxCloudSave.hide();
+				$.toaster({
+					message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 正在保存至云端...",
+					color: 'white'
+				});
 				/*if($('#AXYAjaxCloudSaveButtonWrite')[0].disabled){
 					//console.log($('#AXYAjaxCloudSaveButtonWrite')[0].disabled);
 					return;
@@ -5133,16 +5791,13 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 				var savedata = LZString.compressToBase64(LZString.compressToBase64(JsonEx.stringify(DataManager.makeSaveContents())));
 				//console.log(saveinfo);
 				//console.log(savedata);
-				console.log(DataManager.makeSavefileInfo());
-				console.log(DataManager.makeSaveContents());
+				//console.log(DataManager.makeSavefileInfo());
+				//console.log(DataManager.makeSaveContents());
 				if (savedata.length >= 200000) {
-					console.log("Save data too big");
+					console.log("Save info too big: " + saveinfo.length);
+					console.log("Save data too big: " + savedata.length);
 				};
 
-				$.toaster({
-					message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 正在保存至云端...",
-					color: 'white'
-				});
 				var AXY_AjaxCloudSaveURL = AXY.AjaxNetStuff.Variables.URL.replace('tmpAction', 'rmmvgamecloudsave');
 				$.ajax({
 					url: AXY_AjaxCloudSaveURL,
@@ -5162,11 +5817,11 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 							$.toaster({
 								message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 保存成功！"
 							});
-							setTimeout(function () {
-								// $.toaster({
-								// 	message: "云端存储成本较高，托管在<a href='http://666rpg.com'>666RPG.com</a>的游戏<a href='" + AXY.AjaxNetStuff.Param.URL + "'>《" + AXY.AjaxNetStuff.Variables.gameName + "》</a>诚邀您的支持！"
-								// });
-							}, 3000);
+							// setTimeout(function () {
+							// 	// $.toaster({
+							// 	// 	message: "云端存储成本较高，托管在<a href='http://666rpg.com'>666RPG.com</a>的游戏<a href='" + AXY.AjaxNetStuff.Param.URL + "'>《" + AXY.AjaxNetStuff.Variables.gameName + "》</a>诚邀您的支持！"
+							// 	// });
+							// }, 3000);
 						} else {
 							//console.log(data);
 							$.toaster({
@@ -5222,116 +5877,116 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 				//$('#AXYAjaxCloudSaveButtonRead').attr("disabled", true);
 				//$('#AXYAjaxCloudSaveButtonRead').val(AXY.AjaxNetStuff.Param.LoadingText);
 
-				setTimeout(function () {
-					$.toaster({
-						message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 正在从云端读取...",
-						color: 'white'
-					});
-					var AXY_AjaxCloudLoadURL = AXY.AjaxNetStuff.Variables.URL.replace('tmpAction', 'rmmvgamecloudload');
-					$.ajax({
-						url: AXY_AjaxCloudLoadURL,
-						type: 'POST',
-						dataType: 'json',
-						data: {
-							sid: AXY.AjaxNetStuff.Param.sid
-						},
-						success: function (data) {
-							console.log(data);
-							if (data.status) {
-								try {
-									$.toaster({
-										message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 读取成功！"
-									});
-
-									// Extract data from savegame
-									console.log("Extract save contents");
-									//si = data.saveinfo;
-									//console.log(si);
-									//si = LZString.decompressFromBase64(si);
-									//console.log(si);
-									//si = LZString.decompressFromBase64(si);
-									//console.log(si);
-									//si = JsonEx.parse(si);
-									//console.log(si);
-									//sd = data.savedata;
-									//console.log(sd);
-									//sd = LZString.decompressFromBase64(sd);
-									//console.log(sd);
-									//sd = LZString.decompressFromBase64(sd);
-									//console.log(sd);
-									//sd = JsonEx.parse(sd);
-									//console.log(sd);
-									DataManager.createGameObjects();
-									DataManager.extractSaveContents(JsonEx.parse(LZString.decompressFromBase64(LZString.decompressFromBase64(data.savedata))));
-
-									// Move player
-									console.log("Reserve transfer player");
-									$gamePlayer.reserveTransfer($gameMap.mapId(), $gamePlayer.x, $gamePlayer.y);
-									$gamePlayer.requestMapReload();
-
-									// Initialize map
-									console.log("Goto Scene_Map");
-									$gameSystem.onAfterLoad();
-									Scene_Load.prototype.reloadMapIfUpdated.call(null);
-									SceneManager.goto(Scene_Map);
-									if (SceneManager._scene) {
-										SceneManager._scene.fadeOutAll();
-									};
-
-									/*
-									//exec common event
-									if (PROPERTY.GAME.AFTERLOADEVENT!=0) {
-										debug(LOGGING.ALL,"reserveCommonEvent: "+PROPERTY.GAME.AFTERLOADEVENT);
-										$gameTemp.reserveCommonEvent(PROPERTY.GAME.AFTERLOADEVENT);
-									};*/
-
-									setTimeout(function () {
-										// $.toaster({
-										// 	message: "云端存储成本较高，托管在<a href='http://666rpg.com'>666RPG.com</a>的游戏<a href='" + AXY.AjaxNetStuff.Param.URL + "'>《" + AXY.AjaxNetStuff.Variables.gameName + "》</a>诚邀您的支持！"
-										// });
-										$gameSystem.setTouchMoveEnabled(true);
-									}, 3000);
-								} catch (e) {
-									$.toaster({
-										message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 解析云存档失败，请进入游戏重试！"
-									});
-									console.log(e);
-								}
-							} else {
-								console.log(data);
+				//setTimeout(function () {
+				$.toaster({
+					message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 正在从云端读取...",
+					color: 'white'
+				});
+				var AXY_AjaxCloudLoadURL = AXY.AjaxNetStuff.Variables.URL.replace('tmpAction', 'rmmvgamecloudload');
+				$.ajax({
+					url: AXY_AjaxCloudLoadURL,
+					type: 'POST',
+					dataType: 'json',
+					data: {
+						sid: AXY.AjaxNetStuff.Param.sid
+					},
+					success: function (data) {
+						console.log(data);
+						if (data.status) {
+							try {
 								$.toaster({
-									message: data.info + ', ERRORCODE: ' + data.error,
-									color: 'red'
+									message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 读取成功！"
 								});
-							};
-							//$('#AXYAjaxCloudSaveButtonRead').attr("disabled", false);
-							//$('#AXYAjaxCloudSaveButtonRead').val("读取");
-						},
-						error: function (XMLHttpRequest, textStatus, errorThrown) {
-							console.log(XMLHttpRequest);
-							console.log(textStatus);
-							console.log(errorThrown);
+
+								// Extract data from savegame
+								console.log("Extract save contents");
+								//si = data.saveinfo;
+								//console.log(si);
+								//si = LZString.decompressFromBase64(si);
+								//console.log(si);
+								//si = LZString.decompressFromBase64(si);
+								//console.log(si);
+								//si = JsonEx.parse(si);
+								//console.log(si);
+								//sd = data.savedata;
+								//console.log(sd);
+								//sd = LZString.decompressFromBase64(sd);
+								//console.log(sd);
+								//sd = LZString.decompressFromBase64(sd);
+								//console.log(sd);
+								//sd = JsonEx.parse(sd);
+								//console.log(sd);
+								DataManager.createGameObjects();
+								DataManager.extractSaveContents(JsonEx.parse(LZString.decompressFromBase64(LZString.decompressFromBase64(data.savedata))));
+
+								// Move player
+								console.log("Reserve transfer player");
+								$gamePlayer.reserveTransfer($gameMap.mapId(), $gamePlayer.x, $gamePlayer.y);
+								$gamePlayer.requestMapReload();
+
+								// Initialize map
+								console.log("Goto Scene_Map");
+								$gameSystem.onAfterLoad();
+								Scene_Load.prototype.reloadMapIfUpdated.call(null);
+								SceneManager.goto(Scene_Map);
+								if (SceneManager._scene) {
+									SceneManager._scene.fadeOutAll();
+								};
+
+								/*
+								//exec common event
+								if (PROPERTY.GAME.AFTERLOADEVENT!=0) {
+									debug(LOGGING.ALL,"reserveCommonEvent: "+PROPERTY.GAME.AFTERLOADEVENT);
+									$gameTemp.reserveCommonEvent(PROPERTY.GAME.AFTERLOADEVENT);
+								};*/
+
+								setTimeout(function () {
+									// $.toaster({
+									// 	message: "云端存储成本较高，托管在<a href='http://666rpg.com'>666RPG.com</a>的游戏<a href='" + AXY.AjaxNetStuff.Param.URL + "'>《" + AXY.AjaxNetStuff.Variables.gameName + "》</a>诚邀您的支持！"
+									// });
+									$gameSystem.setTouchMoveEnabled(true);
+								}, 3000);
+							} catch (e) {
+								$.toaster({
+									message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 解析云存档失败，请进入游戏重试！"
+								});
+								console.log(e);
+							}
+						} else {
+							console.log(data);
 							$.toaster({
-								title: 'ERROR: ',
-								message: textStatus + ' ' + errorThrown,
+								message: data.info + ', ERRORCODE: ' + data.error,
 								color: 'red'
 							});
-							//$('#AXYAjaxCloudSaveButtonRead').attr("disabled", false);
-							//$('#AXYAjaxCloudSaveButtonRead').val("读取");
-						},
-						complete: function (XMLHttpRequest, textStatus) {
-							//console.log(XMLHttpRequest);
-							//console.log(textStatus);
-							//$.toaster({
-							//	title: 'COMPLETE: ',
-							//	message: textStatus,
-							//	color: 'gray'
-							//});
-							//$('#AXYAjaxCloudSaveButtonRead').attr("disabled", false);
-							//$('#AXYAjaxCloudSaveButtonRead').val("读取");
-						}
-					});
-				}, 1000);
+						};
+						//$('#AXYAjaxCloudSaveButtonRead').attr("disabled", false);
+						//$('#AXYAjaxCloudSaveButtonRead').val("读取");
+					},
+					error: function (XMLHttpRequest, textStatus, errorThrown) {
+						console.log(XMLHttpRequest);
+						console.log(textStatus);
+						console.log(errorThrown);
+						$.toaster({
+							title: 'ERROR: ',
+							message: textStatus + ' ' + errorThrown,
+							color: 'red'
+						});
+						//$('#AXYAjaxCloudSaveButtonRead').attr("disabled", false);
+						//$('#AXYAjaxCloudSaveButtonRead').val("读取");
+					},
+					complete: function (XMLHttpRequest, textStatus) {
+						//console.log(XMLHttpRequest);
+						//console.log(textStatus);
+						//$.toaster({
+						//	title: 'COMPLETE: ',
+						//	message: textStatus,
+						//	color: 'gray'
+						//});
+						//$('#AXYAjaxCloudSaveButtonRead').attr("disabled", false);
+						//$('#AXYAjaxCloudSaveButtonRead').val("读取");
+					}
+				});
+				//}, 1000);
 			});
 
 			//close button
@@ -6338,8 +6993,23 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 				'</div>' +
 				'</form>' +
 				'</div>' +
-				'<div class="modal-footer">' +
-				'<button type="button" class="btn btn-secondary" id="AXYAjaxLoginButtonUse">' + AXYAjaxTopListButtonTemplate + '</button>' +
+				'<div class="modal-footer">';
+			// console.log(window.AndroidBridgeJavascriptInterface);
+			var AndroidBridgeJavascriptInterface = window.AndroidBridgeJavascriptInterface || null;
+			// console.log(AndroidBridgeJavascriptInterface);
+			try {
+				if (!!AndroidBridgeJavascriptInterface) {
+					console.log(AndroidBridgeJavascriptInterface.isCloudGameApp());
+					console.log(AndroidBridgeJavascriptInterface.getSid());
+					if (AndroidBridgeJavascriptInterface.isCloudGameApp()) {
+						AXYAjaxLoginTemplate += '<button type="button" class="btn btn-secondary" id="AXYAjaxQuickLoginButton">' + AXY.AjaxNetStuff.Param.QuickLoginButtonText + '</button>';
+					}
+				}
+			} catch (e) {
+				console.log(e);
+			}
+
+			AXYAjaxLoginTemplate += '<button type="button" class="btn btn-secondary" id="AXYAjaxLoginButtonUse">' + AXYAjaxTopListButtonTemplate + '</button>' +
 				(AXY.AjaxNetStuff.Param.Reg.Enable ? '<button type="button" class="btn btn-secondary" id="AXYAjaxLoginButtonReg">' + AXY.AjaxNetStuff.Param.Reg.ButtonText + '</button>' : '') +
 				'<button type="button" class="btn btn-secondary" id="AXYAjaxLoginButtonClear">' + AXY.AjaxNetStuff.Param.Reg.ClearText + '</button>' +
 				'<button type="button" class="btn btn-secondary" id="AXYAjaxLoginButtonClose">' + AXY.AjaxNetStuff.Param.Reg.CloseText + '</button>' +
@@ -6386,12 +7056,124 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 					$('#AXYAjaxLoginInputAutoLogin').attr("checked", true);
 				}
 			});
+			$('#AXYAjaxQuickLoginButton').unbind('click touchstart').bind('click touchstart', function () {
+				if ($gameVariables == null) {
+					$.toaster({
+						message: "<a href='" + AXY.AjaxNetStuff.Param.URL + "' target='_blank'>" + AXY.AjaxNetStuff.Variables.gameName + "</a>: 进入游戏后再试",
+						color: 'red'
+					});
+					return;
+				}
+				if (AndroidBridgeJavascriptInterface.getSid() != null) {
+					AXY.AjaxNetStuff.Variables.loggedin = true;
+					AXY.AjaxNetStuff.Param.sid = AndroidBridgeJavascriptInterface.getSid();
+					localStorage.setItem(AXY.AjaxNetStuff.Param.CloudData.LocalCacheUUID + AXY.AjaxNetStuff.Param.AppID + 'sid', AndroidBridgeJavascriptInterface.getSid());
+
+					if ($('#AXYAjaxLoginInputAutoLogin').prop('checked')) {
+						$gameVariables._AXY = {};
+						$gameVariables._AXY.AjaxNetStuff = {};
+						$gameVariables._AXY.AjaxNetStuff.Loggedin = true;
+						$gameVariables._AXY.AjaxNetStuff.sid = AndroidBridgeJavascriptInterface.getSid();
+					}
+
+					$('#AXYAjaxTopListLoginButton').css("display", 'none');
+					$('#AXYAjaxTopListLogoutButton').css("display", '');
+					AXY_AjaxLogin.hide();
+
+					//alert(AXY.AjaxNetStuff.Param.sid);
+					//alert(data.sid);
+					//alert(data.uid);
+					// $gameNetwork._serverURL = data.mvol;
+					// console.log('attempt login to mongodb');
+					// AXY_AjaxLoginConnect2RMMVOL.Connect2RMMVOL(inputName, inputPwd);
+					// setTimeout(function () {
+					// 	// $.toaster({
+					// 	// 	message: "托管在<a href='http://666rpg.com'>666RPG.com</a>的游戏<a href='" + AXY.AjaxNetStuff.Param.URL + "'>《" + data.gamename + "》</a>诚邀您的支持！"
+					// 	// });
+					// }, 3000);
+
+					//logingift
+					if (AXY.AjaxNetStuff.Param.EnableLoginGift) {
+						if (AXY.AjaxNetStuff.Param.LoginGiftDone) {
+							return;
+						}
+						//console.log($gamePlayer);
+						//console.log($gameMap);
+						if (!$gameMap._mapId) {
+							$.toaster({
+								message: "进入游戏后重新登录可以领取登录礼包！"
+							});
+							$('.AXYAjaxTopListLoginButton').css("display", 'inline');
+							return;
+						}
+						var arrLoginGift = String(AXY.AjaxNetStuff.Parameters['LoginGift']).split(';');
+						//console.log(arrLoginGift);
+						$.each(arrLoginGift, function (index) {
+							var arrLoginGiftItem = arrLoginGift[index].split(':');
+							//console.log(arrLoginGiftItem);
+							arrLoginGiftItem[0] = parseInt(arrLoginGiftItem[0]);
+							arrLoginGiftItem[1] = parseInt(arrLoginGiftItem[1]);
+							arrLoginGiftItem[2] = parseInt(arrLoginGiftItem[2]);
+							switch (arrLoginGiftItem[0]) {
+								case 0:
+									$gameParty.gainGold(arrLoginGiftItem[2], 0, 0);
+									if (!AXY.Toast.Param.DisplayGainGold) {
+										$.toaster({
+											message: "+" + arrLoginGiftItem[2] + TextManager.currencyUnit
+										});
+									}
+									break;
+								case 1:
+									$gameParty.gainItem($dataItems[arrLoginGiftItem[1]], arrLoginGiftItem[2], 0, 0);
+									if (!AXY.Toast.Param.DisplayGainItem) {
+										$.toaster({
+											message: "+" + arrLoginGiftItem[2] + $dataItems[arrLoginGiftItem[1]].name
+										});
+									}
+									break;
+								case 2:
+									$gameParty.gainItem($dataWeapons[arrLoginGiftItem[1]], arrLoginGiftItem[2], 0, 0, 0);
+									if (!AXY.Toast.Param.DisplayGainItem) {
+										$.toaster({
+											message: "+" + arrLoginGiftItem[2] + $dataWeapons[arrLoginGiftItem[1]].name
+										});
+									}
+									break;
+								case 3:
+									$gameParty.gainItem($dataArmors[arrLoginGiftItem[1]], arrLoginGiftItem[2], 0, 0, 0);
+									if (!AXY.Toast.Param.DisplayGainItem) {
+										$.toaster({
+											message: "+" + arrLoginGiftItem[2] + $dataArmors[arrLoginGiftItem[1]].name
+										});
+									}
+									break;
+								default:
+									//console.log(typeof(obj[index].num));
+									break;
+							}
+						});
+						AXY.AjaxNetStuff.Param.LoginGiftDone = true;
+					}
+
+					if (AXY.AjaxNetStuff.Param.LoginCommonEventId > 0) {
+						if (!$gameMap._mapId) {
+							$.toaster({
+								message: "进入游戏后重新登录有彩蛋！"
+							});
+							$('.AXYAjaxTopListLoginButton').css("display", 'inline');
+							return;
+						}
+						$gameTemp.reserveCommonEvent(AXY.AjaxNetStuff.Param.LoginCommonEventId);
+					}
+
+					//AXY.AjaxNetStuff.Function.loadDatabase();
+				}
+			});
+			//console.log($('#AXYAjaxLoginInput'));
 			$('#AXYAjaxLoginButtonReg').unbind('click touchstart').bind('click touchstart', function () {
 				//window.open(AXY_LoginURL);
 				AXY_AjaxReg.show();
 			});
-			//console.log($('#AXYAjaxLoginInput'));
-
 			$('#AXYAjaxLoginButtonUse').unbind('click touchstart').bind('click touchstart', function () {
 				if ($gameVariables == null) {
 					$.toaster({
@@ -6668,7 +7450,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 					'</form>' +
 					'</div>' +
 					'<div class="modal-footer">' +
-					'注册即表明您已阅读并同意：<a href="https://shanghai.666rpg.com:6443/Home/Art/index/id/16" target="_blank" style="text-decoration: underline;" id="AXYAjaxRegRequiredReading">注册必读</a>和<a href="https://shanghai.666rpg.com:6443/Home/Art/index/id/19" target="_blank" style="text-decoration: underline;" id="AXYAjaxRegUserAgreement">用户协议</a>' +
+					'注册即表明您已阅读并同意：<a href="https://shanghai.666rpg.com:666/Home/Art/index/id/16" target="_blank" style="text-decoration: underline;" id="AXYAjaxRegRequiredReading">注册必读</a>和<a href="https://shanghai.666rpg.com:666/Home/Art/index/id/19" target="_blank" style="text-decoration: underline;" id="AXYAjaxRegUserAgreement">用户协议</a>' +
 					'<button type="button" class="btn btn-secondary" id="AXYAjaxRegButtonUse">' + AXY.AjaxNetStuff.Param.Reg.ButtonText + '</button>' +
 					'<!--<button type="button" class="btn btn-secondary" id="AXYAjaxRegButtonClear">' + AXY.AjaxNetStuff.Param.Reg.ClearText + '</button>' +
 					'<button type="button" class="btn btn-secondary" id="AXYAjaxRegButtonClose">' + AXY.AjaxNetStuff.Param.Reg.CloseText + '</button>-->' +
