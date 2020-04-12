@@ -1,14 +1,14 @@
 var AXY = AXY || {};
 AXY.AjaxNetStuff = AXY.AjaxNetStuff || {};
-AXY.AjaxNetStuff.VERSION = 1.74;
+AXY.AjaxNetStuff.VERSION = 1.76;
 //=============================================================================
 // A XueYu Plugin - Ajax Net Stuff
 // AXY_AjaxNetStuff.js
-// Version: 1.74
+// Version: 1.76
 // License: MIT
 //=============================================================================
 /*:
- * @plugindesc v1.74 This plugin support rmmv with ajax net stuff.
+ * @plugindesc v1.76 This plugin support rmmv with ajax net stuff.
  * @author A XueYu Plugin
  *
  * @help
@@ -27,6 +27,8 @@ AXY.AjaxNetStuff.VERSION = 1.74;
  * 
  * To open Login modal,
  * AXY_AjaxLogin.show();
+ * To open Login modal with commonevents callback,
+ * AXY_AjaxLogin.show(1);//1=commonevents id
  * To close Login modal,
  * AXY_AjaxLogin.hide();
  * 
@@ -103,6 +105,10 @@ AXY.AjaxNetStuff.VERSION = 1.74;
  * AXY.AjaxNetStuff.Variables.examRightAnswer
  *
  * changelog
+ * 1.76 2020.4.13
+ * add: sign up field: nickname;
+ * 1.75 2020.3.24
+ * add: commonevents callback when login success;
  * 1.74 2020.3.23
  * add: exam module;
  * 1.73 2020.3.21
@@ -1196,6 +1202,12 @@ AXY.AjaxNetStuff.VERSION = 1.74;
  * @type text
  * @default Confirm Password
  * 
+ * @param NicknameText
+ * @text Nickname Text
+ * @desc Nickname Text. default: Nickname
+ * @type text
+ * @default Nickname
+ * 
  * @param UsernamePlaceholderText
  * @text Username Placeholder Text
  * @desc Username Placeholder Text. default: Please enter the username
@@ -1213,6 +1225,12 @@ AXY.AjaxNetStuff.VERSION = 1.74;
  * @desc Confirm Password Placeholder Text. default: Please enter the password again
  * @type text
  * @default Please enter the password again
+ * 
+ * @param NicknamePlaceholderText
+ * @text Nickname Placeholder Text
+ * @desc Nickname Placeholder Text. default: Please enter the nickname
+ * @type text
+ * @default Please enter the nickname
  * 
  * @param RegingText
  * @text Reging Text
@@ -6919,7 +6937,7 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 
 	//ajax login
 	var AXY_AjaxLogin = {
-		show: function () {
+		show: function (common_event_id) {
 			var AXYAjaxLoginEntity;
 			var AXYAjaxLoginTemplate2 =
 				'<div class="AXYAjaxLogin" id="AXYAjaxLogin">' +
@@ -7342,6 +7360,10 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 								}
 
 								//AXY.AjaxNetStuff.Function.loadDatabase();
+
+								if (common_event_id != undefined) {
+									$gameTemp.reserveCommonEvent(common_event_id);
+								}
 							}
 						} else {
 							console.log(data);
@@ -7447,6 +7469,10 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 					'<label for="AXYAjaxRegInputPwd2" class="col-form-label col-sm-3">' + AXY.AjaxNetStuff.Param.Reg.ConfirmPasswordText + '</label>' +
 					'<div class="col-sm-9"><input type="password" class="form-control AXYAjaxRegInput" id="AXYAjaxRegInputPwd2" placeholder="' + AXY.AjaxNetStuff.Param.Reg.ConfirmPasswordPlaceholderText + '" /></div>' +
 					'</div>' +
+					'<div class="form-group row">' +
+					'<label for="AXYAjaxRegInputNickName" class="col-form-label col-sm-3">' + AXY.AjaxNetStuff.Param.Reg.NicknameText + '</label>' +
+					'<div class="col-sm-9"><input type="text" class="form-control AXYAjaxRegInput" id="AXYAjaxRegInputNickName" placeholder="' + AXY.AjaxNetStuff.Param.Reg.NicknamePlaceholderText + '" /></div>' +
+					'</div>' +
 					'</form>' +
 					'</div>' +
 					'<div class="modal-footer">' +
@@ -7528,6 +7554,9 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 					var inputPwd2 = $('#AXYAjaxRegInputPwd2').val(); //$('#AXYAjaxRegInputPwd').val().replace(/ /g, "");
 					inputPwd2 = inputPwd2.replace(/<\/?[^>]*>/gim, ""); //remove all html tag
 					inputPwd2 = inputPwd2.replace(/(^\s+)|(\s+$)/g, ""); //trim
+					var inputNickname = $('#regnickname').val(); //$('#AXYAjaxRegInputPwd').val().replace(/ /g, "");
+					inputNickname = inputNickname.replace(/<\/?[^>]*>/gim, ""); //remove all html tag
+					inputNickname = inputNickname.replace(/(^\s+)|(\s+$)/g, ""); //trim
 					//inputPwd = inputPwd.replace(/\s/g,"");//remove space in str
 					//console.log($('#AXYAjaxRegInput'));
 					//console.log($('#AXYAjaxRegInput').val());
@@ -7567,7 +7596,8 @@ if (AXY_AjaxFetchServerState.isonline() || 1) {
 						data: {
 							username: inputName,
 							password: inputPwd,
-							repassword: inputPwd2
+							repassword: inputPwd2,
+							nickname: inputNickname
 						},
 						success: function (data) {
 							//console.log(data);
