@@ -1,13 +1,31 @@
 //=============================================================================
 // A XueYu Plugins - Save
 // AXY_Save.js
-// Version: 1.02
+// Version: 1.03
 // License: MIT
 //=============================================================================
 /*:
- * @plugindesc v1.02 Allows to Change save's staff.
+ * @plugindesc v1.03 Allows to Change save's staff.
  * @author A XueYu Plugins
  *
+ *  * @help
+ * Introduction
+ * This plugin allows to Change save's staff.
+ * Example: 
+ * 1.It's very simple, so there's no example.
+ * 2.You can use script command such as: AXY_Save.save(); which use default savefileid you define or AXY_Save.save(21); which use you direct define.
+ *
+ * changelog
+ * 1.03 2020.4.18
+ * fix: missed help;
+ * 1.02 2019.12.24
+ * modify: param struct;
+ * 1.01 2019.9.25
+ * Upgrade DataManager.saveGame to rmmv1.6.1 origin method;
+ * Add feature: Make save folder customizable;
+ * 1.0 2019.7.5
+ * first release.
+ * 
  * @param MaxSaveFile
  * @desc The MaxSaveFile could expand the number of save files. Default: 22
  * @default 22
@@ -46,23 +64,7 @@
  * 
  */
 
-/*
- * @help
- * Introduction
- * This plugin allows to Change save's staff.
- * Example: 
- * 1.It's very simple, so there's no example.
- * 2.You can use script command such as: AXY_Save.save(); which use default savefileid you define or AXY_Save.save(21); which use you direct define.
- *
- * changelog
- * 1.02 2019.12.24
- * modify: param struct;
- * 1.01 2019.9.25
- * Upgrade DataManager.saveGame to rmmv1.6.1 origin method;
- * Add feature: Make save folder customizable;
- * 1.0 2019.7.5
- * first release.
- */
+
 
 // Imported
 var Imported = Imported || {};
