@@ -1,0 +1,15 @@
+https://rpg.blue/forum.php?mod=viewthread&tid=398375
+
+用法：
+比如你现在有一个spineboy的骨骼动画，包含如下文件：spineboy.atlas，spineboy.json，spineboy.png
+1.将这三个spine动画文件放在spine/data/下
+2.在事件中使用脚本命令：AXY_Spine.show({filename:'spineboy'});
+3.enjoy！
+
+本例截图中使用的脚本如下：
+AXY_Spine.show({x:$gameVariables.value(1), y:$gameVariables.value(2), action:'walk', filename:'spineboy',scalex:0.5,scaley:0.5});
+配合随机变量进行多次点击该事件进行压力测试。
+其中1号变量从0-816随机，2号变量从0-624随机。
+
+pixi的spine动画详情可以去官方网站查看：
+https://github.com/pixijs/pixi.j ... le%2012%20-%20Spine
